@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: odyssey-postgres
+    environment:
+      POSTGRES_USER: odyssey
+      POSTGRES_PASSWORD: odyssey
+      POSTGRES_DB: odyssey
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odyssey"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: odyssey-server
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://odyssey:odyssey@postgres:5432/odyssey
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./server:/app
+      - /app/__pycache__
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: odyssey-client
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:

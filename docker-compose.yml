@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -17,6 +15,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - odyssey-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: odyssey-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - odyssey-network
 
   server:
     build:
@@ -26,13 +42,16 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://odyssey:odyssey@postgres:5432/odyssey
+      DATABASE_URL: postgresql+psycopg://odyssey:odyssey@postgres:5432/odyssey
+      DEBUG: "True"
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ./server:/app
       - /app/__pycache__
+    networks:
+      - odyssey-network
 
   client:
     build:
@@ -46,6 +65,13 @@ services:
       - /app/node_modules
     depends_on:
       - server
+    networks:
+      - odyssey-network
 
 volumes:
   postgres_data:
+  pgadmin_data:
+
+networks:
+  odyssey-network:
+    driver: bridge

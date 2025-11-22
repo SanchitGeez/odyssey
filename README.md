@@ -1,21 +1,60 @@
 # Odyssey
 
-Full-stack web application with FastAPI backend, React frontend, and PostgreSQL database.
+A holistic life management application helping users build awareness and maintain balance across six core dimensions of life through flexible task tracking.
+
+**Current Status**: 🚧 Stage 1 - Phase 1 Complete (Authentication) ✅
+
+## Project Vision
+
+Odyssey organizes life into six interconnected categories (Body, Mind, Work, Wealth, Connection, Meaning) and provides flexible task types (Recurring, One-Time, Projects) that match how life actually works. See [specs/stage1](./specs/stage1/) for full MVP vision.
+
+## Implementation Progress
+
+### ✅ Stage 1 - Phase 1: Authentication (COMPLETED)
+- Email/password authentication with JWT tokens
+- User registration and login
+- Protected routes and session management
+- PostgreSQL database with Alembic migrations
+- Layered backend architecture (API/Service/Repository/Database)
+- Dark mode frontend with custom theme
+
+**Documentation**: See [implementation/stage1/phase1/](./implementation/stage1/phase1/)
+
+### 🔜 Upcoming Phases
+- Phase 2: Core task management
+- Phase 3: Daily check-in interface
+- Phase 4: Projects and journal
+- Phase 5: Dashboard and analytics
 
 ## Project Structure
 
 ```
 Odyssey/
-├── server/               # FastAPI backend
-│   ├── main.py          # Application entry point
-│   ├── requirements.txt # Python dependencies
-│   └── Dockerfile       # Server container config
-├── client/              # React + Vite + TypeScript frontend
-│   ├── src/            # React source code
-│   ├── Dockerfile      # Client container config
-│   └── package.json    # Node dependencies
-├── docker-compose.yml  # Docker orchestration
-└── .venv/              # Python virtual environment
+├── server/                    # FastAPI backend
+│   ├── app/
+│   │   ├── api/v1/           # API endpoints
+│   │   ├── core/             # Config, security, database
+│   │   ├── models/           # SQLAlchemy models
+│   │   ├── schemas/          # Pydantic schemas
+│   │   ├── services/         # Business logic
+│   │   └── repositories/     # Data access layer
+│   ├── alembic/              # Database migrations
+│   ├── main.py               # Application entry point
+│   └── requirements.txt      # Python dependencies
+├── client/                    # React + Vite + TypeScript frontend
+│   ├── src/
+│   │   ├── components/       # React components
+│   │   ├── pages/            # Page components
+│   │   ├── lib/
+│   │   │   ├── api/          # API client
+│   │   │   ├── store/        # Zustand state management
+│   │   │   └── types/        # TypeScript types
+│   │   └── App.tsx
+│   └── package.json
+├── implementation/            # Phase-by-phase implementation docs
+├── specs/                     # Product specifications
+├── docker-compose.yml         # Docker orchestration
+└── .venv/                    # Python virtual environment
 ```
 
 ## Prerequisites
@@ -73,19 +112,39 @@ docker-compose up postgres -d
 | Server   | http://localhost:8000    | FastAPI backend            |
 | API Docs | http://localhost:8000/docs | Interactive API documentation |
 | Database | localhost:5432           | PostgreSQL database        |
+| PgAdmin  | http://localhost:5050    | Database management UI     |
 
 ## API Endpoints
 
+### Authentication (Phase 1)
+- `POST /api/v1/auth/register` - User registration
+- `POST /api/v1/auth/login` - User login (returns JWT token)
+- `GET /api/v1/auth/me` - Get current user (protected)
+- `POST /api/v1/auth/logout` - Logout (client-side)
+
+### General
 - `GET /` - Root endpoint
 - `GET /health` - Health check endpoint
 
 ## Environment Variables
 
-**Database Configuration:**
+**Backend (server/.env)**:
+```env
+DATABASE_URL=postgresql+psycopg://odyssey:odyssey@postgres:5432/odyssey
+SECRET_KEY=your-secret-key-here
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
+
+**Frontend (client/.env.local)**:
+```env
+VITE_API_URL=http://localhost:8000
+```
+
+**Database Configuration (docker-compose.yml)**:
 - `POSTGRES_USER=odyssey`
 - `POSTGRES_PASSWORD=odyssey`
 - `POSTGRES_DB=odyssey`
-- `DATABASE_URL=postgresql://odyssey:odyssey@postgres:5432/odyssey`
 
 ## Development
 
@@ -96,9 +155,13 @@ docker-compose up postgres -d
 - PostgreSQL integration ready
 
 **Client Features:**
-- React 18 with TypeScript
+- React 19 with TypeScript
 - Vite for fast development and builds
 - Hot Module Replacement (HMR)
+- Zustand state management with localStorage persistence
+- Axios HTTP client with request/response interceptors
+- React Router v6 with protected routes
+- Tailwind CSS v4 with custom dark mode theme
 - ESLint configured
 
 ## Database

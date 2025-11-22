@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-Odyssey MVP follows a simple client-side architecture with local data storage. The entire application runs in the browser as a Progressive Web App (PWA), requiring no backend infrastructure for the initial version. The core system revolves around three task types, a card-based daily check-in interface optimized for 60-90 second completion, comprehensive activity tracking, and a dedicated projects page for ongoing efforts.
+Odyssey MVP follows a simple client-side architecture with local data storage. The entire application runs in the browser as a Progressive Web App (PWA), requiring no backend infrastructure for the initial version. The core system revolves around three task types (Recurring Tasks, One-Time Tasks, and Projects), a card-based daily check-in interface optimized for 60-90 second completion, comprehensive activity tracking, and a dedicated Projects page for natural language updates on multi-step efforts and behavior experiments.
 
 ## Technology Stack
 
@@ -44,8 +44,7 @@ interface UserProfile {
 
 interface UserSettings {
   theme: 'light' | 'dark';
-  experimentCheckInFrequency: 'weekly' | 'biweekly' | 'custom';
-  projectCheckInFrequency: 'twice-weekly' | 'three-times-weekly';
+  defaultProjectCheckInFrequency: 'weekly' | 'biweekly' | 'twice-weekly' | 'three-times-weekly';
   enableNotifications: boolean;
 }
 ```
@@ -273,35 +272,37 @@ const TASK_SUGGESTIONS: TaskSuggestion[] = [
 │   │   ├── Button.tsx
 │   │   ├── Card.tsx
 │   │   ├── Modal.tsx
-│   │   └── Slider.tsx
-│   ├── /dashboard
+│   │   └── CategoryBadge.tsx
+│   ├── /overview
 │   │   ├── LifeHexagon.tsx
 │   │   ├── CategoryCard.tsx
+│   │   ├── StreakDisplay.tsx
 │   │   ├── QuickStats.tsx
-│   │   └── WeekAtGlance.tsx
+│   │   └── ActivityTimeline.tsx
 │   ├── /checkin
-│   │   ├── DailyCheckInForm.tsx
-│   │   ├── HabitCheckboxList.tsx
-│   │   └── MoodSelector.tsx
-│   ├── /habits
-│   │   ├── HabitList.tsx
-│   │   ├── HabitForm.tsx
-│   │   └── StreakDisplay.tsx
-│   ├── /reviews
-│   │   ├── WeeklyReviewForm.tsx
-│   │   ├── MonthlyReviewForm.tsx
-│   │   └── CategoryRatingInput.tsx
-│   └── /insights
-│       ├── TrendChart.tsx
-│       ├── CompletionStats.tsx
-│       └── PatternDisplay.tsx
+│   │   ├── CheckInCard.tsx
+│   │   ├── CardProgress.tsx
+│   │   └── CompletionSummary.tsx
+│   ├── /tasks
+│   │   ├── TaskList.tsx
+│   │   ├── TaskForm.tsx
+│   │   ├── TaskSuggestions.tsx
+│   │   └── TaskCard.tsx
+│   ├── /projects
+│   │   ├── ProjectList.tsx
+│   │   ├── ProjectForm.tsx
+│   │   ├── ProjectProgressForm.tsx
+│   │   ├── MilestoneTracker.tsx
+│   │   └── ProjectTimeline.tsx
+│   └── /journal
+│       ├── JournalEntry.tsx
+│       ├── JournalList.tsx
+│       └── JournalForm.tsx
 ├── /pages
-│   ├── HomePage.tsx
-│   ├── CheckInPage.tsx
-│   ├── HabitsPage.tsx
-│   ├── InsightsPage.tsx
-│   ├── ReviewsPage.tsx
-│   └── SettingsPage.tsx
+│   ├── OverviewPage.tsx     # Dashboard with hexagon, streaks, analytics
+│   ├── CheckInPage.tsx      # Card-based daily task completion (60-90 sec)
+│   ├── ProjectsPage.tsx     # Natural language updates, milestone tracking
+│   └── JournalPage.tsx      # Free-form notes and reflections
 ├── /lib
 │   ├── /storage
 │   │   ├── localStorage.ts
@@ -309,8 +310,9 @@ const TASK_SUGGESTIONS: TaskSuggestion[] = [
 │   │   └── migrations.ts
 │   ├── /store
 │   │   ├── useCheckInStore.ts
-│   │   ├── useHabitStore.ts
-│   │   ├── useReviewStore.ts
+│   │   ├── useTaskStore.ts
+│   │   ├── useProjectStore.ts
+│   │   ├── useJournalStore.ts
 │   │   └── useSettingsStore.ts
 │   ├── /utils
 │   │   ├── dateHelpers.ts
@@ -374,35 +376,55 @@ const TASK_SUGGESTIONS: TaskSuggestion[] = [
 ```typescript
 interface CheckInStore {
   checkIns: DailyCheckIn[];
+  streak: StreakData;
   addCheckIn: (checkIn: Omit<DailyCheckIn, 'id'>) => void;
   updateCheckIn: (id: string, updates: Partial<DailyCheckIn>) => void;
   getTodayCheckIn: () => DailyCheckIn | undefined;
   getCheckInByDate: (date: string) => DailyCheckIn | undefined;
   getCheckInsInRange: (start: string, end: string) => DailyCheckIn[];
+  updateStreak: () => void;
 }
 ```
 
-#### HabitStore
+#### TaskStore
 ```typescript
-interface HabitStore {
-  habits: Habit[];
-  addHabit: (habit: Omit<Habit, 'id'>) => void;
-  updateHabit: (id: string, updates: Partial<Habit>) => void;
-  deleteHabit: (id: string) => void;
-  getActiveHabits: () => Habit[];
-  getHabitsByCategory: (category: CategoryType) => Habit[];
-  calculateStreak: (habitId: string) => number;
+interface TaskStore {
+  recurringTasks: RecurringHabit[];
+  oneTimeTasks: OneTimeTask[];
+  addRecurringTask: (task: Omit<RecurringHabit, 'id'>) => void;
+  addOneTimeTask: (task: Omit<OneTimeTask, 'id'>) => void;
+  updateTask: (id: string, updates: Partial<BaseTask>) => void;
+  deleteTask: (id: string) => void;
+  getActiveTasks: () => (RecurringHabit | OneTimeTask)[];
+  getTasksByCategory: (category: CategoryType) => (RecurringHabit | OneTimeTask)[];
+  archiveTask: (id: string) => void;
 }
 ```
 
-#### ReviewStore
+#### ProjectStore
 ```typescript
-interface ReviewStore {
-  weeklyReviews: WeeklyReview[];
-  monthlyReviews: MonthlyReview[];
-  addWeeklyReview: (review: Omit<WeeklyReview, 'id'>) => void;
-  addMonthlyReview: (review: Omit<MonthlyReview, 'id'>) => void;
-  getCurrentMonthFocus: () => CategoryType[];
+interface ProjectStore {
+  projects: Project[];
+  addProject: (project: Omit<Project, 'id'>) => void;
+  updateProject: (id: string, updates: Partial<Project>) => void;
+  deleteProject: (id: string) => void;
+  addProjectProgress: (projectId: string, entry: string, milestonesCompleted?: string[]) => void;
+  getActiveProjects: () => Project[];
+  getProjectsByCategory: (category: CategoryType) => Project[];
+  updateOverallProgress: (projectId: string, progress: number) => void;
+}
+```
+
+#### JournalStore
+```typescript
+interface JournalStore {
+  entries: JournalEntry[];
+  addEntry: (entry: Omit<JournalEntry, 'id'>) => void;
+  updateEntry: (id: string, updates: Partial<JournalEntry>) => void;
+  deleteEntry: (id: string) => void;
+  getEntriesByDate: (date: string) => JournalEntry[];
+  getEntriesByCategory: (category: CategoryType) => JournalEntry[];
+  searchEntries: (query: string) => JournalEntry[];
 }
 ```
 
@@ -413,9 +435,11 @@ interface ReviewStore {
 class StorageManager {
   private static readonly KEYS = {
     CHECK_INS: 'odyssey_checkins',
-    HABITS: 'odyssey_habits',
-    REVIEWS_WEEKLY: 'odyssey_reviews_weekly',
-    REVIEWS_MONTHLY: 'odyssey_reviews_monthly',
+    RECURRING_TASKS: 'odyssey_recurring_tasks',
+    ONE_TIME_TASKS: 'odyssey_onetime_tasks',
+    PROJECTS: 'odyssey_projects',
+    JOURNALS: 'odyssey_journals',
+    STREAK: 'odyssey_streak',
     SETTINGS: 'odyssey_settings',
     VERSION: 'odyssey_version'
   };
@@ -435,9 +459,11 @@ class StorageManager {
   "exportDate": "2025-11-22T10:30:00Z",
   "data": {
     "checkIns": [...],
-    "habits": [...],
-    "weeklyReviews": [...],
-    "monthlyReviews": [...],
+    "recurringTasks": [...],
+    "oneTimeTasks": [...],
+    "projects": [...],
+    "journals": [...],
+    "streak": {...},
     "settings": {...}
   }
 }

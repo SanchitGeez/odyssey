@@ -52,12 +52,11 @@ Odyssey organizes life into 6 dimensions:
 ❤️ Connection & Belonging
 🌟 Meaning & Transcendence
 
-And supports 4 types of commitments:
+And supports 3 types of tasks:
 
-🔄 Recurring Habits - Daily routines
+🔄 Recurring Tasks - Daily routines and habits
 ✅ One-Time Tasks - Things to do once
-🔬 Experiments - Try something for X days
-🎯 Projects - Multi-step efforts
+🎯 Projects - Multi-step efforts or behavior experiments
 
 [Continue]
 ```
@@ -80,7 +79,7 @@ Popular tasks in Body & Vitality:
 - Workout 30 min (Recurring - 3x/week)
 - Meal prep Sundays (Recurring - Weekly)
 - Annual health checkup (One-Time - This year)
-- 30-day morning gym experiment (Experiment - 30 days)
+- 30-day morning gym trial (Project - Experiment)
 
 [Use a suggestion] [Create custom task]
 ```
@@ -268,10 +267,10 @@ Categories needing attention:
 
 ---
 
-## User Journey 4: Creating an Experiment (Month 1)
+## User Journey 4: Creating a Behavior Experiment Project (Month 1)
 
 ### Context
-After 2 weeks, Arjun notices he's inconsistent with gym. Wants to try a 30-day experiment.
+After 2 weeks, Arjun notices he's inconsistent with gym. Wants to try a 30-day experiment to test morning gym routine.
 
 ### Flow
 
@@ -282,17 +281,33 @@ New Task
 Category: 💪 Body & Vitality
 
 Type:
-( ) Recurring Habit
+( ) Recurring Task
 ( ) One-Time Task
-(•) Experiment
-( ) Project
+(•) Project
 
 [Continue]
 ```
 
-**2. Experiment Details**
+**2. Project Type Selection**
 ```
-Create Experiment
+Create Project
+
+What kind of project?
+
+( ) Build/Create Project
+    Multi-step effort with milestones
+    (e.g., Build website, Learn Spanish)
+
+(•) Behavior Experiment
+    Test a new behavior for a set period
+    (e.g., 30-day morning gym trial)
+
+[Continue]
+```
+
+**3. Experiment Details**
+```
+Create Behavior Experiment
 
 Name: 30-Day Morning Gym Streak
 
@@ -305,20 +320,21 @@ Success Criteria (What makes this successful?):
 
 How often should we check in?
 (•) Weekly (every 7 days)
-( ) 2x per week
-( ) 3x per week
+( ) Twice per week (Tue & Fri)
+( ) Three times per week (Mon/Wed/Fri)
 
-[Create Experiment]
+[Create Project]
 ```
 
-**3. Confirmation**
+**4. Confirmation**
 ```
-✓ Experiment created!
+✓ Project created!
 
 "30-Day Morning Gym Streak" runs Dec 1-30.
 
 This won't show in daily check-in.
-Instead, we'll prompt you weekly for a progress update.
+Instead, we'll prompt you weekly for a progress update
+on the Projects page.
 
 Good luck! 🚀
 
@@ -327,18 +343,21 @@ Good luck! 🚀
 
 ### Week 1 Progress Check-In (Dec 7)
 
-**Separate prompt:**
+**On Projects Page:**
 ```
-Experiment Check-In
+Project Update
 
 30-Day Morning Gym Streak
 Day 7 of 30 (23% complete)
+Type: Behavior Experiment
 
 How's it going?
 
 [Text area for natural language update]
 
 "Going great! Went all 7 days. Mornings are WAY better than evenings. Have way more energy. Waking up at 6 AM is hard but worth it."
+
+Days Completed: 7/30
 
 [Save Progress]
 ```
@@ -347,20 +366,54 @@ How's it going?
 
 ---
 
-## User Journey 5: Creating a Project (Month 2)
+## User Journey 5: Creating a Build Project (Month 2)
 
 ### Context
-Arjun wants to build a side project but it's multi-step.
+Arjun wants to build a side project - it's a multi-step effort that needs milestone tracking.
 
 ### Flow
 
-**Create Project:**
+**1. Create Task**
+```
+New Task
+
+Category: 💼 Work & Mastery
+
+Type:
+( ) Recurring Task
+( ) One-Time Task
+(•) Project
+
+[Continue]
+```
+
+**2. Project Type Selection**
 ```
 Create Project
+
+What kind of project?
+
+(•) Build/Create Project
+    Multi-step effort with milestones
+    (e.g., Build website, Learn Spanish)
+
+( ) Behavior Experiment
+    Test a new behavior for a set period
+    (e.g., 30-day morning gym trial)
+
+[Continue]
+```
+
+**3. Build Project Details**
+```
+Create Build Project
 
 Name: Build Personal Portfolio Website
 
 Category: 💼 Work & Mastery
+
+Success Criteria:
+[Fully functional portfolio website live at sanchit.dev with 3 projects showcased]
 
 Milestones (optional):
 1. [Design mockup]
@@ -372,19 +425,21 @@ Milestones (optional):
 [Add milestone] [Remove]
 
 Progress check-in frequency:
-(•) 2x per week (Tue & Fri)
-( ) 3x per week (Mon/Wed/Fri)
+(•) Twice per week (Tue & Fri)
+( ) Three times per week (Mon/Wed/Fri)
+( ) Weekly
 
 [Create Project]
 ```
 
 ### Tuesday Progress Prompt
 
-**Separate UI:**
+**On Projects Page:**
 ```
 Project Update
 
 Build Personal Portfolio Website
+Type: Build Project
 Overall Progress: 0%
 
 Any progress this week?
@@ -488,19 +543,15 @@ Life Balance
 [View Details]
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Active Experiments
-
-30-Day Morning Gym Streak
-Day 24/30 (80%) - Going strong!
-[View Progress]
-
-━━━━━━━━━━━━━━━━━━━━━━
-
 Active Projects
 
-Build Personal Portfolio Website
-60% complete (3/5 milestones)
-[Update Progress]
+🔬 30-Day Morning Gym Streak (Experiment)
+   Day 24/30 (80%) - Going strong!
+   [View Progress]
+
+🎯 Build Personal Portfolio Website (Build)
+   60% complete (3/5 milestones)
+   [Update Progress]
 
 ━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -513,7 +564,7 @@ Build Personal Portfolio Website
 Score: 7.5/10 🟢
 
 ━━━━━━━━━━━━━━━━━━━━━━
-Recurring Habits (3)
+Recurring Tasks (3)
 
 🔄 Workout 30 min (Mon/Wed/Fri)
    15/18 this month (83%)
@@ -531,10 +582,10 @@ One-Time Tasks (1 completed)
   Completed Nov 5
 
 ━━━━━━━━━━━━━━━━━━━━━━
-Experiments (1 active)
+Projects (1 active)
 
-🔬 30-Day Morning Gym Streak
-   Day 24/30
+🔬 30-Day Morning Gym Streak (Experiment)
+   Day 24/30 (80%)
    [View progress]
 
 ━━━━━━━━━━━━━━━━━━━━━━
@@ -717,8 +768,8 @@ Misses 3 days, no shame spiral, just gentle restart. Feels supported.
 - Adjusts: adds "Call parents 2x/week"
 
 ### Month 3
-- Multiple experiments completed
-- One project at 60% completion
+- 2 behavior experiments completed (morning gym, no alcohol for 30 days)
+- 1 build project at 60% completion (portfolio website)
 - All 6 categories balanced (nothing below 5/10)
 - 90-day streak
 - Clear patterns visible in timeline
@@ -738,8 +789,8 @@ Misses 3 days, no shame spiral, just gentle restart. Feels supported.
 **For Arjun (6 months later)**:
 - Opens Odyssey every evening (habit)
 - 180-day check-in streak (with some breaks, restarts)
-- 4 experiments completed, learned what works
-- 2 projects: one completed, one 70% done
+- 4 behavior experiments completed (learned what works for him)
+- 2 build projects: one completed, one 70% done
 - Hexagon balanced: all categories 6-8/10
 - Can explain patterns: "I need morning routines" "Connection requires active effort"
 - Uses journal for weekly reflections
@@ -757,13 +808,14 @@ Misses 3 days, no shame spiral, just gentle restart. Feels supported.
 
 ## Design Principles Demonstrated
 
-1. **Flexible Task Types** - Real life isn't one-size-fits-all
-2. **Speed First** - 60-90 second daily commitment
-3. **Non-Judgmental** - Skips don't break streaks
-4. **Holistic View** - 6 categories prevent tunnel vision
-5. **Smart Suggestions** - Reduces decision fatigue
-6. **Separate Long-Term Tracking** - Experiments/projects don't clutter daily flow
+1. **Flexible Task Types** - Three types match how life actually works (recurring, one-time, projects)
+2. **Speed First** - 60-90 second daily commitment for check-ins
+3. **Non-Judgmental** - Skips don't break streaks, showing up is what matters
+4. **Holistic View** - 6 categories prevent tunnel vision on single area
+5. **Smart Suggestions** - Pre-populated task library reduces decision fatigue
+6. **Separate Long-Term Tracking** - Projects (both build & experiments) don't clutter daily flow
 7. **Activity Timeline** - Complete history for pattern recognition
+8. **Project Flexibility** - Supports both multi-step builds and behavior experiments
 
 ---
 

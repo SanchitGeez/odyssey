@@ -57,19 +57,19 @@ Primary: Tech-savvy 22-35 year olds (India-focused initially) who:
 | 5 | ❤️ Connection & Belonging | Family, friendships, relationships, community |
 | 6 | 🌟 Meaning & Transcendence | Values, purpose, creativity, legacy |
 
-### 4.2 The 3 Task Types
+### 4.2 Task Types + Quests (Stage 1)
 
 | Type | Purpose | Tracking |
 | --- | --- | --- |
 | 🔄 Recurring | Build consistent patterns | Daily check-in cards with streak |
 | ✅ One-Time | Complete specific actions that do not repeat | Check-in cards until completed or archived |
-| 🎯 Project | Multi-step efforts or time-bound behavior experiments | Separate Projects page; weekly prompts |
+| 🎯 Quest (separate module) | Multi-step goal tracking outside daily check-in | Separate Quests page; weekly prompts |
 
 ## 5. Product Roadmap Overview
 
 | Stage | Focus |
 | --- | --- |
-| Stage 1 (Now) | Core tracking: tasks, daily check-in, projects, journal, dashboard |
+| Stage 1 (Now) | Core tracking: tasks, daily check-in, quests, journal, insights |
 | Stage 2 (Next) | Scoring system, XP/gamification, Sage AI mentor |
 | Stage 3 | Community features, accountability circles, public sharing |
 | Stage 4 | Deep AI integration, integrations (Calendar, Health, Banking) |
@@ -82,11 +82,11 @@ Primary: Tech-savvy 22-35 year olds (India-focused initially) who:
 - Email/password registration and login
 - JWT-based session with token persistence
 - Protected routes with redirect
-- Status: ✅ Complete
+- Status: In Progress (implemented; hardening in progress)
 
 ### 6.2 Task Management
 
-Users can create, edit, and delete tasks across all 3 types and 6 categories.
+Users can create, edit, and delete recurring + one-time tasks across all 6 categories.
 
 #### Recurring Tasks
 
@@ -102,17 +102,17 @@ Users can create, edit, and delete tasks across all 3 types and 6 categories.
 - Do not penalize streak until past due date
 - Auto-archive on completion
 
-#### Projects (Two Sub-Types)
+#### Quests (Single Standard Type in Phase 1)
 
-- Build/Create: Named milestones, progress %, natural language updates, no end date required
-- Behavior Experiment: Defined start + end date, success criteria, days-completed counter
-- Both: Separate Projects page; do not appear in daily check-in
-- Weekly or bi-weekly check-in prompts on the Projects page
-- Progress tracked via free-text updates plus optional milestone completion
+- One quest model for Stage 1 (no backend quest sub-types)
+- Separate Quests page; do not appear in daily check-in
+- Weekly or bi-weekly prompts on the Quests page
+- Progress tracked via free-text updates plus milestone/checkpoint events
+- Future phases may add specialized quest sub-types if product complexity requires it
 
 #### Task Suggestions Library
 
-- Per-category pre-populated suggestions for all 3 task types
+- Per-category pre-populated suggestions for recurring + one-time task types
 - User can select a suggestion (pre-fills form) or create custom
 - Examples per category provided in the product description
 
@@ -143,17 +143,24 @@ The core 60-90 second interaction. Card-based UI showing only tasks due today.
 - Missing the entire check-in breaks streak
 - On return after missed days: "Welcome back. Your X-day streak ended. [Start fresh] [Quick catch-up]"
 
-### 6.4 Projects Page
+#### Backend Tracking Decisions (Phase 1)
+
+- Daily check-in items are generated dynamically per request (no stored cards table)
+- Task definition state is stored in `tasks`
+- Responses/progress/status updates are stored in `task_activity`
+- Optional `checkin_days` table is used for fast streak and heatmap queries
+
+### 6.4 Quests Page
 
 Dedicated page separate from daily check-in.
 
 #### Features
 
-- List of all active projects (build + experiments)
-- Progress timeline visualization (days elapsed, % complete)
-- Weekly or bi-weekly prompt: "How's [project] going?"
+- List of all active quests
+- Progress timeline visualization (% complete + update history)
+- Weekly or bi-weekly prompt: "How's [quest] going?"
 - Free-text progress entry field
-- Milestone checklist (build projects); days-completed counter (experiments)
+- Milestone/checkpoint updates
 - All past updates in chronological order
 - Success criteria visible at the top
 
@@ -170,7 +177,7 @@ Free-form writing space for reflection and notes.
 - Appears in Activity Timeline
 - Use cases: gratitude, weekly reflection, random thoughts, emotional processing
 
-### 6.6 Overview Dashboard
+### 6.6 Insights Overview (previously Dashboard)
 
 #### Sections
 
@@ -179,17 +186,26 @@ Free-form writing space for reflection and notes.
   - 🟢 Green (7-10), 🟡 Yellow (4-6), 🔴 Red (1-3)
   - Tap a category to drill into its tasks + scores
 - Quick Actions: Start today's check-in, add new task
-- Active Projects Summary: Name, type, progress % for each active project
-- Activity Timeline: Chronological feed of all completions and journal entries; filterable by category/type
+- Active Quests Summary: Name + progress % for each active quest
+- Activity Timeline: Chronological feed of task completions/skips, quest updates, and journal entries; filterable by category/type
 
 #### Category Health Score (Auto-Calculated)
 
-- Weighted average of recurring habit completion rate, one-time task completion, project milestone progress, and recent activity level
+- Weighted average of recurring habit completion rate, one-time task completion, quest progress signals, and recent activity level
+
+#### Backend Analytics Decisions (Phase 1)
+
+- No precomputed `insight_snapshots` table in V1
+- No generic global `activity_events` stream in V1
+- Insights are generated by query-based analysis over:
+  - `tasks` + `task_activity`
+  - `quests` + `quest_activity`
+  - `journal_entries`
 
 ### 6.7 Onboarding
 
 - No signup required to try (if local-storage MVP) or simple email signup for cloud
-- 3-step intro: explain 6 dimensions -> explain 3 task types -> create first task
+- 3-step intro: explain 6 dimensions -> explain recurring/one-time tasks + quests -> create first task
 - Guided task creation with suggestion library
 - First check-in walkthrough
 
@@ -205,7 +221,7 @@ Free-form writing space for reflection and notes.
 
 #### Category Score Formula
 
-`Category Score = (Habit Consistency × 40%) + (Project Progress × 30%) + (Subjective Feel × 30%)`
+`Category Score = (Habit Consistency × 40%) + (Quest Progress × 30%) + (Subjective Feel × 30%)`
 
 - Subjective feel: user self-rates monthly during review
 - Life Balance Score = average of all 6 category scores
@@ -216,7 +232,7 @@ Free-form writing space for reflection and notes.
   - check-in completion (+10)
   - recurring task (+2)
   - one-time task (+5)
-  - project update (+15)
+  - quest update (+15)
   - journal (+8)
   - streak milestones (50 / 200 / 1000 XP)
 - 20 levels from Beginner -> Guru; level-up unlocks themes, advanced analytics, and Sage
@@ -233,14 +249,14 @@ Free-form writing space for reflection and notes.
 
 - Streak: Week Warrior (7d), Month Master (30d), Century Club (100d), Year Legend (365d)
 - Category: Body Builder, Mind Master, Wealth Wizard, Connection King
-- Task: Task Slayer (100 one-time), Project Pro (10 projects), Journal Junkie (100 entries)
+- Task: Task Slayer (100 one-time), Quest Pro (10 quests), Journal Junkie (100 entries)
 - Special: Balanced Life (all categories 7+), Experimenter (20 experiments)
 
 All gamification is opt-out. Users can disable XP, notifications, and leaderboards independently.
 
 ### 7.2 Sage: AI Mentor
 
-Sage is an optional AI companion with full RAG context of the user's journals, completions, project updates, and category scores.
+Sage is an optional AI companion with full RAG context of the user's journals, completions, quest updates, and category scores.
 
 #### Core Behaviors
 
@@ -277,15 +293,15 @@ As a user, I want to create a one-time task with a flexible due window ("sometim
 
 #### US-03
 
-As a user, I want to create a behavior experiment project with start/end dates and success criteria so I can test a new behavior without it cluttering my daily check-in.
+As a user, I want to create a quest with success criteria and optional target date so I can track meaningful goals without it cluttering my daily check-in.
 
-**Acceptance:** Project is visible on the Projects page only; daily check-in cards are unaffected; timeline shows days elapsed / remaining.
+**Acceptance:** Quest is visible on the Quests page only; daily check-in cards are unaffected; timeline shows updates chronologically.
 
 #### US-04
 
-As a user, I want to create a build project with optional milestones so I can track multi-step goals with visible progress.
+As a user, I want to create a quest with optional milestones/checkpoints so I can track multi-step goals with visible progress.
 
-**Acceptance:** Progress % = milestones completed / total; visible on Projects page and dashboard summary.
+**Acceptance:** Progress updates are visible on Quests page and Insights summary.
 
 #### US-05
 
@@ -325,25 +341,25 @@ As a user, when I miss multiple check-in days, I want a non-shaming welcome-back
 
 **Acceptance:** Copy is "Welcome back", not "You failed"; offers `[Start fresh today]` or `[Quick catch-up]`; no angry notifications.
 
-### Epic 3: Projects
+### Epic 3: Quests
 
 #### US-11
 
-As a user, I want to add a free-text progress update to a project on a weekly prompt so I can document progress in my own words without rigid structure.
+As a user, I want to add a free-text progress update to a quest on a weekly prompt so I can document progress in my own words without rigid structure.
 
 **Acceptance:** Prompt fires at the configured interval; text saved with timestamp; all updates shown chronologically.
 
 #### US-12
 
-As a user, I want to mark milestones complete for a build project so I can see tangible progress percentage.
+As a user, I want to mark milestones complete for a quest so I can see tangible progress percentage.
 
-**Acceptance:** Checking a milestone updates progress %; shown on both Projects page and dashboard.
+**Acceptance:** Checking a milestone updates progress %; shown on both Quests page and Insights.
 
 #### US-13
 
-As a user, I want to see days elapsed vs total for a behavior experiment so I know how far I am through the trial.
+As a user, I want to see progress history and current completion estimate for a quest so I can understand momentum over time.
 
-**Acceptance:** "Day 18 of 30" counter visible on project card; progress bar reflects elapsed %.
+**Acceptance:** Quest detail shows timestamped updates and current progress indicator.
 
 ### Epic 4: Journal
 
@@ -359,7 +375,7 @@ As a user, I want to search my journal entries by keyword so I can find past ref
 
 **Acceptance:** Full-text search returns matching entries; results highlighted; sorted by date.
 
-### Epic 5: Dashboard
+### Epic 5: Insights
 
 #### US-16
 
@@ -371,7 +387,7 @@ As a user, I want to see a hexagon chart showing all 6 category health scores so
 
 As a user, I want my check-in streak displayed prominently with a calendar heatmap so I feel proud of consistently showing up.
 
-**Acceptance:** Current streak number shown on dashboard; calendar shows last 30+ days color-coded by check-in/miss.
+**Acceptance:** Current streak number shown on Insights overview; calendar shows last 30+ days color-coded by check-in/miss.
 
 #### US-18
 
@@ -477,7 +493,7 @@ Guided reflection prompts at regular cadences beyond the daily check-in.
 - Rate each of the 6 categories subjectively (1-10)
 - Review wins and struggles
 - Pick next month's focus area (1-2 categories)
-- Sets the "Monthly Focus" visible on dashboard
+- Sets the "Monthly Focus" visible on Insights
 - Optional: Joy Audit prompt ("Which habits make me feel alive? Which feel like homework?")
 
 #### Quarterly Overhaul (Every 3 months, 60 min)
@@ -497,7 +513,7 @@ As a user, I want a guided weekly review prompt every Sunday that asks me struct
 
 As a user, I want a monthly review where I subjectively rate all 6 life categories and pick next month's focus area so I can course-correct intentionally.
 
-**Acceptance:** Monthly prompt shows each category with a 1-10 slider; selected focus area appears on dashboard for the following month; ratings feed into category health scores.
+**Acceptance:** Monthly prompt shows each category with a 1-10 slider; selected focus area appears on Insights for the following month; ratings feed into category health scores.
 
 ### 9.4 Energy / Mood Quick Ratings
 
@@ -507,14 +523,14 @@ Beyond task yes/no, capture how the user *feels* each day with minimal friction.
   - Energy level (1-5 or emoji scale)
   - Mood (emoji: frustrated / meh / okay / good / great)
   - Optional one-line note
-- Data feeds into dashboard trends and future pattern recognition
+- Data feeds into Insights trends and future pattern recognition
 - Takes 5-10 extra seconds, always skippable
 
 #### US-29
 
 As a user, I want to rate my energy and mood at the end of each check-in so I can track how I feel over time, not just what I did.
 
-**Acceptance:** After the last task card, an optional card appears with energy slider and mood emoji picker. Skippable. Data visible in dashboard trends.
+**Acceptance:** After the last task card, an optional card appears with energy slider and mood emoji picker. Skippable. Data visible in Insights trends.
 
 ### 9.5 "Today's Win" Positive Framing
 
@@ -535,9 +551,9 @@ As a user, I want to capture "Today's Win" after each check-in so I build a habi
 
 Instead of exposing all features at once, gradually introduce complexity as the user builds the daily habit.
 
-- **Week 1**: Start with max 3 habits. Only check-in page visible. Journal, Projects, and Dashboard are locked/hidden.
-- **After 7 days**: Unlock dashboard and hexagon. Prompt: "You've been at this for a week! Here's how your categories look."
-- **After 14 days**: Unlock Projects page. Suggest first experiment.
+- **Week 1**: Start with max 3 habits. Only check-in page visible. Journal, Quests, and Insights are locked/hidden.
+- **After 7 days**: Unlock Insights and hexagon. Prompt: "You've been at this for a week! Here's how your categories look."
+- **After 14 days**: Unlock Quests page. Suggest first quest.
 - **After 21 days**: Unlock Journal. Suggest first reflection.
 - **After 30 days**: Full app available. Prompt first monthly review.
 
@@ -547,7 +563,7 @@ Users can skip ahead and unlock everything immediately via settings.
 
 As a user, I want Odyssey to gradually unlock features over my first month so I am not overwhelmed on day one.
 
-**Acceptance:** New users see only check-in and task creation initially. Dashboard unlocks after 7 check-ins. Projects after 14. Journal after 21. User can override via settings to unlock all immediately.
+**Acceptance:** New users see only check-in and task creation initially. Insights unlock after 7 check-ins. Quests after 14. Journal after 21. User can override via settings to unlock all immediately.
 
 ### 9.7 Joy Audit
 
@@ -614,10 +630,10 @@ Allow users to personalize the app's terminology and visual theme to feel like *
 
 Potential theme packs inspired by brainstorming:
 
-- **Nature/Growth**: Habits = "Rituals", Projects = "Cultivations", Categories = "Gardens"
-- **Developer/Tech**: Habits = "Cron Jobs", Projects = "Sprints", Categories = "Modules"
-- **RPG/Game**: Habits = "Dailies", Projects = "Quests", Categories = "Realms"
-- **Space/Explorer**: Habits = "Protocols", Projects = "Missions", Categories = "Sectors"
+- **Nature/Growth**: Habits = "Rituals", Quests = "Cultivations", Categories = "Gardens"
+- **Developer/Tech**: Habits = "Cron Jobs", Quests = "Sprints", Categories = "Modules"
+- **RPG/Game**: Habits = "Dailies", Quests = "Quests", Categories = "Realms"
+- **Space/Explorer**: Habits = "Protocols", Quests = "Missions", Categories = "Sectors"
 
 MVP: single default theme. Good-to-have: 2-3 theme options that change terminology and color palette.
 
@@ -644,16 +660,16 @@ As a user, when I return after missing days, I want a quick catch-up flow that l
 
 ### 9.13 Category Detail View
 
-Tapping a category on the hexagon or dashboard shows a dedicated detail page.
+Tapping a category on the hexagon or Insights overview shows a dedicated detail page.
 
-- All tasks in that category grouped by type (recurring, one-time, projects)
+- All items in that category grouped by type (recurring, one-time, quests)
 - Completion rates for the current period
 - Historical score trend (line chart)
 - Quick-add task to this category
 
 #### US-38
 
-As a user, I want to drill into a life category from the dashboard to see all its tasks, scores, and trends in one place so I can understand and improve a specific area.
+As a user, I want to drill into a life category from the Insights overview to see all its tasks, scores, and trends in one place so I can understand and improve a specific area.
 
 **Acceptance:** Tapping a category on the hexagon opens a detail view showing all tasks grouped by type, current completion rates, score history chart, and a quick-add task button.
 
@@ -720,14 +736,14 @@ Current stack: React 19 + TypeScript + Vite + Tailwind v4 (frontend), FastAPI + 
 
 | Phase | Feature | Status |
 | --- | --- | --- |
-| 1 | Auth (register, login, JWT, protected routes) | ✅ Complete |
+| 1 | Auth (register, login, JWT, protected routes) | 🚧 In Progress |
 | 2 | Task models + CRUD API | 🔜 Next |
 | 2 | Task creation UI + suggestions | 🔜 Next |
 | 3 | Daily check-in card interface | 🔜 Pending |
 | 3 | Streak tracking | 🔜 Pending |
-| 4 | Projects page + progress updates | 🔜 Pending |
+| 4 | Quests page + progress updates | 🔜 Pending |
 | 4 | Journal with search | 🔜 Pending |
-| 5 | Hexagon dashboard + activity timeline | 🔜 Pending |
+| 5 | Insights overview + activity timeline | 🔜 Pending |
 | 5 | Category health scoring | 🔜 Pending |
 
 ## 14. Tagline

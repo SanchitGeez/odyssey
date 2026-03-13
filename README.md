@@ -1,218 +1,161 @@
 # Odyssey
 
-A holistic life management application helping users build awareness and maintain balance across six core dimensions of life through flexible task tracking.
+Odyssey backend for Stage 1: tasks, quests, journals, and insights.
 
-**Current Status**: 🚧 Stage 1 - Phase 1 Complete (Authentication) ✅
+## Current Status
 
-## Project Vision
+- Backend architecture: modular monolith with layered modules
+- Implemented modules: `identity`, `tasks`, `quests`, `journals`, `insights`
+- DB migrations: Alembic
+- Tests: Pytest (API integration tests)
 
-Odyssey organizes life into six interconnected categories (Body, Mind, Work, Wealth, Connection, Meaning) and provides flexible task types (Recurring, One-Time, Projects) that match how life actually works. See [specs/stage1](./specs/stage1/) for full MVP vision.
+Reference architecture: [architecurre.md](/home/sanchit/projects/odyssey/architecurre.md)
 
-## Implementation Progress
+## Backend Structure
 
-### ✅ Stage 1 - Phase 1: Authentication (COMPLETED)
-- Email/password authentication with JWT tokens
-- User registration and login
-- Protected routes and session management
-- PostgreSQL database with Alembic migrations
-- Layered backend architecture (API/Service/Repository/Database)
-- Dark mode frontend with custom theme
-
-**Documentation**: See [implementation/stage1/phase1/](./implementation/stage1/phase1/)
-
-### 🔜 Upcoming Phases
-- Phase 2: Core task management
-- Phase 3: Daily check-in interface
-- Phase 4: Projects and journal
-- Phase 5: Dashboard and analytics
-
-## Project Structure
-
-```
-Odyssey/
-├── server/                    # FastAPI backend
-│   ├── app/
-│   │   ├── api/v1/           # API endpoints
-│   │   ├── core/             # Config, security, database
-│   │   ├── models/           # SQLAlchemy models
-│   │   ├── schemas/          # Pydantic schemas
-│   │   ├── services/         # Business logic
-│   │   └── repositories/     # Data access layer
-│   ├── alembic/              # Database migrations
-│   ├── main.py               # Application entry point
-│   └── requirements.txt      # Python dependencies
-├── client/                    # React + Vite + TypeScript frontend
-│   ├── src/
-│   │   ├── components/       # React components
-│   │   ├── pages/            # Page components
-│   │   ├── lib/
-│   │   │   ├── api/          # API client
-│   │   │   ├── store/        # Zustand state management
-│   │   │   └── types/        # TypeScript types
-│   │   └── App.tsx
-│   └── package.json
-├── implementation/            # Phase-by-phase implementation docs
-├── specs/                     # Product specifications
-├── docker-compose.yml         # Docker orchestration
-└── .venv/                    # Python virtual environment
+```txt
+server/
+  app/
+    api/v1/                      # Thin HTTP routes
+    modules/
+      identity/                  # auth/session
+      tasks/                     # tasks + task_activity + daily items
+      quests/                    # quests + quest_activity
+      journals/                  # journal CRUD + search
+      insights/                  # query-driven analytics
+    shared/
+      core/                      # config/security
+      db/                        # base/session/uow/models
+  alembic/
+  requirements.txt
 ```
 
 ## Prerequisites
 
-- Docker & Docker Compose
-- Python 3.13+ (for local development)
-- Node.js 20+ (for local development)
-- uv (Python package manager)
+- Python 3.13+
+- Docker + Docker Compose (optional, for Postgres)
 
-## Quick Start
+## Local Setup (Backend)
 
-### Using Docker (Recommended)
-
-```bash
-# Start all services
-docker-compose up
-
-# Start in detached mode
-docker-compose up -d
-
-# Stop all services
-docker-compose down
-
-# View logs
-docker-compose logs -f
-```
-
-### Local Development
-
-**Server:**
 ```bash
 cd server
-source ../.venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload
 ```
-
-**Client:**
-```bash
-cd client
-npm install
-npm run dev
-```
-
-**Database:**
-```bash
-docker-compose up postgres -d
-```
-
-## Services
-
-| Service  | URL                      | Description                |
-|----------|--------------------------|----------------------------|
-| Client   | http://localhost:5173    | React frontend             |
-| Server   | http://localhost:8000    | FastAPI backend            |
-| API Docs | http://localhost:8000/docs | Interactive API documentation |
-| Database | localhost:5432           | PostgreSQL database        |
-| PgAdmin  | http://localhost:5050    | Database management UI     |
-
-## API Endpoints
-
-### Authentication (Phase 1)
-- `POST /api/v1/auth/register` - User registration
-- `POST /api/v1/auth/login` - User login (returns JWT token)
-- `GET /api/v1/auth/me` - Get current user (protected)
-- `POST /api/v1/auth/logout` - Logout (client-side)
-
-### General
-- `GET /` - Root endpoint
-- `GET /health` - Health check endpoint
 
 ## Environment Variables
 
-**Backend (server/.env)**:
+Default local DB is SQLite (`sqlite:///./odyssey.db`) if `DATABASE_URL` is not set.
+
+Create `server/.env` (optional):
+
 ```env
-DATABASE_URL=postgresql+psycopg://odyssey:odyssey@postgres:5432/odyssey
-SECRET_KEY=your-secret-key-here
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+APP_NAME=Odyssey Backend
+APP_VERSION=0.1.0
+DATABASE_URL=sqlite:///./odyssey.db
+JWT_SECRET=change-me-in-prod
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_MINUTES=30
+REFRESH_TOKEN_DAYS=30
 ```
 
-**Frontend (client/.env.local)**:
+For Postgres (Docker), use:
+
 ```env
-VITE_API_URL=http://localhost:8000
+DATABASE_URL=postgresql://odyssey:odyssey@localhost:5432/odyssey
 ```
 
-**Database Configuration (docker-compose.yml)**:
-- `POSTGRES_USER=odyssey`
-- `POSTGRES_PASSWORD=odyssey`
-- `POSTGRES_DB=odyssey`
+## Run Migrations
 
-## Development
-
-**Server Features:**
-- FastAPI with automatic API documentation
-- CORS enabled for frontend development
-- Hot-reload enabled in Docker
-- PostgreSQL integration ready
-
-**Client Features:**
-- React 19 with TypeScript
-- Vite for fast development and builds
-- Hot Module Replacement (HMR)
-- Zustand state management with localStorage persistence
-- Axios HTTP client with request/response interceptors
-- React Router v6 with protected routes
-- Tailwind CSS v4 with custom dark mode theme
-- ESLint configured
-
-## Database
-
-PostgreSQL 16 is configured with:
-- Persistent volume storage
-- Health checks
-- Auto-restart on failure
-
-**Connection Details:**
-- Host: `localhost` (or `postgres` within Docker network)
-- Port: `5432`
-- Database: `odyssey`
-- Username: `odyssey`
-- Password: `odyssey`
-
-## Building for Production
+Alembic now auto-reads `DATABASE_URL` from env if set.
 
 ```bash
-# Build all services
-docker-compose build
-
-# Build specific service
-docker-compose build server
-docker-compose build client
+cd server
+source .venv/bin/activate
+alembic upgrade head
 ```
 
-## Troubleshooting
+## Run Server
 
-**Port already in use:**
 ```bash
-# Check what's using the port
-lsof -i :5173  # Client
-lsof -i :8000  # Server
-lsof -i :5432  # Database
+cd server
+source .venv/bin/activate
+uvicorn main:app --reload
 ```
 
-**Database connection issues:**
+Useful URLs:
+
+- API docs: `http://localhost:8000/docs`
+- Health: `http://localhost:8000/health`
+
+## Run Tests
+
 ```bash
-# Check if postgres is healthy
-docker-compose ps
-docker-compose logs postgres
+cd server
+source .venv/bin/activate
+pytest -q
 ```
 
-**Client/Server not updating:**
+## Docker (Postgres + Server)
+
 ```bash
-# Rebuild and restart
-docker-compose down
-docker-compose up --build
+docker compose up --build
 ```
 
-## License
+Services:
 
-MIT
+- Postgres: `localhost:5432`
+- Server: `localhost:8000`
+
+After containers start, run migrations:
+
+```bash
+docker compose exec server alembic upgrade head
+```
+
+## Implemented API Endpoints
+
+Identity:
+
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/refresh`
+- `GET /api/v1/auth/me`
+
+Tasks:
+
+- `POST /api/v1/tasks`
+- `GET /api/v1/tasks`
+- `GET /api/v1/tasks/by-id/{task_id}`
+- `PATCH /api/v1/tasks/by-id/{task_id}`
+- `DELETE /api/v1/tasks/by-id/{task_id}`
+- `GET /api/v1/tasks/daily-items`
+- `POST /api/v1/tasks/by-id/{task_id}/respond`
+
+Quests:
+
+- `POST /api/v1/quests`
+- `GET /api/v1/quests`
+- `PATCH /api/v1/quests/{quest_id}`
+- `DELETE /api/v1/quests/{quest_id}`
+- `POST /api/v1/quests/{quest_id}/activity`
+- `GET /api/v1/quests/{quest_id}/activity`
+
+Journals:
+
+- `POST /api/v1/journals`
+- `GET /api/v1/journals`
+- `DELETE /api/v1/journals/{journal_id}`
+
+Insights:
+
+- `GET /api/v1/insights/overview`
+
+## Notes
+
+- `tasks` and `quests` follow the activity-table model:
+  - `tasks` + `task_activity`
+  - `quests` + `quest_activity`
+- Daily items are query-generated (not stored as a `cards` table).
+- `checkin_days` is used for streak and completion aggregation.

@@ -30,6 +30,7 @@ services:
         condition: service_healthy
     volumes:
       - ./server:/app
+      - /app/.venv
       - /app/__pycache__
 
 volumes:

@@ -14,7 +14,7 @@ import { isOnboardingComplete } from '../lib/storage'
 function ProtectedRoute() {
   const { loading, isAuthenticated, user } = useAuth()
   const location = useLocation()
-  if (loading) {
+  if (loading || (isAuthenticated && !user)) {
     return <div className="ody-auth-wrap"><div className="ody-card">Loading session...</div></div>
   }
   if (!isAuthenticated) {
@@ -28,7 +28,7 @@ function ProtectedRoute() {
 
 function PublicOnlyRoute() {
   const { loading, isAuthenticated, user } = useAuth()
-  if (loading) {
+  if (loading || (isAuthenticated && !user)) {
     return <div className="ody-auth-wrap"><div className="ody-card">Loading session...</div></div>
   }
   if (isAuthenticated) {

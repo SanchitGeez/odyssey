@@ -1,34 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600&family=Spectral+SC:wght@400;500;600&display=swap');
 
+/* ── design tokens ──────────────────────────────────── */
 :root {
   --bg-base: #05070d;
   --bg-secondary: #0a0f1a;
   --bg-panel: rgba(8, 12, 20, 0.74);
   --bg-panel-strong: rgba(10, 15, 25, 0.92);
   --bg-terminal: rgba(7, 11, 18, 0.96);
+  --bg-elevated: rgba(14, 19, 30, 0.85);
 
   --text-primary: #e8e9ee;
   --text-secondary: #b3b7c1;
-  --text-muted: #838998;
+  --text-muted: #9399a6;
 
   --border-soft: rgba(149, 157, 171, 0.18);
   --border-default: rgba(176, 184, 198, 0.32);
   --border-strong: rgba(201, 164, 76, 0.5);
 
   --accent-gold: #c9a44c;
+  --accent-gold-dim: rgba(201, 164, 76, 0.15);
   --accent-silver: #9ea3aa;
   --accent-red: #8b1e2d;
+
+  --cat-body: #6ea889;
+  --cat-mind: #7b93db;
+  --cat-work: #c9a44c;
+  --cat-wealth: #d4a853;
+  --cat-connection: #bd5a67;
+  --cat-meaning: #a97bdb;
 
   --state-success: #6ea889;
   --state-warning: #c39f62;
   --state-danger: #bd5a67;
 
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 
   --shadow-panel: 0 18px 42px rgba(0, 0, 0, 0.48);
   --shadow-gold: 0 0 0 2px rgba(201, 164, 76, 0.18), 0 14px 34px rgba(0, 0, 0, 0.52);
+  --shadow-lift: 0 8px 24px rgba(0, 0, 0, 0.4);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -42,15 +53,14 @@
   --font-display: 'Cinzel', 'Cormorant Garamond', serif;
   --font-body: 'Manrope', 'Segoe UI', sans-serif;
   --font-mono: 'Spectral SC', 'Cormorant Garamond', 'Georgia', serif;
+
+  --ease-out: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html,
-body,
-#root {
+html, body, #root {
   margin: 0;
   min-height: 100%;
 }
@@ -63,6 +73,7 @@ body {
     radial-gradient(1200px 700px at 85% 8%, rgba(31, 38, 57, 0.26), transparent 66%),
     linear-gradient(180deg, #04060b 0%, #05070d 45%, #070b13 100%);
   letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
 }
 
 body::before,
@@ -86,33 +97,39 @@ body::after {
     transparent 1px,
     transparent 3px
   );
-  opacity: 0.25;
+  opacity: 0.2;
   z-index: -1;
 }
 
-a {
-  color: inherit;
-}
+a { color: inherit; }
+input, select, textarea, button { font: inherit; }
 
-input,
-select,
-textarea,
-button {
-  font: inherit;
+/* ── scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(158, 163, 170, 0.25);
+  border-radius: 3px;
 }
+::-webkit-scrollbar-thumb:hover { background: rgba(158, 163, 170, 0.4); }
 
+/* ── layout: app shell ──────────────────────────────── */
 .ody-app-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: 260px minmax(0, 1fr);
 }
 
 .ody-sidebar {
   border-right: 1px solid var(--border-soft);
   background: linear-gradient(180deg, rgba(8, 11, 18, 0.96), rgba(5, 7, 12, 0.98));
-  padding: var(--space-8) var(--space-5) var(--space-6);
-  position: relative;
-  overflow: hidden;
+  padding: var(--space-6) var(--space-4) var(--space-6);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
 .ody-sidebar::before {
@@ -121,25 +138,30 @@ button {
   inset: 18% 16% auto;
   height: 280px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(158, 163, 170, 0.08), transparent 68%);
+  background: radial-gradient(circle, rgba(158, 163, 170, 0.06), transparent 68%);
   filter: blur(16px);
   pointer-events: none;
 }
 
+.ody-nav-brand {
+  padding: 0 var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
 .ody-nav-caption {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   letter-spacing: 0.42em;
-  color: rgba(233, 236, 242, 0.45);
-  margin-bottom: var(--space-2);
+  color: rgba(233, 236, 242, 0.4);
+  margin-bottom: var(--space-1);
   text-transform: uppercase;
 }
 
 .ody-brand {
   font-family: var(--font-display);
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   letter-spacing: 0.14em;
   font-weight: 500;
-  margin: 0 0 var(--space-5);
+  margin: 0;
   text-transform: uppercase;
 }
 
@@ -148,7 +170,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  margin: var(--space-3) 0 var(--space-5);
+  margin: var(--space-2) 0 var(--space-4);
 }
 
 .ody-ornament::before,
@@ -156,121 +178,150 @@ button {
   content: '';
   height: 1px;
   flex: 1;
-  background: linear-gradient(90deg, transparent, rgba(163, 170, 182, 0.45), transparent);
+  background: linear-gradient(90deg, transparent, rgba(163, 170, 182, 0.35), transparent);
 }
 
 .ody-ornament span {
-  width: 10px;
-  height: 10px;
-  border: 1px solid rgba(201, 164, 76, 0.58);
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(201, 164, 76, 0.5);
   transform: rotate(45deg);
-  box-shadow: 0 0 10px rgba(201, 164, 76, 0.28);
+  box-shadow: 0 0 8px rgba(201, 164, 76, 0.2);
 }
 
 .ody-nav {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-3);
+  flex: 1;
 }
 
 .ody-nav-link {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
   text-decoration: none;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  color: var(--text-secondary);
-  letter-spacing: 0.09em;
+  border: none;
+  border-radius: 0;
+  padding: 4px 0;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.78rem;
-  transition: border-color 220ms ease, background-color 220ms ease, color 220ms ease, transform 280ms ease;
+  font-size: 0.74rem;
+  font-weight: 400;
+  background: transparent;
+  position: relative;
+  transition: color 250ms ease;
+}
+
+/* underline indicator — tight under text */
+.ody-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent-gold), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 280ms ease;
+}
+
+.ody-nav-link svg {
+  opacity: 0.35;
+  transition: opacity 250ms ease, color 250ms ease;
+  flex-shrink: 0;
 }
 
 .ody-nav-link:hover {
-  border-color: var(--border-default);
   color: var(--text-primary);
-  transform: translateX(2px);
+}
+
+.ody-nav-link:hover svg {
+  opacity: 0.7;
+}
+
+.ody-nav-link:hover::after {
+  transform: scaleX(0.5);
 }
 
 .ody-nav-link.active {
-  border-color: var(--border-strong);
-  color: var(--text-primary);
-  background: linear-gradient(90deg, rgba(201, 164, 76, 0.12), rgba(201, 164, 76, 0.02));
+  font-weight: 500;
+}
+
+.ody-nav-link.active .ody-nav-label {
+  color: transparent;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent-gold) 0%,
+    var(--accent-gold) 30%,
+    #f0d890 50%,
+    var(--accent-gold) 70%,
+    var(--accent-gold) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: ody-text-shine 2.5s linear infinite;
+}
+
+.ody-nav-link.active svg {
+  opacity: 1;
+  color: var(--accent-gold);
+}
+
+.ody-nav-link.active::after {
+  transform: scaleX(1);
 }
 
 .ody-nav-index {
   font-family: var(--font-mono);
-  color: rgba(158, 163, 170, 0.8);
-  font-size: 0.7rem;
+  color: rgba(158, 163, 170, 0.5);
+  font-size: 0.65rem;
   min-width: 2ch;
 }
 
 .ody-sidebar-footer {
-  position: absolute;
-  left: var(--space-5);
-  right: var(--space-5);
-  bottom: var(--space-5);
   border-top: 1px solid var(--border-soft);
   padding-top: var(--space-3);
+  margin-top: var(--space-4);
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.3em;
-  font-size: 0.64rem;
+  letter-spacing: 0.25em;
+  font-size: 0.6rem;
+  opacity: 0.7;
 }
 
+/* ── layout: main content ───────────────────────────── */
 .ody-main {
-  padding: var(--space-7);
+  padding: var(--space-6) var(--space-7);
   position: relative;
+  min-height: 100vh;
 }
 
 .ody-main::before {
   content: '';
   position: absolute;
-  inset: 80px 8% auto;
-  height: 520px;
-  background: radial-gradient(circle, rgba(158, 163, 170, 0.08), transparent 66%);
+  inset: 60px 8% auto;
+  height: 400px;
+  background: radial-gradient(circle, rgba(158, 163, 170, 0.06), transparent 66%);
   filter: blur(16px);
   pointer-events: none;
 }
 
 .ody-topbar {
-  display: grid;
-  gap: var(--space-3);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
   margin-bottom: var(--space-6);
   position: relative;
   z-index: 1;
 }
 
-.ody-topline {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  color: rgba(232, 233, 238, 0.42);
-  text-transform: uppercase;
-  letter-spacing: 0.28em;
-  font-size: 0.66rem;
-  gap: var(--space-3);
-}
-
-.ody-topline::before,
-.ody-topline::after {
-  content: '';
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(149, 157, 171, 0.26), transparent);
-}
-
-.ody-topline-center {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-}
-
 .ody-page-header {
-  text-align: center;
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .ody-page-title {
@@ -278,51 +329,315 @@ button {
   font-family: var(--font-display);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.26em;
-  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  letter-spacing: 0.2em;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
 }
 
 .ody-page-subtitle {
   margin: 0;
-  color: var(--text-secondary);
-  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
 }
 
+.ody-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ── card system ────────────────────────────────────── */
 .ody-card {
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
-  background: rgba(9, 14, 23, 0.75);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: rgba(9, 14, 23, 0.7);
   box-shadow: var(--shadow-panel);
   padding: var(--space-5);
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(6px);
-  animation: ody-fade-up 420ms ease both;
-}
-
-.ody-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid rgba(201, 164, 76, 0.08);
-  pointer-events: none;
+  animation: ody-fade-up 400ms var(--ease-out) both;
 }
 
 .ody-card::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 8%;
-  right: 8%;
+  left: 10%;
+  right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201, 164, 76, 0.65), transparent);
-  opacity: 0.55;
+  background: linear-gradient(90deg, transparent, rgba(201, 164, 76, 0.5), transparent);
+  opacity: 0.4;
   pointer-events: none;
 }
 
+/* stat card — large numbers */
+.ody-stat-card {
+  text-align: center;
+  padding: var(--space-6) var(--space-5);
+}
+
+.ody-stat-value {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  margin-bottom: var(--space-2);
+}
+
+.ody-stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+}
+
+.ody-stat-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: var(--space-1);
+}
+
+/* hero card — centered, ornamental */
+.ody-hero-card {
+  text-align: center;
+  padding: var(--space-8) var(--space-6);
+  border-color: var(--border-default);
+}
+
+.ody-hero-card .ody-hero-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-5);
+  border: 1px solid var(--border-default);
+  border-radius: 50%;
+  color: var(--accent-gold);
+  background: rgba(201, 164, 76, 0.06);
+}
+
+.ody-hero-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-3);
+}
+
+.ody-hero-card p {
+  color: var(--text-muted);
+  max-width: 400px;
+  margin: 0 auto var(--space-5);
+  line-height: 1.6;
+}
+
+/* ── check-in focused mode ──────────────────────────── */
+.ody-checkin-focused {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  position: relative;
+}
+
+.ody-checkin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.ody-checkin-topbar .ody-brand-mini {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.ody-progress-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: var(--space-6);
+}
+
+.ody-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-gold), rgba(201, 164, 76, 0.6));
+  border-radius: 2px;
+  transition: width 500ms var(--ease-out);
+}
+
+.ody-checkin-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 520px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ody-checkin-card {
+  width: 100%;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: rgba(9, 14, 23, 0.85);
+  backdrop-filter: blur(12px);
+  padding: var(--space-7);
+  text-align: center;
+  animation: ody-card-enter 400ms var(--ease-out) both;
+}
+
+.ody-checkin-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 164, 76, 0.6), transparent);
+  pointer-events: none;
+}
+
+.ody-checkin-category {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-5);
+}
+
+.ody-checkin-category .ody-cat-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.ody-checkin-task-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  margin: 0 0 var(--space-3);
+}
+
+.ody-checkin-task-desc {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0 0 var(--space-6);
+  line-height: 1.5;
+}
+
+.ody-checkin-counter {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-5);
+}
+
+.ody-checkin-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.ody-checkin-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 14px 32px;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: all 280ms var(--ease-out);
+}
+
+.ody-checkin-btn.done {
+  border: 1px solid rgba(110, 168, 137, 0.5);
+  background: linear-gradient(180deg, rgba(40, 72, 58, 0.9), rgba(24, 48, 38, 0.95));
+  color: var(--state-success);
+}
+
+.ody-checkin-btn.done:hover {
+  border-color: var(--state-success);
+  box-shadow: 0 0 20px rgba(110, 168, 137, 0.15);
+  transform: translateY(-2px);
+}
+
+.ody-checkin-btn.skip {
+  border: 1px solid rgba(158, 163, 170, 0.3);
+  background: linear-gradient(180deg, rgba(25, 30, 41, 0.9), rgba(14, 18, 27, 0.95));
+  color: var(--text-secondary);
+}
+
+.ody-checkin-btn.skip:hover {
+  border-color: rgba(158, 163, 170, 0.5);
+  transform: translateY(-2px);
+}
+
+/* check-in value input row */
+.ody-checkin-value-row {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  width: 100%;
+}
+
+.ody-checkin-value-row .ody-input {
+  flex: 1;
+  text-align: center;
+}
+
+/* completion screen */
+.ody-checkin-complete {
+  text-align: center;
+  animation: ody-fade-up 500ms var(--ease-out) both;
+}
+
+.ody-checkin-complete .ody-streak-glow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 164, 76, 0.4);
+  background: radial-gradient(circle, rgba(201, 164, 76, 0.1), transparent 70%);
+  margin-bottom: var(--space-5);
+  animation: ody-glow-pulse 2s ease-in-out infinite;
+}
+
+.ody-checkin-complete .ody-streak-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--accent-gold);
+}
+
+/* ── form elements ──────────────────────────────────── */
 .ody-grid {
   display: grid;
   gap: var(--space-4);
@@ -338,14 +653,15 @@ button {
 
 .ody-field {
   display: grid;
-  gap: var(--space-2);
+  gap: 6px;
 }
 
 .ody-label {
-  color: var(--text-secondary);
-  font-size: 0.73rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
+  font-weight: 400;
 }
 
 .ody-input,
@@ -353,66 +669,104 @@ button {
 .ody-textarea {
   width: 100%;
   border: 1px solid var(--border-soft);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 10px 12px;
   background: var(--bg-panel-strong);
   color: var(--text-primary);
-  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  font-size: 0.88rem;
+  transition: border-color 220ms ease, box-shadow 220ms ease;
 }
 
 .ody-input::placeholder,
 .ody-textarea::placeholder {
-  color: rgba(131, 137, 152, 0.75);
+  color: rgba(131, 137, 152, 0.6);
 }
 
 .ody-input:focus-visible,
 .ody-select:focus-visible,
-.ody-textarea:focus-visible,
-.ody-btn:focus-visible {
+.ody-textarea:focus-visible {
   outline: none;
   border-color: var(--accent-gold);
-  box-shadow: var(--shadow-gold);
+  box-shadow: 0 0 0 3px rgba(201, 164, 76, 0.12);
 }
 
 .ody-textarea {
-  min-height: 110px;
+  min-height: 100px;
   resize: vertical;
 }
 
+/* ── buttons ────────────────────────────────────────── */
 .ody-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
   border: 1px solid rgba(201, 164, 76, 0.42);
-  border-radius: 4px;
-  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  padding: 9px 16px;
   cursor: pointer;
   color: var(--text-primary);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   font-size: 0.72rem;
+  font-weight: 500;
   background: linear-gradient(180deg, rgba(47, 39, 22, 0.92), rgba(28, 24, 16, 0.94));
-  transition: transform 280ms cubic-bezier(0.25, 0.8, 0.25, 1), border-color 240ms ease, box-shadow 240ms ease;
+  transition: all 240ms var(--ease-out);
+  white-space: nowrap;
 }
 
 .ody-btn:hover {
   border-color: rgba(201, 164, 76, 0.78);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lift);
   transform: translateY(-1px);
 }
 
+.ody-btn:active { transform: translateY(0) scale(0.98); }
+
 .ody-btn.secondary {
   background: linear-gradient(180deg, rgba(25, 30, 41, 0.9), rgba(14, 18, 27, 0.94));
-  border-color: rgba(158, 163, 170, 0.42);
+  border-color: rgba(158, 163, 170, 0.3);
+}
+
+.ody-btn.secondary:hover {
+  border-color: rgba(158, 163, 170, 0.55);
 }
 
 .ody-btn.danger {
-  border-color: rgba(139, 30, 45, 0.58);
+  border-color: rgba(139, 30, 45, 0.5);
   background: linear-gradient(180deg, rgba(64, 20, 28, 0.92), rgba(42, 13, 20, 0.94));
+}
+
+.ody-btn.danger:hover {
+  border-color: rgba(189, 90, 103, 0.6);
 }
 
 .ody-btn:disabled {
   cursor: not-allowed;
-  opacity: 0.58;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
+.ody-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  transition: all 200ms;
+}
+
+.ody-icon-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-soft);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ── rows and badges ────────────────────────────────── */
 .ody-row {
   display: flex;
   align-items: center;
@@ -424,31 +778,42 @@ button {
 .ody-badge {
   display: inline-flex;
   align-items: center;
-  border: 1px solid rgba(158, 163, 170, 0.42);
+  gap: 6px;
+  border: 1px solid rgba(158, 163, 170, 0.3);
   border-radius: 999px;
-  padding: 4px 12px;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+  padding: 3px 10px;
+  font-size: 0.68rem;
   color: var(--text-secondary);
-  letter-spacing: 0.07em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.ody-muted {
-  color: var(--text-muted);
+.ody-badge.gold {
+  border-color: rgba(201, 164, 76, 0.4);
+  color: var(--accent-gold);
 }
 
-.ody-error {
+.ody-badge.success {
+  border-color: rgba(110, 168, 137, 0.35);
+  color: var(--state-success);
+}
+
+.ody-badge.danger {
+  border-color: rgba(189, 90, 103, 0.35);
   color: var(--state-danger);
 }
 
-.ody-terminal {
-  border: 1px solid rgba(158, 163, 170, 0.36);
-  border-radius: var(--radius-md);
-  background: var(--bg-terminal);
-  font-family: var(--font-mono);
-  padding: var(--space-4);
+.ody-cat-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
+.ody-muted { color: var(--text-muted); }
+.ody-error { color: var(--state-danger); }
+
+/* ── list system ────────────────────────────────────── */
 .ody-list {
   list-style: none;
   margin: 0;
@@ -458,18 +823,218 @@ button {
 }
 
 .ody-list-item {
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-sm);
-  padding: var(--space-3);
-  background: rgba(11, 16, 26, 0.66);
-  transition: border-color 220ms ease, background-color 220ms ease;
+  border: 1px solid rgba(149, 157, 171, 0.12);
+  border-radius: 0;
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  position: relative;
+  transition: background 200ms ease;
 }
 
 .ody-list-item:hover {
-  border-color: rgba(176, 184, 198, 0.4);
-  background: rgba(14, 19, 30, 0.75);
+  background: rgba(255, 255, 255, 0.03);
 }
 
+.ody-list-item:hover .ody-item-title {
+  color: var(--text-primary);
+}
+
+.ody-list-item.selected {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ody-list-item.selected .ody-item-title {
+  color: var(--text-primary);
+}
+
+.ody-list-item .ody-item-title {
+  font-weight: 500;
+  font-size: 0.92rem;
+  transition: color 200ms ease;
+}
+
+.ody-list-item .ody-item-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+/* ── terminal block ─────────────────────────────────── */
+.ody-terminal {
+  border: 1px solid rgba(158, 163, 170, 0.2);
+  border-radius: var(--radius-md);
+  background: var(--bg-terminal);
+  padding: var(--space-4);
+}
+
+/* ── slide-over modal ───────────────────────────────── */
+.ody-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  animation: ody-overlay-in 200ms ease both;
+}
+
+.ody-slide-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 520px;
+  background: linear-gradient(180deg, rgba(8, 12, 20, 0.98), rgba(5, 7, 13, 0.99));
+  border-left: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  animation: ody-slide-in 300ms var(--ease-out) both;
+  overflow-y: auto;
+}
+
+.ody-slide-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.ody-slide-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin: 0;
+}
+
+.ody-slide-subtitle {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 4px 0 0;
+}
+
+.ody-slide-body {
+  padding: var(--space-5);
+  flex: 1;
+}
+
+/* ── toast notifications ────────────────────────────── */
+.ody-toast-container {
+  position: fixed;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  z-index: 200;
+  display: grid;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.ody-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(10, 15, 25, 0.95);
+  border: 1px solid var(--border-default);
+  backdrop-filter: blur(8px);
+  font-size: 0.8rem;
+  animation: ody-toast-in 300ms var(--ease-out) both;
+  pointer-events: auto;
+  min-width: 240px;
+}
+
+.ody-toast-success { border-color: rgba(110, 168, 137, 0.45); }
+.ody-toast-success svg:first-child { color: var(--state-success); }
+
+.ody-toast-error { border-color: rgba(189, 90, 103, 0.45); }
+.ody-toast-error svg:first-child { color: var(--state-danger); }
+
+.ody-toast-info { border-color: rgba(201, 164, 76, 0.35); }
+.ody-toast-info svg:first-child { color: var(--accent-gold); }
+
+.ody-toast span { flex: 1; }
+
+/* ── skeleton loader ────────────────────────────────── */
+.ody-skeleton {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0.03) 75%);
+  background-size: 200% 100%;
+  animation: ody-shimmer 1.5s ease infinite;
+  border-radius: var(--radius-sm);
+}
+
+.ody-skeleton-line {
+  height: 14px;
+  border-radius: 4px;
+}
+
+.ody-skeleton-card {
+  height: 120px;
+  border-radius: var(--radius-md);
+}
+
+/* ── progress bar (generic) ─────────────────────────── */
+.ody-progress {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ody-progress-bar {
+  height: 100%;
+  background: var(--accent-gold);
+  border-radius: 2px;
+  transition: width 400ms var(--ease-out);
+}
+
+/* ── hexagon chart ──────────────────────────────────── */
+.ody-hex-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5) 0;
+}
+
+.ody-hex-container svg text {
+  fill: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── section spacing ────────────────────────────────── */
+.ody-section + .ody-section,
+.ody-card + .ody-card {
+  margin-top: var(--space-4);
+}
+
+.ody-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.ody-section-title {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ── auth pages ─────────────────────────────────────── */
 .ody-auth-wrap {
   min-height: 100vh;
   display: grid;
@@ -478,47 +1043,39 @@ button {
 }
 
 .ody-auth-card {
-  width: min(430px, 100%);
-  min-height: 620px;
-  padding: 42px 34px;
+  width: min(420px, 100%);
+  padding: var(--space-7) var(--space-6);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .ody-auth-title {
-  margin: 0 0 20px;
+  margin: 0 0 var(--space-3);
   font-family: var(--font-display);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.24em;
-  font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+  letter-spacing: 0.2em;
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
   text-align: center;
 }
 
 .ody-auth-card .ody-page-subtitle {
-  color: rgba(179, 183, 193, 0.74);
+  color: rgba(179, 183, 193, 0.7);
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-5);
 }
 
-.ody-auth-card .ody-label {
-  color: rgba(179, 183, 193, 0.7);
+.ody-auth-card .ody-label,
+.ody-auth-card .ody-muted {
   text-align: center;
 }
 
 .ody-auth-card .ody-muted {
-  color: rgba(179, 183, 193, 0.72);
-  text-align: center;
+  color: rgba(179, 183, 193, 0.65);
 }
 
-.ody-auth-card .ody-grid {
-  gap: 18px;
-}
-
-.ody-auth-card .ody-input {
-  background: var(--bg-panel-strong);
-}
+.ody-auth-card .ody-grid { gap: 14px; }
 
 .ody-auth-card .ody-input:-webkit-autofill,
 .ody-auth-card .ody-input:-webkit-autofill:hover,
@@ -530,43 +1087,266 @@ button {
 }
 
 .ody-auth-card .ody-muted a {
-  color: rgba(222, 226, 235, 0.86);
+  color: var(--accent-gold);
+  text-decoration: none;
+  transition: opacity 200ms;
 }
 
-.ody-auth-card .ody-muted a:hover {
+.ody-auth-card .ody-muted a:hover { opacity: 0.8; }
+
+/* ── onboarding dimension cards ─────────────────────── */
+.ody-dim-card {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: rgba(11, 16, 26, 0.5);
+  font-size: 0.82rem;
+  transition: border-color 200ms;
+}
+
+.ody-dim-card:hover { border-color: var(--border-default); }
+
+/* ── empty state ────────────────────────────────────── */
+.ody-empty {
+  text-align: center;
+  padding: var(--space-7) var(--space-5);
+}
+
+.ody-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: 50%;
+  color: var(--text-muted);
+}
+
+.ody-empty h4 {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-2);
+}
+
+.ody-empty p {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin: 0;
+  max-width: 320px;
+  margin-inline: auto;
+  line-height: 1.6;
+}
+
+/* ── mobile bottom nav ──────────────────────────────── */
+.ody-mobile-nav {
+  display: none;
+}
+
+/* ── date nav (check-in, etc.) ──────────────────────── */
+.ody-date-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.ody-date-nav button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 200ms;
+}
+
+.ody-date-nav button:hover {
   color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
 }
 
+.ody-date-nav .ody-date-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  padding: 0 var(--space-2);
+  min-width: 100px;
+  text-align: center;
+}
+
+/* ── stagger animation for lists ────────────────────── */
+.ody-stagger > * {
+  animation: ody-fade-up 400ms var(--ease-out) both;
+}
+.ody-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.ody-stagger > *:nth-child(2) { animation-delay: 50ms; }
+.ody-stagger > *:nth-child(3) { animation-delay: 100ms; }
+.ody-stagger > *:nth-child(4) { animation-delay: 150ms; }
+.ody-stagger > *:nth-child(5) { animation-delay: 200ms; }
+.ody-stagger > *:nth-child(6) { animation-delay: 250ms; }
+.ody-stagger > *:nth-child(7) { animation-delay: 300ms; }
+.ody-stagger > *:nth-child(8) { animation-delay: 350ms; }
+
+/* ── timeline ───────────────────────────────────────── */
+.ody-timeline {
+  position: relative;
+  padding-left: var(--space-5);
+}
+
+.ody-timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: linear-gradient(180deg, var(--border-default), transparent);
+}
+
+.ody-timeline-item {
+  position: relative;
+  padding-bottom: var(--space-4);
+}
+
+.ody-timeline-item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--space-5) + 2px);
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--border-default);
+  background: var(--bg-base);
+}
+
+.ody-timeline-item.done::before {
+  border-color: var(--state-success);
+  background: rgba(110, 168, 137, 0.2);
+}
+
+.ody-timeline-date {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* ── animations ─────────────────────────────────────── */
 @keyframes ody-fade-up {
-  from {
-    transform: translateY(10px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
+@keyframes ody-card-enter {
+  from { transform: translateY(16px) scale(0.97); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes ody-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ody-slide-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes ody-toast-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes ody-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes ody-glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(201, 164, 76, 0.1); }
+  50% { box-shadow: 0 0 40px rgba(201, 164, 76, 0.25); }
+}
+
+@keyframes ody-text-shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: 0% 0; }
+}
+
+/* ── responsive ─────────────────────────────────────── */
 @media (max-width: 1120px) {
   .ody-app-shell {
     grid-template-columns: 1fr;
+    padding-bottom: 64px;
   }
 
   .ody-sidebar {
-    border-right: 0;
-    border-bottom: 1px solid var(--border-soft);
-    padding: var(--space-5);
+    display: none;
   }
 
-  .ody-sidebar-footer {
-    position: static;
-    margin-top: var(--space-4);
+  .ody-mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: linear-gradient(180deg, rgba(8, 11, 18, 0.95), rgba(5, 7, 12, 0.98));
+    border-top: 1px solid var(--border-soft);
+    backdrop-filter: blur(12px);
+    padding: 4px var(--space-2);
+    justify-content: space-around;
   }
 
-  .ody-nav {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .ody-mobile-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 4px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 200ms;
+    border-radius: 0;
+    min-width: 52px;
+    position: relative;
+  }
+
+  .ody-mobile-nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background: var(--accent-gold);
+    transform: scaleX(0);
+    transition: transform 250ms ease;
+  }
+
+  .ody-mobile-nav-link:hover,
+  .ody-mobile-nav-link.active {
+    color: var(--accent-gold);
+  }
+
+  .ody-mobile-nav-link.active::before {
+    transform: scaleX(1);
   }
 
   .ody-main {
@@ -580,27 +1360,25 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .ody-nav {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .ody-page-title { letter-spacing: 0.12em; }
+
+  .ody-checkin-card {
+    padding: var(--space-5);
   }
 
-  .ody-page-title {
-    letter-spacing: 0.14em;
+  .ody-checkin-actions {
+    flex-direction: column;
+    gap: var(--space-3);
   }
 
-  .ody-page-subtitle {
-    letter-spacing: 0.12em;
+  .ody-checkin-btn {
+    width: 100%;
   }
 }
 
 @media (max-width: 640px) {
-  .ody-sidebar,
   .ody-main {
     padding: var(--space-4);
-  }
-
-  .ody-nav {
-    grid-template-columns: 1fr;
   }
 
   .ody-card {
@@ -608,13 +1386,13 @@ button {
   }
 
   .ody-auth-card {
-    min-height: 0;
-    padding: 30px 20px;
+    padding: var(--space-5) var(--space-4);
   }
 
-  .ody-btn,
-  .ody-badge,
-  .ody-label {
-    letter-spacing: 0.09em;
+  .ody-topbar {
+    flex-direction: column;
+    gap: var(--space-3);
   }
+
+  .ody-stat-value { font-size: 1.8rem; }
 }

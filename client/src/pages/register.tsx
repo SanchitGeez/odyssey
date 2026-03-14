@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../app/auth'
 import { AuthCard } from '../components/layout'
+import { Icon } from '../components/icons'
 
 export function RegisterPage() {
   const { api } = useAuth()
@@ -12,23 +13,22 @@ export function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const onSubmit = async (event: FormEvent) => {
-    event.preventDefault()
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault()
     setError('')
     setLoading(true)
     try {
       await api.register(email, password, timezone)
       navigate('/onboarding')
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Registration failed'
-      setError(message)
+      setError(err instanceof Error ? err.message : 'Registration failed')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <AuthCard title="Create account" subtitle="Start tracking your life dimensions.">
+    <AuthCard title="Create Account" subtitle="Begin tracking your life dimensions.">
       <form className="ody-grid" onSubmit={onSubmit}>
         <div className="ody-field">
           <input
@@ -46,7 +46,7 @@ export function RegisterPage() {
             className="ody-input"
             type="password"
             minLength={8}
-            placeholder="Password (min 8 chars)"
+            placeholder="Password (min 8 characters)"
             aria-label="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -64,9 +64,12 @@ export function RegisterPage() {
           />
         </div>
         {error ? <p className="ody-error" style={{ margin: 0 }}>{error}</p> : null}
-        <button className="ody-btn" type="submit" disabled={loading}>{loading ? 'Creating account...' : 'Register'}</button>
-        <p className="ody-muted" style={{ margin: 0 }}>
-          Already registered? <Link to="/login">Login</Link>
+        <button className="ody-btn" type="submit" disabled={loading}>
+          <Icon name="shield" size={14} />
+          {loading ? 'Creating account...' : 'Begin Your Odyssey'}
+        </button>
+        <p className="ody-muted" style={{ margin: 0, fontSize: '0.78rem' }}>
+          Already registered? <Link to="/login">Sign in</Link>
         </p>
       </form>
     </AuthCard>

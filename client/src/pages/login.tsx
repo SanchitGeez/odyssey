@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../app/auth'
 import { AuthCard } from '../components/layout'
+import { Icon } from '../components/icons'
 import { isOnboardingComplete } from '../lib/storage'
 
 export function LoginPage() {
@@ -12,28 +13,22 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const onSubmit = async (event: FormEvent) => {
-    event.preventDefault()
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault()
     setError('')
     setLoading(true)
     try {
       const me = await api.login(email, password)
-      const userId = me.id
-      if (isOnboardingComplete(userId)) {
-        navigate('/check-in')
-      } else {
-        navigate('/onboarding')
-      }
+      navigate(isOnboardingComplete(me.id) ? '/check-in' : '/onboarding')
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Login failed'
-      setError(message)
+      setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <AuthCard title="Welcome back" subtitle="Sign in to continue your journey.">
+    <AuthCard title="Welcome Back" subtitle="Sign in to continue your journey.">
       <form className="ody-grid" onSubmit={onSubmit}>
         <div className="ody-field">
           <input
@@ -58,8 +53,11 @@ export function LoginPage() {
           />
         </div>
         {error ? <p className="ody-error" style={{ margin: 0 }}>{error}</p> : null}
-        <button className="ody-btn" type="submit" disabled={loading}>{loading ? 'Signing in...' : 'Sign In'}</button>
-        <p className="ody-muted" style={{ margin: 0 }}>
+        <button className="ody-btn" type="submit" disabled={loading}>
+          <Icon name="arrow-right" size={14} />
+          {loading ? 'Signing in...' : 'Sign In'}
+        </button>
+        <p className="ody-muted" style={{ margin: 0, fontSize: '0.78rem' }}>
           New here? <Link to="/register">Create account</Link>
         </p>
       </form>

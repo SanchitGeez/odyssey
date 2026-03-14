@@ -1,266 +1,510 @@
-# Odyssey Styling Guide (Phase 1)
+# Odyssey Styling Guide
 
-**Version:** 1.0  
-**Date:** March 14, 2026  
-**Theme Direction:** Dark fantasy + dungeon atmosphere + technical terminal precision
+**Version:** 2.0
+**Date:** March 14, 2026
+**Theme Direction:** Assassin's Creed Odyssey cinematic menu UI + heraldic minimalism + life OS clarity
 
-## 1. Theme Intent
+---
 
-Odyssey UI should feel like:
+## 1. Design Philosophy
 
-- A calm command center for life progression
-- A subtle medieval/dungeon world (stone, iron, parchment hints)
-- A technical console for self-tracking (terminal clarity, precise feedback)
+### North Star
 
-Design target:
+> The UI should feel like navigating the pause menu of a cinematic AAA game — specifically Assassin's Creed Odyssey — adapted for a life-tracking productivity tool.
 
-- `70%` modern product UI clarity
-- `20%` atmospheric fantasy tone
-- `10%` terminal/ops aesthetic accents
+### Core Identity
 
-The app should be immersive but still highly readable and productive.
+Odyssey is **not** a typical web dashboard. It is a **cinematic life operating system** disguised as a dark productivity app. Every interaction should feel intentional, minimal, and atmospheric.
+
+### Design DNA
+
+| Source | Weight | What It Contributes |
+|--------|--------|---------------------|
+| AC Odyssey game menus | 40% | Flat text menus, gold underlines, no-card hover, shimmer effects |
+| Cinematic heraldic minimalism | 25% | Serif display type, ornamental dividers, symmetry, ceremony |
+| Modern product UI | 25% | Readability, accessibility, responsive layout, form patterns |
+| Terminal/ops aesthetic | 10% | Monospace metadata, badge chips, compact data display |
+
+### The Balance Test
+
+If a screenshot looks like a premium game settings screen first, a dark productivity tool second, and a fantasy world third — the balance is right.
+
+### What We Are NOT
+
+- Not a generic admin dashboard
+- Not a cosplay-heavy fantasy UI with ornaments on everything
+- Not a flat Material/Tailwind template with a dark coat of paint
+- Not a college project with inconsistent spacing and visible CSS seams
+
+---
 
 ## 2. Core Visual Principles
 
-- Dark-first UI only for Phase 1.
-- Thin white/near-white borders as primary structure language.
-- High contrast text with restrained color accents.
-- Atmosphere through layered background textures, not noisy decorations.
-- Components are self-styled and reusable; pages mostly compose them.
-- Avoid novelty CSS per page; theme consistency beats experimentation.
+### 2.1 Flat, Borderless, Text-First
 
-## 3. Color System (Design Tokens)
+The primary interaction language is **plain text on dark backgrounds**. UI elements are defined by typography, spacing, and subtle state changes — not by card borders, shadows, or background fills.
 
-Use semantic tokens only.
+**Do:**
+- Let text stand on its own with generous spacing
+- Use thin 1px borders only for structural containers (forms, list groups)
+- Keep backgrounds transparent or near-transparent
 
-```css
-:root {
-  --bg-base: #090b10;
-  --bg-elev-1: #10141c;
-  --bg-elev-2: #151b26;
-  --bg-panel: rgba(18, 22, 31, 0.84);
-  --bg-terminal: #0b0f12;
+**Don't:**
+- Wrap every piece of content in a bordered card
+- Use box shadows for elevation
+- Add background fills to interactive rows
 
-  --text-primary: #f2f5f9;
-  --text-secondary: #b9c1cf;
-  --text-muted: #8a93a6;
+### 2.2 AC Odyssey Menu Selection Pattern
 
-  --border-default: rgba(245, 248, 255, 0.28);
-  --border-strong: rgba(245, 248, 255, 0.48);
-  --border-soft: rgba(245, 248, 255, 0.16);
+This is the defining interaction pattern for all selectable items (nav links, list rows, tabs):
 
-  --accent-steel: #8fa3bf;
-  --accent-cyan: #63d4ff;
-  --accent-ember: #e39a63;
-  --accent-violet: #9286ff;
+**At rest:**
+- Plain text, muted color, no background, no border
 
-  --state-success: #5fd1a8;
-  --state-warning: #e4b46f;
-  --state-danger: #ef7d7d;
-  --state-info: #76b9ff;
-}
-```
+**On hover:**
+- Text brightens (muted → primary white)
+- No background change, no border, no card effect
 
-Usage rules:
+**Active/selected:**
+- Text turns gold (`--accent-gold`)
+- A thin gold **horizontal underline** appears directly below the text
+- The underline fades from solid gold on the left to transparent on the right
+- A continuous **shimmer animation** sweeps through the text characters (light gold `#f0d890` glint via `background-clip: text`)
 
-- White borders are thin and frequent (`1px` baseline).
-- Accent colors are sparse; never more than 1 accent family per component.
-- Panels prefer layered dark surfaces over solid black blocks.
+**Key rules:**
+- Never highlight the full row/card — only the text responds
+- Underlines are always horizontal, never vertical side bars
+- Hover underlines expand to 50%; active underlines are full width
+- The shimmer is text-only, not a background overlay
 
-## 4. Background and Atmosphere
+### 2.3 Extreme Minimalism in Spacing
 
-Build depth with layered backgrounds:
+Generous whitespace is non-negotiable. The UI must breathe.
 
-1. Base gradient wash (`navy -> charcoal`).
-2. Soft radial fog blobs with low opacity.
-3. Optional subtle noise texture (`2-4%` opacity).
-4. Rare rune/grid overlays for hero/header sections only.
+- Nav items: thin padding (`4px 0`), generous gap between items (`12px+`)
+- List items: compact internal padding, clear separation gap between items (`12px`)
+- Cards: padding `24px`, margin between cards `16px`
+- Page sections: `32-64px` vertical rhythm
 
-Recommended app background recipe:
+### 2.4 Dark Cinematic Depth
+
+Background is **not flat black**. It's a layered deep blue with atmospheric fog:
 
 ```css
 background:
-  radial-gradient(900px 420px at 12% -8%, rgba(102, 119, 168, 0.18), transparent 60%),
-  radial-gradient(700px 360px at 90% 0%, rgba(93, 142, 153, 0.14), transparent 58%),
-  linear-gradient(180deg, #0a0d13 0%, #080a0f 52%, #07090d 100%);
+  radial-gradient(1200px 700px at 20% -5%, rgba(34, 49, 84, 0.32), transparent 65%),
+  radial-gradient(1200px 700px at 85% 8%, rgba(31, 38, 57, 0.26), transparent 66%),
+  linear-gradient(180deg, #04060b 0%, #05070d 45%, #070b13 100%);
 ```
 
-Do not use:
+Additional depth layers:
+- Subtle vignette via `radial-gradient` on `body::before`
+- Faint horizontal scanlines via `repeating-linear-gradient` on `body::after` at ~20% opacity
+- Soft radial glow in sidebar and main content area
 
-- bright fantasy gold everywhere
-- heavy vignette overlays
-- high-contrast textures behind body text
+---
 
-## 5. Border, Radius, and Elevation Language
+## 3. Color System
 
-- Border-first hierarchy: containers separated by thin light borders.
-- Radius: mostly `10px-14px`, avoid pill-heavy modern look.
-- Elevation via soft cold shadows + border glow, not thick drop shadows.
-
-Token suggestions:
+### 3.1 Core Palette
 
 ```css
---radius-sm: 8px;
---radius-md: 12px;
---radius-lg: 14px;
+:root {
+  /* Backgrounds — layered deep blue, never flat black */
+  --bg-base: #05070d;
+  --bg-secondary: #0a0f1a;
+  --bg-panel: rgba(8, 12, 20, 0.74);
+  --bg-panel-strong: rgba(10, 15, 25, 0.92);
+  --bg-terminal: rgba(7, 11, 18, 0.96);
+  --bg-elevated: rgba(14, 19, 30, 0.85);
 
---shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.35);
---shadow-focus: 0 0 0 3px rgba(99, 212, 255, 0.2);
+  /* Text — high contrast, WCAG AA compliant */
+  --text-primary: #e8e9ee;
+  --text-secondary: #b3b7c1;
+  --text-muted: #9399a6;    /* bumped from #838998 for contrast */
+
+  /* Borders — thin, frequent, structural */
+  --border-soft: rgba(149, 157, 171, 0.18);
+  --border-default: rgba(176, 184, 198, 0.32);
+  --border-strong: rgba(201, 164, 76, 0.5);
+
+  /* Gold accent — the signature color */
+  --accent-gold: #c9a44c;
+  --accent-gold-dim: rgba(201, 164, 76, 0.15);
+  --accent-silver: #9ea3aa;
+  --accent-red: #8b1e2d;
+
+  /* Life dimension colors */
+  --cat-body: #6ea889;
+  --cat-mind: #7b93db;
+  --cat-work: #c9a44c;
+  --cat-wealth: #d4a853;
+  --cat-connection: #bd5a67;
+  --cat-meaning: #a97bdb;
+
+  /* State colors */
+  --state-success: #6ea889;
+  --state-warning: #c39f62;
+  --state-danger: #bd5a67;
+}
 ```
 
-## 6. Typography System
+### 3.2 Color Usage Rules
 
-Split typography by role:
+- **Gold** is the primary accent. Used for: active nav text, selected item underlines, primary button borders, ornamental dividers, streak highlights
+- **Category colors** are used only as small dots/indicators next to dimension-tagged content, never as fills or backgrounds
+- **State colors** are used only for badges and inline feedback text
+- Backgrounds are always transparent or near-transparent — never solid colored panels
+- White borders at `0.12` opacity for list items, `0.18` for structural panels
 
-- Display/headings: serif fantasy tone (example: `Cinzel`, `Cormorant Garamond`)
-- Body/UI: modern readable sans (example: `Manrope`, `IBM Plex Sans`)
-- Terminal/meta data: monospace (example: `JetBrains Mono`, `IBM Plex Mono`)
+---
 
-Rules:
+## 4. Typography System
 
-- Heading serif usage should be restrained and mostly for titles/section headers.
-- Body copy always sans for readability.
-- Monospace only for metrics, tags, timestamps, command-like actions, and debug/tech blocks.
+### 4.1 Font Stack
 
-## 7. Layout and Spacing Standards
+```css
+--font-display: 'Cinzel', 'Cormorant Garamond', serif;
+--font-body: 'Manrope', 'Segoe UI', sans-serif;
+--font-mono: 'Spectral SC', 'Cormorant Garamond', 'Georgia', serif;
+```
 
-- Page structure: CSS Grid (`sidebar + content`) on desktop.
-- Internal component alignment: Flexbox.
-- Content width constraints prevent stretched dashboards.
-- 8px spacing grid across all components.
-- Section rhythm should feel “modular console”, not dense admin clutter.
+### 4.2 Usage Rules
 
-Base spacing scale:
+| Context | Font | Size | Weight | Spacing | Transform |
+|---------|------|------|--------|---------|-----------|
+| Page title | Display serif | `clamp(1.2rem, 2vw, 1.6rem)` | 500 | `0.2em` | uppercase |
+| Section title | Display serif | `0.9rem` | 500 | `0.12em` | uppercase |
+| Nav label | Body sans | `0.74rem` | 400/500 | `0.08em` | uppercase |
+| Body text | Body sans | `0.82-0.88rem` | 400 | `0.01em` | none |
+| Badge/meta | Mono serif | `0.68rem` | 400 | `0.06em` | uppercase |
+| Muted label | Body sans | `0.7rem` | 400 | `0.14em` | uppercase |
 
-- `4, 8, 12, 16, 24, 32, 40, 48`
+### 4.3 Restraint Rules
 
-## 8. Component Styling Contract
+- Serif display font is **only** for page titles, section headers, stat values, and the brand name
+- Body copy is always sans-serif for readability
+- Monospace is for badges, timestamps, and metadata — never for body text
+- All nav and label text is uppercase with letter-spacing
 
-Every shared component must define:
+---
 
-- default, hover, active, focus-visible, disabled states
-- loading/empty/error visual state when applicable
-- token-only colors and spacing
-- border + background + text contrast passing accessibility
+## 5. Interaction Patterns
 
-Page-level CSS limits:
+### 5.1 Navigation (Sidebar)
 
-- Pages can control layout wrappers only.
-- Component internals must own their visual style.
-- No duplicate “custom card/button/input” styles in pages.
+Styled as a flat text menu, not a component sidebar:
 
-## 9. Terminal-Tech Accent Pattern
+```
+At rest:     TASKS          (muted gray, no background)
+On hover:    TASKS          (white text, half-width underline fades in)
+Active:      TASKS          (gold text with shimmer, full underline tapering right)
+                ————————
+```
 
-Use terminal aesthetic as secondary layer:
+Implementation:
+- `padding: 4px 0` — thin, not chunky
+- `gap: 12px` between items
+- No border, no background, no border-radius
+- `::after` pseudo-element for the underline: `linear-gradient(90deg, var(--accent-gold), transparent)`
+- Active text uses `background-clip: text` with a `repeating-linear-gradient` shimmer animation
 
-- monospace labels for status chips and timestamps
-- subtle caret/blink animation only in specific widgets (never global)
-- command-like quick actions: `> Start Check-In`, `> Add Task`
-- tiny scanline/noise effect only in terminal components
+### 5.2 Active Item Shimmer
 
-Terminal surfaces:
+The active nav label has a continuous light-gold glint sweeping through the text:
 
-- use darker panel token (`--bg-terminal`)
-- stronger border contrast
-- compact spacing and monospace typography
+```css
+.ody-nav-link.active .ody-nav-label {
+  color: transparent;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent-gold) 0%,
+    var(--accent-gold) 30%,
+    #f0d890 50%,          /* lighter gold shimmer peak */
+    var(--accent-gold) 70%,
+    var(--accent-gold) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: ody-text-shine 2.5s linear infinite;
+}
 
-Keep it controlled:
+@keyframes ody-text-shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: 0% 0; }
+}
+```
 
-- Maximum one terminal-heavy section per page to avoid visual fatigue.
+Key: `repeating-linear-gradient` + `background-size: 200%` ensures the animation tiles seamlessly with no stutter or jump on loop restart.
 
-## 10. Key Component Recipes
+### 5.3 List Items (Tasks, Quests, Journals)
 
-### Button
+Styled as AC Odyssey settings rows — separated items with thin borders:
 
-- Primary: dark steel fill + thin bright border + cyan focus ring
-- Secondary: transparent/dark panel with white border
-- Destructive: muted red accent border, no bright red fills
+```
+┌─────────────────────────────────────┐
+│  Workout                  Recurring │   ← thin 1px border, no fill
+└─────────────────────────────────────┘
+                                          ← 12px gap
+┌─────────────────────────────────────┐
+│  Read 30 minutes          Recurring │
+└─────────────────────────────────────┘
+```
 
-### Card/Panel
+- Each item has its own `1px solid rgba(149, 157, 171, 0.12)` border
+- No border-radius — sharp, flat, rectangular
+- Background is transparent at rest
+- Hover: very faint white fill `rgba(255, 255, 255, 0.03)` — like AC Odyssey's selected row tint
+- Selected: slightly stronger `rgba(255, 255, 255, 0.05)`, text stays white
+- No underlines, no gold accents, no lift/shadow — just the quiet tint change
+- `gap: 12px` between items in the list
 
-- layered dark background
-- 1px light border
-- subtle inner highlight top edge
-- title in serif or semibold sans depending context
+### 5.4 Buttons
 
-### Inputs
+- Primary: gold-tinted dark gradient, thin gold border
+- Secondary: dark gradient, thin gray border
+- Danger: red-tinted dark gradient, thin red border
+- All: uppercase, `0.72rem`, `letter-spacing: 0.1em`
+- Hover: border brightens, subtle `translateY(-1px)`, shadow lift
+- Active press: `scale(0.98)` — quick tactile feedback
+- Icon + text pattern: `<Icon size={14} /> Label`
 
-- dark field background
-- thin white border default, cyan border on focus
-- placeholder in muted text
-- optional terminal variant for command/notes experience
+### 5.5 Form Controls
 
-### Navigation
+- Dark field background (`--bg-panel-strong`)
+- Thin `--border-soft` border
+- Focus: gold border + `0 0 0 3px rgba(gold, 0.12)` ring
+- Forms live in slide-over panels, not inline on the page
 
-- left sidebar with section separators
-- active item indicated by border + glow strip, not large filled pills
-- icons should be line-based and minimal
+### 5.6 Slide-Over Panel (Modal Alternative)
 
-### Tables/Lists
+Forms for creating/editing tasks, quests, and journal entries use a slide-over panel instead of inline forms:
 
-- alternating panel shades are subtle
-- row separators via soft border token
-- metadata text in muted or monospace
+- Slides in from the right edge
+- Backdrop blur + dark overlay
+- `max-width: 520px`
+- Escape to close
+- This keeps the main content clean and removes the "admin dashboard" feel
 
-## 11. Motion and Interaction
+---
 
-Motion should feel deliberate and calm:
+## 6. Layout Architecture
 
-- panel fade/slide on load (`120-220ms`)
-- hover transitions (`120ms`)
-- minimal transform distances (`2-4px`)
-- no bouncy easing for core productivity surfaces
+### 6.1 Desktop (>1120px)
 
-Recommended easing:
+```
+┌──────────────┬─────────────────────────────────┐
+│              │                                  │
+│   SIDEBAR    │         MAIN CONTENT             │
+│   260px      │         flex: 1                  │
+│   sticky     │                                  │
+│              │   ┌─ Page Title ──────────────┐  │
+│   Brand      │   │  + subtitle               │  │
+│   Ornament   │   └───────────────────────────┘  │
+│   Nav links  │                                  │
+│              │   [Content sections]              │
+│   Footer     │                                  │
+│              │                                  │
+└──────────────┴─────────────────────────────────┘
+```
 
-- `cubic-bezier(0.22, 1, 0.36, 1)` for panel entrance
-- `ease-out` for micro interactions
+### 6.2 Mobile (<1120px)
 
-## 12. Iconography and Illustrative Style
+- Sidebar hidden
+- Bottom tab bar with 5 key nav items
+- Active tab: gold top-line indicator (`::before` pseudo)
+- Content full-width with reduced padding
 
-- Icon style: outlined, geometric, low-detail
-- Avoid emoji-like or cartoon icon sets
-- If adding fantasy motifs (runes/crest), keep them monochrome and sparse
+### 6.3 Check-In (Special Layout)
 
-## 13. Accessibility and Readability
+Check-in is a **full-screen focused flow** — no sidebar, no shell:
 
-- Minimum AA contrast for text and controls
-- Focus-visible states always obvious
-- Do not encode meaning by color only
-- Terminal-style text still must meet readable size and spacing
+```
+   ODYSSEY              Today              ✕
+   ═══════════════════════════════════════   ← progress bar
 
-## 14. Theming Implementation Plan
+                    Card 3 of 7
 
-1. Define token files:
-- `tokens.css` for colors, spacing, radius, shadow, typography, z-index
+              ┌─────────────────┐
+              │   Body & Vitality
+              │
+              │    WORKOUT
+              │
+              │   [Done]  [Skip]
+              │
+              │   [optional value input]
+              └─────────────────┘
 
-2. Add theme utility classes:
-- `surface-panel`, `surface-terminal`, `border-ornate`, `text-mono-meta`
+          Progress saved — continue later
+```
 
-3. Build component library first:
-- Button, Input, Select, Textarea, Card, Modal, Badge, Tabs, Table, Empty/Error/Loading states
+---
 
-4. Apply shell and background system:
-- global atmospheric background and app shell grid
+## 7. Component Reference
 
-5. Enforce via lint/review checklist:
-- no hardcoded colors
-- no page-level one-off button/card/input styles
+### 7.1 Ornamental Divider
 
-## 15. Brainstorm: Achieving the Exact “Odyssey” Feel
+A centered diamond with fading lines — used between brand and nav, and above page titles:
 
-Use this mix to avoid looking generic or cosplay-heavy:
+```css
+.ody-ornament::before, .ody-ornament::after {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, rgba(163, 170, 182, 0.35), transparent);
+}
+.ody-ornament span {
+  width: 8px; height: 8px;
+  border: 1px solid rgba(201, 164, 76, 0.5);
+  transform: rotate(45deg);
+}
+```
 
-- Medieval tone: serif headers, crest-like section dividers, iron/stone-inspired surfaces
-- Dungeon tone: dim layered lighting, mist gradients, restrained warm ember accents
-- Tech nerd tone: monospace telemetry, command-like quick actions, crisp border grids
+### 7.2 Card
 
-What to avoid:
+Used for content containers, stat panels, and forms:
 
-- Overly decorative fantasy ornaments on every component
-- Pure neon cyberpunk palette
-- Flat black-only UI with no depth
+- `1px solid --border-soft` border
+- `border-radius: 12px` — subtle, not pill-shaped
+- Transparent/near-transparent background with `backdrop-filter: blur(6px)`
+- Gold top-edge highlight: `linear-gradient(90deg, transparent, rgba(gold, 0.5), transparent)` via `::after`
+- Fade-up entrance animation: `translateY(8px)` → `0` over `400ms`
 
-North-star test:
+### 7.3 Stat Card
 
-- If a screenshot looks like a premium productivity dashboard first, and a fantasy-tech world second, the balance is right.
+For insights page metrics:
+
+- Centered layout with icon → large number → label
+- Display serif font for the value at `2.4rem`
+- Small uppercase label below
+- Category/accent color on the icon
+
+### 7.4 Empty State
+
+When a list or section has no data:
+
+- Centered layout with a circle-bordered icon
+- Display serif title ("No Tasks Yet")
+- Muted body text explaining what goes here
+- Optional CTA button
+
+### 7.5 Toast Notifications
+
+- Fixed bottom-right position
+- Slide-in from right
+- Color-coded left accent: green (success), red (error), gold (info)
+- Auto-dismiss after 3.5 seconds
+- Icon + message + dismiss button
+
+### 7.6 Badges
+
+- Pill-shaped with thin border
+- Variants: default (gray), gold, success (green), danger (red)
+- Small category dots (`6px` circles) use dimension colors
+
+### 7.7 Timeline (Quest Activity)
+
+- Vertical line on the left with dot markers
+- Date label → activity badge → optional note
+- Completed milestones get a green-tinted dot
+
+---
+
+## 8. Motion and Animation
+
+### 8.1 Principles
+
+- Motion is **calm and deliberate** — never bouncy or playful
+- Transitions are 200-400ms, eased with `cubic-bezier(0.25, 0.8, 0.25, 1)`
+- The only continuous animation is the nav shimmer — everything else is triggered
+
+### 8.2 Catalog
+
+| Effect | Duration | Easing | Usage |
+|--------|----------|--------|-------|
+| Card fade-up | 400ms | ease-out | Page load, list stagger |
+| List stagger | 50ms delay per item | ease-out | Task/quest/journal lists |
+| Underline expand | 280ms | ease | Nav hover/active |
+| Text shimmer | 2.5s continuous | linear | Active nav label only |
+| Slide-over enter | 300ms | ease-out | Form panels |
+| Overlay fade | 200ms | ease | Modal backdrop |
+| Toast slide-in | 300ms | ease-out | Notifications |
+| Button hover lift | 240ms | ease-out | `translateY(-1px)` |
+| Button press | instant | — | `scale(0.98)` |
+| Progress bar fill | 500ms | ease-out | Check-in progress |
+| Skeleton shimmer | 1.5s continuous | ease | Loading placeholders |
+| Glow pulse | 2s continuous | ease-in-out | Completion celebration |
+
+### 8.3 No-Go List
+
+- No bouncy spring easing on productivity surfaces
+- No scale transforms on hover (except button press feedback)
+- No translateY lifts on list items or cards
+- No parallax or scroll-linked effects
+- No page transition animations between routes (keep it instant)
+
+---
+
+## 9. Accessibility
+
+- Minimum WCAG AA contrast for all text
+- `--text-muted` set to `#9399a6` (4.5:1 ratio on `#05070d`)
+- Focus-visible states: gold border + `box-shadow` ring
+- `aria-label` on all icon-only buttons
+- `aria-live="polite"` on toast container
+- `role="dialog"` + `aria-modal` on slide-over panels
+- Skip-to-content link (planned)
+- Color is never the only indicator of meaning — always paired with text or icon
+
+---
+
+## 10. Iconography
+
+- 22 custom inline SVG icons in `components/icons.tsx`
+- Style: filled, geometric, 24x24 viewBox
+- Used in: nav items, buttons, badges, empty states, stat cards
+- Icons inherit `currentColor` — they respond to text color changes automatically
+- Opacity modulated: `0.35` at rest, `0.7` on hover, `1.0` when active
+
+---
+
+## 11. What to Avoid
+
+| Anti-pattern | Why | Instead |
+|-------------|-----|---------|
+| Card-shaped hover effects | Looks like a web dashboard, not a game menu | Subtle tint + text color change only |
+| Vertical side bars on selection | Too "IDE sidebar" feeling | Horizontal underlines that taper |
+| Heavy box shadows | Breaks the flat cinematic feel | Thin borders for structure |
+| Bright accent colors everywhere | Kills the dark atmospheric mood | Gold sparingly, category dots small |
+| Rounded pill buttons/badges | Too modern/casual for the theme | Sharp or subtle radius only |
+| Forms always visible on page | Admin panel feel | Slide-over panels for creation/editing |
+| "Loading..." text | Unprofessional | Skeleton shimmer cards |
+| Empty lists with no guidance | Dead-end experience | Empty states with icon + copy + CTA |
+| Thick chunky nav items | Looks like a component library demo | Thin text with generous spacing |
+
+---
+
+## 12. Implementation Stack
+
+```
+React 19 + TypeScript
+CSS custom properties (no Tailwind classes in markup)
+Inline SVG icons (no icon library dependency)
+Framer Motion (planned for Phase 2 route transitions)
+Custom slide-over/modal (no headless UI library)
+Custom toast system (no third-party notification library)
+```
+
+All styles live in `index.css` using the `ody-` prefix convention. No CSS-in-JS, no CSS modules, no Tailwind utility classes in templates.
+
+---
+
+## 13. File Reference
+
+| File | Purpose |
+|------|---------|
+| `client/src/index.css` | Complete design system — tokens, components, responsive |
+| `client/src/components/icons.tsx` | SVG icon library (22 icons) |
+| `client/src/components/layout.tsx` | AppShell, AuthCard, nav with shimmer |
+| `client/src/components/modal.tsx` | SlideOver panel |
+| `client/src/components/toast.tsx` | ToastProvider + useToast hook |

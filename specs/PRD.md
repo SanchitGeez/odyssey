@@ -50,12 +50,12 @@ Primary: Tech-savvy 22-35 year olds (India-focused initially) who:
 
 | # | Dimension | Covers |
 | --- | --- | --- |
-| 1 | 💪 Body & Vitality | Physical health, sleep, nutrition, fitness, environment |
-| 2 | 🧠 Mind & Inner World | Mental health, self-awareness, learning, emotional regulation |
-| 3 | 💼 Work & Mastery | Career, skills, productivity, purpose |
-| 4 | 💰 Wealth & Resources | Money, saving, investing, financial literacy |
-| 5 | ❤️ Connection & Belonging | Family, friendships, relationships, community |
-| 6 | 🌟 Meaning & Transcendence | Values, purpose, creativity, legacy |
+| 1 | 💪 Vitality | Physical health, sleep, nutrition, fitness, environment |
+| 2 | 🧠 Psyche | Mental health, self-awareness, learning, emotional regulation |
+| 3 | 💼 Prowess | Career, skills, productivity, purpose |
+| 4 | 💰 Wealth | Money, saving, investing, financial literacy |
+| 5 | ❤️ Alliance | Family, friendships, relationships, community |
+| 6 | 🌟 Legacy | Values, purpose, creativity, legacy |
 
 ### 4.2 Task Types + Quests (Stage 1)
 

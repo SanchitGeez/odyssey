@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { getStoredTokens, setStoredTokens } from '../lib/storage'
 import type {
   AuthTokens,
@@ -92,7 +92,9 @@ function trimPayload<T extends Record<string, unknown>>(payload: T): T {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [tokens, setTokens] = useState<AuthTokens | null>(() => getStoredTokens())
+  const initialTokens = getStoredTokens()
+  const [tokens, setTokens] = useState<AuthTokens | null>(initialTokens)
+  const tokensRef = useRef<AuthTokens | null>(initialTokens)
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -114,18 +116,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const clearSession = () => {
+    tokensRef.current = null
     setTokens(null)
     setStoredTokens(null)
     setUser(null)
   }
 
   const updateSession = (nextTokens: AuthTokens) => {
+    tokensRef.current = nextTokens
     setTokens(nextTokens)
     setStoredTokens(nextTokens)
   }
 
   async function refresh(): Promise<AuthTokens | null> {
-    const refreshToken = tokens?.refresh_token
+    const refreshToken = tokensRef.current?.refresh_token
     if (!refreshToken) return null
     try {
       const res = await fetch('/api/v1/auth/refresh', {
@@ -142,8 +146,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function authedFetch<T>(path: string, init: RequestInit = {}, retry = true): Promise<T> {
-    const accessToken = tokens?.access_token
+  async function authedFetch<T>(path: string, init: RequestInit = {}, retry = true, accessTokenOverride?: string): Promise<T> {
+    const accessToken = accessTokenOverride ?? tokensRef.current?.access_token
     const headers = new Headers(init.headers || {})
     if (!headers.has('Content-Type') && init.body) {
       headers.set('Content-Type', 'application/json')
@@ -152,12 +156,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       headers.set('Authorization', `Bearer ${accessToken}`)
     }
     const response = await fetch(path, { ...init, headers })
-    if (response.status === 401 && retry && tokens?.refresh_token) {
+    if (response.status === 401 && retry && tokensRef.current?.refresh_token) {
       const refreshed = await refresh()
       if (!refreshed) {
         throw { status: 401, message: 'Session expired. Please login again.' } satisfies ApiError
       }
-      return authedFetch<T>(path, init, false)
+      return authedFetch<T>(path, init, false, refreshed.access_token)
     }
     return parseResponse<T>(response)
   }
@@ -172,7 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
         const data = await parseResponse<AuthTokens>(res)
         updateSession(data)
-        const me = await authedFetch<User>('/api/v1/auth/me')
+        const me = await authedFetch<User>('/api/v1/auth/me', {}, true, data.access_token)
         setUser(me)
         return me
       },
@@ -184,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
         const data = await parseResponse<AuthTokens>(res)
         updateSession(data)
-        const me = await authedFetch<User>('/api/v1/auth/me')
+        const me = await authedFetch<User>('/api/v1/auth/me', {}, true, data.access_token)
         setUser(me)
         return me
       },

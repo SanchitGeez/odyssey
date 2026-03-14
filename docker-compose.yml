@@ -24,7 +24,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://odyssey:odyssey@postgres:5432/odyssey
+      DATABASE_URL: postgresql+psycopg://odyssey:odyssey@postgres:5432/odyssey
+      PYTHONPATH: /app
     depends_on:
       postgres:
         condition: service_healthy
@@ -32,6 +33,27 @@ services:
       - ./server:/app
       - /app/.venv
       - /app/__pycache__
+    command:
+      [
+        "sh",
+        "-c",
+        "python -c \"import app.shared.db.models as m; from app.shared.db.base import Base; from app.shared.db.session import engine; Base.metadata.create_all(bind=engine)\" && uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
+      ]
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: odyssey-client
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://server:8000
+    depends_on:
+      - server
+    volumes:
+      - ./client:/app
+      - /app/node_modules
 
 volumes:
   postgres_data:

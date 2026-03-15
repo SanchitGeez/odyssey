@@ -37,9 +37,31 @@ def task_due_on(db: Session, task: Task, target_date: date) -> bool:
     if schedule_type == "daily":
         return True
     if schedule_type == "specific_days":
-        return target_date.weekday() in config.get("days_of_week", [])
+        raw_days = config.get("days_of_week", [])
+        if not isinstance(raw_days, list):
+            return True
+        days: list[int] = []
+        for raw_day in raw_days:
+            try:
+                day = int(raw_day)
+            except (TypeError, ValueError):
+                continue
+            if 0 <= day <= 6:
+                days.append(day)
+        if not days:
+            return True
+        return target_date.weekday() in days
     if schedule_type in {"x_per_week", "once_per_week"}:
-        target_count = int(config.get("target_count", 1 if schedule_type == "once_per_week" else 3))
+        if schedule_type == "once_per_week":
+            target_count = 1
+        else:
+            raw_target_count = config.get("target_count", 1)
+            try:
+                target_count = int(raw_target_count)
+            except (TypeError, ValueError):
+                target_count = 1
+            if target_count < 1:
+                target_count = 1
         start, end = week_bounds(target_date)
         done_count = db.scalar(
             select(func.count(TaskActivity.id)).where(

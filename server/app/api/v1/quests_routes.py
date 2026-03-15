@@ -9,13 +9,25 @@ from app.api.deps import get_current_user
 from app.modules.quests.application.handlers import (
     AddQuestActivityHandler,
     CreateQuestHandler,
+    CreateQuestMilestoneHandler,
     DeleteQuestHandler,
+    DeleteQuestMilestoneHandler,
     ListQuestActivityHandler,
+    ListQuestMilestonesHandler,
     ListQuestsHandler,
+    UpdateQuestMilestoneHandler,
     UpdateQuestHandler,
 )
 from app.modules.quests.infrastructure.repository_impl import QuestRepository
-from app.modules.quests.presentation.schemas import QuestActivityIn, QuestCreateIn, QuestOut, QuestUpdateIn
+from app.modules.quests.presentation.schemas import (
+    QuestActivityIn,
+    QuestCreateIn,
+    QuestMilestoneCreateIn,
+    QuestMilestoneOut,
+    QuestMilestoneUpdateIn,
+    QuestOut,
+    QuestUpdateIn,
+)
 from app.shared.db.models import User
 from app.shared.db.session import get_db
 from app.shared.db.uow import UnitOfWork
@@ -62,3 +74,43 @@ def add_quest_activity(
 @router.get("/{quest_id}/activity")
 def list_quest_activity(quest_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> list[dict]:
     return ListQuestActivityHandler(QuestRepository(db)).execute(user.id, quest_id)
+
+
+@router.get("/{quest_id}/milestones", response_model=list[QuestMilestoneOut])
+def list_quest_milestones(quest_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> list[QuestMilestoneOut]:
+    return ListQuestMilestonesHandler(QuestRepository(db)).execute(user.id, quest_id)
+
+
+@router.post("/{quest_id}/milestones", response_model=QuestMilestoneOut, status_code=201)
+def create_quest_milestone(
+    quest_id: str,
+    body: QuestMilestoneCreateIn,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> QuestMilestoneOut:
+    repo = QuestRepository(db)
+    return CreateQuestMilestoneHandler(repo, UnitOfWork(db)).execute(user.id, quest_id, body)
+
+
+@router.patch("/{quest_id}/milestones/{milestone_id}", response_model=QuestMilestoneOut)
+def update_quest_milestone(
+    quest_id: str,
+    milestone_id: str,
+    body: QuestMilestoneUpdateIn,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> QuestMilestoneOut:
+    repo = QuestRepository(db)
+    return UpdateQuestMilestoneHandler(repo, UnitOfWork(db)).execute(user.id, quest_id, milestone_id, body)
+
+
+@router.delete("/{quest_id}/milestones/{milestone_id}", status_code=204, response_class=Response)
+def delete_quest_milestone(
+    quest_id: str,
+    milestone_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> Response:
+    repo = QuestRepository(db)
+    DeleteQuestMilestoneHandler(repo, UnitOfWork(db)).execute(user.id, quest_id, milestone_id)
+    return Response(status_code=204)

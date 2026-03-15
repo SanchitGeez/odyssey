@@ -380,6 +380,19 @@ input, select, textarea, button { font: inherit; }
   padding: var(--space-6) var(--space-5);
 }
 
+.ody-insights-stats {
+  align-items: stretch;
+}
+
+.ody-insights-stats .ody-stat-card {
+  height: 100%;
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .ody-stat-value {
   font-family: var(--font-display);
   font-size: 2.4rem;
@@ -400,6 +413,10 @@ input, select, textarea, button { font: inherit; }
   font-size: 0.68rem;
   color: var(--text-muted);
   margin-top: var(--space-1);
+}
+
+.ody-insights-stats .ody-stat-sub {
+  margin-top: var(--space-2);
 }
 
 /* hero card — centered, ornamental */
@@ -817,6 +834,51 @@ input, select, textarea, button { font: inherit; }
   flex-wrap: wrap;
 }
 
+.ody-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1px solid var(--border-soft);
+  border-radius: 3px;
+  background: var(--bg-panel-strong);
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+  transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
+}
+
+.ody-checkbox::before {
+  content: '';
+  width: 8px;
+  height: 4px;
+  border-left: 2px solid rgba(8, 12, 20, 0.9);
+  border-bottom: 2px solid rgba(8, 12, 20, 0.9);
+  transform: rotate(-45deg) translateY(-1px) scale(0);
+  transform-origin: center;
+  transition: transform 140ms ease;
+}
+
+.ody-checkbox:hover {
+  border-color: var(--border-default);
+}
+
+.ody-checkbox:checked {
+  border-color: rgba(201, 164, 76, 0.75);
+  background: linear-gradient(180deg, rgba(219, 183, 92, 0.92), rgba(191, 152, 58, 0.95));
+}
+
+.ody-checkbox:checked::before {
+  transform: rotate(-45deg) translateY(-1px) scale(1);
+}
+
+.ody-checkbox:focus-visible {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(201, 164, 76, 0.12);
+}
+
 .ody-badge {
   display: inline-flex;
   align-items: center;
@@ -901,6 +963,57 @@ input, select, textarea, button { font: inherit; }
   gap: var(--space-2);
   flex-wrap: wrap;
   margin-top: var(--space-2);
+}
+
+.ody-milestone-summary {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ody-milestone-list {
+  display: grid;
+  gap: 10px;
+}
+
+.ody-milestone-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+
+.ody-milestone-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  font-size: 0.86rem;
+  line-height: 1.4;
+  flex: 1;
+  cursor: pointer;
+}
+
+.ody-milestone-check.done {
+  color: var(--text-muted);
+}
+
+.ody-milestone-check.done span {
+  text-decoration: line-through;
+}
+
+.ody-milestone-add {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: 4px;
+}
+
+.ody-milestone-add .ody-input {
+  flex: 1;
 }
 
 .ody-heatmap-panel {
@@ -1298,6 +1411,11 @@ input, select, textarea, button { font: inherit; }
 .ody-section + .ody-section,
 .ody-card + .ody-card {
   margin-top: var(--space-4);
+}
+
+.ody-grid.three > .ody-card + .ody-card,
+.ody-grid.two > .ody-card + .ody-card {
+  margin-top: 0;
 }
 
 .ody-section-header {
@@ -1932,16 +2050,44 @@ input, select, textarea, button { font: inherit; }
 
 .ody-journal-dim-picker {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.ody-journal-dim-picker .ody-badge {
-  border: 1px solid var(--border-soft);
-  background: transparent;
+.ody-journal-dim-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(149, 157, 171, 0.3);
+  border-radius: 999px;
+  background: rgba(10, 16, 26, 0.35);
   cursor: pointer;
-  padding: 5px 8px;
+  padding: 6px 10px;
+  transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
+}
+
+.ody-journal-dim-chip:hover {
+  border-color: rgba(201, 164, 76, 0.45);
+  transform: translateY(-1px);
+}
+
+.ody-journal-dim-chip .ody-dim-label {
+  color: var(--text-muted);
+}
+
+.ody-journal-dim-chip.active {
+  border-color: rgba(201, 164, 76, 0.58);
+  background: rgba(201, 164, 76, 0.12);
+}
+
+.ody-journal-dim-chip.active .ody-dim-label {
+  color: var(--accent-gold);
+}
+
+.ody-journal-dim-chip:focus-visible {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(201, 164, 76, 0.18);
 }
 
 .ody-journal-editor-wrap {
@@ -2032,6 +2178,14 @@ input, select, textarea, button { font: inherit; }
   text-transform: uppercase;
 }
 
+.ody-journal-tag-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+
 .ody-journal-reader-text {
   white-space: pre-wrap;
   color: var(--text-secondary);
@@ -2046,5 +2200,9 @@ input, select, textarea, button { font: inherit; }
 
   .ody-journal-dim-picker {
     justify-content: flex-start;
+  }
+
+  .ody-journal-tag-row {
+    gap: 8px 10px;
   }
 }

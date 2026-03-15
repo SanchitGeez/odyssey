@@ -69,6 +69,16 @@ export type QuestActivity = {
   created_at?: string
 }
 
+export type QuestMilestone = {
+  id: string
+  quest_id: string
+  title: string
+  is_completed: boolean
+  completed_at: string | null
+  sort_order: number
+  created_at: string
+}
+
 export type Journal = {
   id: string
   title: string | null

@@ -151,13 +151,14 @@ export function InsightsPage() {
       ) : overview ? (
         <div className="ody-grid">
           {/* Stat cards */}
-          <div className="ody-grid three ody-stagger">
+          <div className="ody-grid three ody-insights-stats">
             <article className="ody-card ody-stat-card">
               <div style={{ color: 'var(--accent-gold)', marginBottom: 8 }}>
                 <Icon name="flame" size={24} />
               </div>
               <div className="ody-stat-value">{overview.current_streak}</div>
               <div className="ody-stat-label">Day Streak</div>
+              <div className="ody-stat-sub">Consistency over intensity</div>
             </article>
 
             <article className="ody-card ody-stat-card">

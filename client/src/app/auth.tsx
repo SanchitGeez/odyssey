@@ -10,6 +10,7 @@ import type {
   Quest,
   QuestActivity,
   QuestActivityType,
+  QuestMilestone,
   QuestStatus,
   Task,
   TaskHeatmapResponse,
@@ -76,6 +77,10 @@ type AppApi = {
   deleteQuest: (questId: string) => Promise<void>
   listQuestActivity: (questId: string) => Promise<QuestActivity[]>
   addQuestActivity: (questId: string, activityType: QuestActivityType, eventDate: string, payload?: Record<string, unknown>) => Promise<void>
+  listQuestMilestones: (questId: string) => Promise<QuestMilestone[]>
+  createQuestMilestone: (questId: string, title: string) => Promise<QuestMilestone>
+  updateQuestMilestone: (questId: string, milestoneId: string, payload: { title?: string; is_completed?: boolean; sort_order?: number }) => Promise<QuestMilestone>
+  deleteQuestMilestone: (questId: string, milestoneId: string) => Promise<void>
   listJournals: (search?: string) => Promise<Journal[]>
   getJournal: (journalId: string) => Promise<Journal>
   createJournal: (payload: JournalPayload) => Promise<Journal>
@@ -274,6 +279,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return authedFetch<void>(`/api/v1/quests/${questId}/activity`, {
           method: 'POST',
           body: JSON.stringify(trimPayload({ activity_type: activityType, event_date: eventDate, payload })),
+        })
+      },
+      listQuestMilestones(questId) {
+        return authedFetch<QuestMilestone[]>(`/api/v1/quests/${questId}/milestones`)
+      },
+      createQuestMilestone(questId, title) {
+        return authedFetch<QuestMilestone>(`/api/v1/quests/${questId}/milestones`, {
+          method: 'POST',
+          body: JSON.stringify(trimPayload({ title })),
+        })
+      },
+      updateQuestMilestone(questId, milestoneId, payload) {
+        return authedFetch<QuestMilestone>(`/api/v1/quests/${questId}/milestones/${milestoneId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(trimPayload(payload)),
+        })
+      },
+      deleteQuestMilestone(questId, milestoneId) {
+        return authedFetch<void>(`/api/v1/quests/${questId}/milestones/${milestoneId}`, {
+          method: 'DELETE',
         })
       },
       listJournals(search) {

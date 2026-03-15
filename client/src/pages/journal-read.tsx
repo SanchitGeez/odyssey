@@ -91,7 +91,7 @@ export function JournalReadPage() {
         <p className="ody-journal-date">{formatDate(entry.created_at)}</p>
         <h1 className="ody-journal-title">{entry.title || 'Untitled entry'}</h1>
         {entry.category_tags?.length ? (
-          <div className="ody-item-meta" style={{ marginBottom: 16 }}>
+          <div className="ody-journal-tag-row">
             {entry.category_tags.map((tag) => (
               <DimensionLabel key={tag} dim={tag} />
             ))}

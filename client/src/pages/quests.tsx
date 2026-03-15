@@ -1,20 +1,15 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { AppShell } from '../components/layout'
 import { SlideOver } from '../components/modal'
+import { DimensionFilter } from '../components/dimension-filter'
+import { DimensionLabel } from '../components/dimension-label'
 import { Icon } from '../components/icons'
 import { useToast } from '../components/toast'
 import { useAuth } from '../app/auth'
-import type { Quest, QuestActivity, QuestActivityType, QuestStatus } from '../app/types'
+import type { LifeDimension, Quest, QuestActivity, QuestActivityType, QuestStatus } from '../app/types'
 import { formatDate, todayIso } from '../lib/date'
-
-const categories = [
-  'Body & Vitality',
-  'Mind & Inner World',
-  'Work & Mastery',
-  'Wealth & Resources',
-  'Connection & Belonging',
-  'Meaning & Transcendence',
-]
+import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
 
 const activityTypes: QuestActivityType[] = [
   'progress_updated',
@@ -36,7 +31,7 @@ type QuestForm = {
   id?: string
   title: string
   description: string
-  category: string
+  category: LifeDimension | ''
   target_date: string
   success_criteria: string
   progress_percent: string
@@ -54,6 +49,7 @@ const initialForm: QuestForm = {
 }
 
 export function QuestsPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const { api } = useAuth()
   const { toast } = useToast()
   const [quests, setQuests] = useState<Quest[]>([])
@@ -65,6 +61,7 @@ export function QuestsPage() {
   const [activityPayload, setActivityPayload] = useState('')
   const [activityDate, setActivityDate] = useState(todayIso())
   const [loading, setLoading] = useState(true)
+  const [dimFilter, setDimFilter] = useState<LifeDimension | 'all'>('all')
 
   const loadQuests = async () => {
     setLoading(true)
@@ -93,7 +90,43 @@ export function QuestsPage() {
     else setActivity([])
   }, [selectedQuestId])
 
-  const selectedQuest = quests.find((q) => q.id === selectedQuestId)
+  useEffect(() => {
+    if (searchParams.get('prefill') !== 'true') return
+    const title = searchParams.get('title') || ''
+    const categoryParam = searchParams.get('category') as LifeDimension | null
+    const category = categoryParam && categoryParam in DIMENSIONS ? categoryParam : ''
+
+    setForm({
+      ...initialForm,
+      title,
+      category,
+    })
+    setPanelOpen(true)
+
+    const next = new URLSearchParams(searchParams)
+    next.delete('prefill')
+    next.delete('title')
+    next.delete('category')
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams])
+
+  const filteredQuests = useMemo(
+    () => quests.filter((quest) => dimFilter === 'all' || quest.category === dimFilter),
+    [dimFilter, quests],
+  )
+
+  const selectedQuest = filteredQuests.find((q) => q.id === selectedQuestId) ?? filteredQuests[0]
+
+  useEffect(() => {
+    if (filteredQuests.length === 0) {
+      setSelectedQuestId('')
+      setActivity([])
+      return
+    }
+    if (!filteredQuests.some((quest) => quest.id === selectedQuestId)) {
+      setSelectedQuestId(filteredQuests[0].id)
+    }
+  }, [filteredQuests, selectedQuestId])
 
   const openCreate = () => { setForm(initialForm); setPanelOpen(true) }
   const openEdit = (quest: Quest) => {
@@ -115,14 +148,14 @@ export function QuestsPage() {
     try {
       if (form.id) {
         await api.updateQuest(form.id, {
-          title: form.title, description: form.description, category: form.category,
+          title: form.title, description: form.description, category: form.category || undefined,
           target_date: form.target_date, success_criteria: form.success_criteria,
           status: form.status, progress_percent: Number(form.progress_percent),
         })
         toast('Quest updated', 'success')
       } else {
         await api.createQuest({
-          title: form.title, description: form.description, category: form.category,
+          title: form.title, description: form.description, category: form.category || undefined,
           target_date: form.target_date, success_criteria: form.success_criteria,
         })
         toast('Quest created', 'success')
@@ -171,19 +204,23 @@ export function QuestsPage() {
         </button>
       }
     >
+      <DimensionFilter value={dimFilter} onChange={setDimFilter} />
+
       {loading ? (
         <div className="ody-grid">
           {[1, 2].map((i) => <div key={i} className="ody-skeleton ody-skeleton-card" />)}
         </div>
-      ) : quests.length === 0 ? (
+      ) : filteredQuests.length === 0 ? (
         <div className="ody-card">
           <div className="ody-empty">
             <div className="ody-empty-icon"><Icon name="compass" size={22} /></div>
-            <h4>No Quests Yet</h4>
-            <p>Quests are multi-step goals that live outside your daily check-in.</p>
-            <button className="ody-btn" onClick={openCreate} style={{ marginTop: 16 }}>
-              <Icon name="plus" size={14} /> Create Quest
-            </button>
+            <h4>{quests.length === 0 ? 'No Quests Yet' : 'No Matches'}</h4>
+            <p>{quests.length === 0 ? 'Quests are multi-step goals that live outside your daily check-in.' : 'Try selecting another dimension.'}</p>
+            {quests.length === 0 ? (
+              <button className="ody-btn" onClick={openCreate} style={{ marginTop: 16 }}>
+                <Icon name="plus" size={14} /> Create Quest
+              </button>
+            ) : null}
           </div>
         </div>
       ) : (
@@ -191,7 +228,7 @@ export function QuestsPage() {
           {/* Quest list */}
           <div className="ody-grid">
             <ul className="ody-list ody-stagger">
-              {quests.map((quest) => (
+              {filteredQuests.map((quest) => (
                 <li
                   key={quest.id}
                   className={`ody-list-item${selectedQuestId === quest.id ? ' selected' : ''}`}
@@ -217,6 +254,7 @@ export function QuestsPage() {
                     </div>
                   </div>
                   <div className="ody-item-meta" style={{ marginTop: 8 }}>
+                    {quest.category ? <DimensionLabel dim={quest.category} /> : <span className="ody-muted" style={{ fontSize: '0.72rem' }}>No dimension</span>}
                     <div style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
                       <button className="ody-icon-btn" onClick={(e) => { e.stopPropagation(); openEdit(quest) }} aria-label="Edit quest">
                         <Icon name="edit" size={15} />
@@ -237,6 +275,11 @@ export function QuestsPage() {
               <>
                 <div className="ody-card">
                   <h3 className="ody-section-title" style={{ marginBottom: 8 }}>{selectedQuest.title}</h3>
+                  {selectedQuest.category ? (
+                    <div style={{ marginBottom: 10 }}>
+                      <DimensionLabel dim={selectedQuest.category} />
+                    </div>
+                  ) : null}
                   {selectedQuest.success_criteria ? (
                     <p className="ody-muted" style={{ fontSize: '0.82rem', margin: '0 0 12px', lineHeight: 1.5 }}>
                       {selectedQuest.success_criteria}
@@ -327,9 +370,17 @@ export function QuestsPage() {
           </label>
           <label className="ody-field">
             <span className="ody-label">Category</span>
-            <select className="ody-select" value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}>
+            <select
+              className="ody-select"
+              value={form.category}
+              onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as LifeDimension | '' }))}
+            >
               <option value="">Select category</option>
-              {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+              {DIMENSION_KEYS.map((dimensionKey) => (
+                <option key={dimensionKey} value={dimensionKey}>
+                  {DIMENSIONS[dimensionKey].label}
+                </option>
+              ))}
             </select>
           </label>
           <label className="ody-field">

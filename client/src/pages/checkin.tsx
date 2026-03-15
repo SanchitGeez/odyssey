@@ -1,18 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../app/auth'
+import { DimensionLabel } from '../components/dimension-label'
 import { Icon } from '../components/icons'
 import type { DailyItemsResponse, DailyItem } from '../app/types'
 import { shiftDays, todayIso, formatDate } from '../lib/date'
-
-const categoryColors: Record<string, string> = {
-  'Body & Vitality': 'var(--cat-body)',
-  'Mind & Inner World': 'var(--cat-mind)',
-  'Work & Mastery': 'var(--cat-work)',
-  'Wealth & Resources': 'var(--cat-wealth)',
-  'Connection & Belonging': 'var(--cat-connection)',
-  'Meaning & Transcendence': 'var(--cat-meaning)',
-}
 
 export function CheckInPage() {
   const { api } = useAuth()
@@ -149,11 +141,7 @@ export function CheckInPage() {
             </div>
             <div className="ody-checkin-card" key={activeItem.task_id}>
               <div className="ody-checkin-category">
-                <span
-                  className="ody-cat-dot"
-                  style={{ background: categoryColors[activeItem.category] || 'var(--accent-silver)' }}
-                />
-                {activeItem.category}
+                <DimensionLabel dim={activeItem.category} />
               </div>
               <h3 className="ody-checkin-task-title">{activeItem.title}</h3>
               <div className="ody-checkin-actions">

@@ -1,29 +1,15 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { AppShell } from '../components/layout'
 import { SlideOver } from '../components/modal'
+import { DimensionFilter } from '../components/dimension-filter'
+import { DimensionLabel } from '../components/dimension-label'
 import { Icon } from '../components/icons'
 import { useToast } from '../components/toast'
 import { useAuth } from '../app/auth'
-import type { Task, TaskStatus, TaskType } from '../app/types'
+import type { LifeDimension, Task, TaskStatus, TaskType } from '../app/types'
 import { formatDate } from '../lib/date'
-
-const categories = [
-  'Body & Vitality',
-  'Mind & Inner World',
-  'Work & Mastery',
-  'Wealth & Resources',
-  'Connection & Belonging',
-  'Meaning & Transcendence',
-]
-
-const categoryColors: Record<string, string> = {
-  'Body & Vitality': 'var(--cat-body)',
-  'Mind & Inner World': 'var(--cat-mind)',
-  'Work & Mastery': 'var(--cat-work)',
-  'Wealth & Resources': 'var(--cat-wealth)',
-  'Connection & Belonging': 'var(--cat-connection)',
-  'Meaning & Transcendence': 'var(--cat-meaning)',
-}
+import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
 
 const dayOptions = [
   { label: 'Mon', value: 0 },
@@ -39,7 +25,7 @@ type TaskForm = {
   id?: string
   title: string
   description: string
-  category: string
+  category: LifeDimension
   task_type: TaskType
   schedule_type: string
   days_of_week: number[]
@@ -51,7 +37,7 @@ type TaskForm = {
 const initialForm: TaskForm = {
   title: '',
   description: '',
-  category: categories[0],
+  category: DIMENSION_KEYS[0],
   task_type: 'recurring',
   schedule_type: 'daily',
   days_of_week: [],
@@ -80,6 +66,7 @@ function parseDaysOfWeek(value: unknown): number[] {
 }
 
 export function TasksPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const { api } = useAuth()
   const { toast } = useToast()
   const [tasks, setTasks] = useState<Task[]>([])
@@ -88,6 +75,7 @@ export function TasksPage() {
   const [panelOpen, setPanelOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState<'all' | TaskStatus>('all')
   const [typeFilter, setTypeFilter] = useState<'all' | TaskType>('all')
+  const [dimFilter, setDimFilter] = useState<LifeDimension | 'all'>('all')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -105,17 +93,45 @@ export function TasksPage() {
 
   useEffect(() => { void load() }, [])
 
+  useEffect(() => {
+    if (searchParams.get('prefill') !== 'true') return
+    const title = searchParams.get('title') || ''
+    const categoryParam = searchParams.get('category') as LifeDimension | null
+    const typeParam = searchParams.get('type')
+    const category = categoryParam && categoryParam in DIMENSIONS ? categoryParam : DIMENSION_KEYS[0]
+    const taskType: TaskType = typeParam === 'one_time' ? 'one_time' : 'recurring'
+
+    setForm({
+      ...initialForm,
+      title,
+      category,
+      task_type: taskType,
+      schedule_type: taskType === 'recurring' ? 'daily' : initialForm.schedule_type,
+      due_window_type: taskType === 'one_time' ? 'none' : initialForm.due_window_type,
+    })
+    setScheduleError('')
+    setPanelOpen(true)
+
+    const next = new URLSearchParams(searchParams)
+    next.delete('prefill')
+    next.delete('title')
+    next.delete('category')
+    next.delete('type')
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams])
+
   const filtered = useMemo(
     () => tasks.filter((t) => {
       if (statusFilter !== 'all' && t.status !== statusFilter) return false
       if (typeFilter !== 'all' && t.task_type !== typeFilter) return false
+      if (dimFilter !== 'all' && t.category !== dimFilter) return false
       if (search.trim()) {
         const q = search.toLowerCase()
         if (!`${t.title} ${t.description || ''}`.toLowerCase().includes(q)) return false
       }
       return true
     }),
-    [search, statusFilter, tasks, typeFilter],
+    [dimFilter, search, statusFilter, tasks, typeFilter],
   )
 
   const openCreate = () => {
@@ -212,6 +228,8 @@ export function TasksPage() {
         </button>
       }
     >
+      <DimensionFilter value={dimFilter} onChange={setDimFilter} />
+
       {/* Filters */}
       <div className="ody-card" style={{ marginBottom: 16 }}>
         <div className="ody-row">
@@ -270,10 +288,6 @@ export function TasksPage() {
             <li key={task.id} className="ody-list-item">
               <div className="ody-row">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span
-                    className="ody-cat-dot"
-                    style={{ background: categoryColors[task.category] || 'var(--accent-silver)' }}
-                  />
                   <span className="ody-item-title">{task.title}</span>
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
@@ -289,7 +303,7 @@ export function TasksPage() {
                 </p>
               ) : null}
               <div className="ody-item-meta" style={{ marginTop: 10 }}>
-                <span className="ody-muted" style={{ fontSize: '0.72rem' }}>{task.category}</span>
+                <DimensionLabel dim={task.category} />
                 {task.schedule_type ? (
                   <span className="ody-muted" style={{ fontSize: '0.72rem' }}>
                     {task.schedule_type.replace(/_/g, ' ')}
@@ -332,8 +346,16 @@ export function TasksPage() {
           </label>
           <label className="ody-field">
             <span className="ody-label">Category</span>
-            <select className="ody-select" value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}>
-              {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+            <select
+              className="ody-select"
+              value={form.category}
+              onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as LifeDimension }))}
+            >
+              {DIMENSION_KEYS.map((dimensionKey) => (
+                <option key={dimensionKey} value={dimensionKey}>
+                  {DIMENSIONS[dimensionKey].label}
+                </option>
+              ))}
             </select>
           </label>
           <label className="ody-field">

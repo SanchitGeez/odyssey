@@ -1,4 +1,4 @@
----
+`---
 title: Odyssey Product Requirements Document
 version: "1.1"
 date: March 2026
@@ -8,7 +8,7 @@ status: Stage 1 In Progress
 # Odyssey Product Requirements Document
 
 **Version:** 1.1
-**Date:** March 2026  
+**Date:** March 2026
 **Status:** Stage 1 In Progress
 
 ## 1. Problem Statement

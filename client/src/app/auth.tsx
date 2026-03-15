@@ -6,6 +6,7 @@ import type {
   DailyItemsResponse,
   InsightsOverview,
   Journal,
+  LifeDimension,
   Quest,
   QuestActivity,
   QuestActivityType,
@@ -25,7 +26,7 @@ type ApiError = {
 type TaskPayload = {
   title: string
   description?: string
-  category: string
+  category: LifeDimension
   task_type: TaskType
   schedule_type?: string
   schedule_config?: Record<string, unknown>
@@ -40,7 +41,7 @@ type TaskPatch = Partial<TaskPayload> & { status?: TaskStatus }
 type QuestPayload = {
   title: string
   description?: string
-  category?: string
+  category?: LifeDimension
   target_date?: string
   success_criteria?: string
 }
@@ -65,7 +66,7 @@ type AppApi = {
   listQuestActivity: (questId: string) => Promise<QuestActivity[]>
   addQuestActivity: (questId: string, activityType: QuestActivityType, eventDate: string, payload?: Record<string, unknown>) => Promise<void>
   listJournals: (search?: string) => Promise<Journal[]>
-  createJournal: (payload: { title?: string; content: string; tags?: string[]; category_tags?: string[] }) => Promise<Journal>
+  createJournal: (payload: { title?: string; content: string; tags?: string[]; category_tags?: LifeDimension[] }) => Promise<Journal>
   deleteJournal: (journalId: string) => Promise<void>
   getInsightsOverview: (fromDate: string, toDate: string) => Promise<InsightsOverview>
 }

@@ -1,19 +1,18 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { AppShell } from '../components/layout'
+import { DimensionFilter } from '../components/dimension-filter'
 import { Icon } from '../components/icons'
 import { useAuth } from '../app/auth'
-import type { InsightsOverview } from '../app/types'
+import type { InsightsOverview, LifeDimension } from '../app/types'
 import { defaultInsightsWindow, formatDate } from '../lib/date'
+import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
 
-const dimensions = [
-  { key: 'Body & Vitality', short: 'Body', color: 'var(--cat-body)' },
-  { key: 'Mind & Inner World', short: 'Mind', color: 'var(--cat-mind)' },
-  { key: 'Work & Mastery', short: 'Work', color: 'var(--cat-work)' },
-  { key: 'Wealth & Resources', short: 'Wealth', color: 'var(--cat-wealth)' },
-  { key: 'Connection & Belonging', short: 'Connect', color: 'var(--cat-connection)' },
-  { key: 'Meaning & Transcendence', short: 'Meaning', color: 'var(--cat-meaning)' },
-]
+const dimensions = DIMENSION_KEYS.map((dimensionKey) => ({
+  key: dimensionKey,
+  short: DIMENSIONS[dimensionKey].label,
+  color: `var(${DIMENSIONS[dimensionKey].cssVar})`,
+}))
 
 function HexagonChart() {
   const cx = 150, cy = 140, r = 100
@@ -104,6 +103,7 @@ export function InsightsPage() {
   const [window, setWindow] = useState(defaultInsightsWindow())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [dimFilter, setDimFilter] = useState<LifeDimension | 'all'>('all')
 
   const load = async (from: string, to: string) => {
     setLoading(true)
@@ -136,6 +136,8 @@ export function InsightsPage() {
         </Link>
       }
     >
+      <DimensionFilter value={dimFilter} onChange={setDimFilter} />
+
       {loading ? (
         <div className="ody-grid three">
           {[1, 2, 3].map((i) => (
@@ -191,7 +193,9 @@ export function InsightsPage() {
             </div>
             <HexagonChart />
             <p className="ody-muted" style={{ textAlign: 'center', fontSize: '0.72rem', margin: 0 }}>
-              Category health scores will become data-driven as you track more activity.
+              {dimFilter === 'all'
+                ? 'Category health scores will become data-driven as you track more activity.'
+                : `${DIMENSIONS[dimFilter].label} is selected for activity filtering. The balance hexagon always shows all dimensions.`}
             </p>
           </article>
 

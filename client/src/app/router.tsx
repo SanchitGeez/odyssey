@@ -3,6 +3,7 @@ import { useAuth } from './auth'
 import { CheckInPage } from '../pages/checkin'
 import { InsightsPage } from '../pages/insights'
 import { JournalsPage } from '../pages/journals'
+import { HelpPage } from '../pages/help'
 import { LoginPage } from '../pages/login'
 import { OnboardingPage } from '../pages/onboarding'
 import { QuestsPage } from '../pages/quests'
@@ -56,6 +57,7 @@ export function AppRouter() {
           <Route path="/quests" element={<QuestsPage />} />
           <Route path="/journals" element={<JournalsPage />} />
           <Route path="/insights" element={<InsightsPage />} />
+          <Route path="/help" element={<HelpPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
 

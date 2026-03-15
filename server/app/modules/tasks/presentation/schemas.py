@@ -5,13 +5,13 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from app.shared.db.models import TaskActivityType, TaskStatus, TaskType
+from app.shared.db.models import LifeDimension, TaskActivityType, TaskStatus, TaskType
 
 
 class TaskCreateIn(BaseModel):
     title: str = Field(min_length=1, max_length=255)
     description: str | None = None
-    category: str
+    category: LifeDimension
     task_type: TaskType
     schedule_type: str | None = None
     schedule_config: dict[str, Any] | None = None
@@ -29,7 +29,7 @@ class TaskOut(TaskCreateIn):
 class TaskUpdateIn(BaseModel):
     title: str | None = None
     description: str | None = None
-    category: str | None = None
+    category: LifeDimension | None = None
     status: TaskStatus | None = None
     schedule_type: str | None = None
     schedule_config: dict[str, Any] | None = None
@@ -42,7 +42,7 @@ class TaskUpdateIn(BaseModel):
 class DailyItem(BaseModel):
     task_id: str
     title: str
-    category: str
+    category: LifeDimension
     status: str
     response: str | None = None
 

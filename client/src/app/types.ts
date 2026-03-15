@@ -1,6 +1,7 @@
 export type TaskType = 'one_time' | 'recurring'
 export type TaskStatus = 'active' | 'completed' | 'archived'
 export type TaskActivityType = 'done' | 'skipped' | 'value_logged' | 'status_changed' | 'deadline_extended' | 'note_added'
+export type LifeDimension = 'vitality' | 'psyche' | 'prowess' | 'wealth' | 'alliance' | 'legacy'
 
 export type QuestStatus = 'active' | 'paused' | 'completed' | 'archived'
 export type QuestActivityType = 'progress_updated' | 'status_changed' | 'milestone_added' | 'milestone_completed' | 'note_added'
@@ -21,7 +22,7 @@ export type Task = {
   id: string
   title: string
   description: string | null
-  category: string
+  category: LifeDimension
   task_type: TaskType
   status: TaskStatus
   schedule_type: string | null
@@ -35,7 +36,7 @@ export type Task = {
 export type DailyItem = {
   task_id: string
   title: string
-  category: string
+  category: LifeDimension
   status: string
   response: string | null
 }
@@ -52,7 +53,7 @@ export type Quest = {
   id: string
   title: string
   description: string | null
-  category: string | null
+  category: LifeDimension | null
   status: QuestStatus
   target_date: string | null
   success_criteria: string | null
@@ -72,7 +73,7 @@ export type Journal = {
   title: string | null
   content: string
   tags: string[] | null
-  category_tags: string[] | null
+  category_tags: LifeDimension[] | null
 }
 
 export type InsightsOverview = {

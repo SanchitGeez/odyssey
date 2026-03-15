@@ -1,4 +1,5 @@
 import { AppShell } from '../components/layout'
+import { Link } from 'react-router-dom'
 import { Icon } from '../components/icons'
 import { useAuth } from '../app/auth'
 
@@ -36,6 +37,21 @@ export function SettingsPage() {
           <button className="ody-btn danger" onClick={api.logout}>
             <Icon name="logout" size={14} /> Sign Out
           </button>
+        </article>
+
+        <article className="ody-card">
+          <div className="ody-section-header">
+            <h3 className="ody-section-title">Guide</h3>
+            <Icon name="scroll" size={18} className="ody-muted" />
+          </div>
+          <p className="ody-muted" style={{ margin: '0 0 16px', fontSize: '0.82rem', lineHeight: 1.6 }}>
+            Read the full Life Dimensions guide with practical examples for habits and goals.
+          </p>
+          <Link to="/help" style={{ textDecoration: 'none' }}>
+            <button className="ody-btn secondary">
+              <Icon name="book" size={14} /> Open Guide
+            </button>
+          </Link>
         </article>
 
         <article className="ody-card">

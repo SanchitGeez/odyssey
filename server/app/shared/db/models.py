@@ -50,6 +50,15 @@ class QuestActivityType(str, enum.Enum):
     note_added = "note_added"
 
 
+class LifeDimension(str, enum.Enum):
+    vitality = "vitality"
+    psyche = "psyche"
+    prowess = "prowess"
+    wealth = "wealth"
+    alliance = "alliance"
+    legacy = "legacy"
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -79,7 +88,7 @@ class Task(Base):
     user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    category: Mapped[str] = mapped_column(String(64), nullable=False)
+    category: Mapped[LifeDimension] = mapped_column(Enum(LifeDimension), nullable=False)
     task_type: Mapped[TaskType] = mapped_column(Enum(TaskType), nullable=False)
     status: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.active, nullable=False)
     schedule_type: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
@@ -130,7 +139,7 @@ class Quest(Base):
     user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    category: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    category: Mapped[Optional[LifeDimension]] = mapped_column(Enum(LifeDimension), nullable=True)
     status: Mapped[QuestStatus] = mapped_column(Enum(QuestStatus), default=QuestStatus.active, nullable=False)
     target_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     success_criteria: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

@@ -11,7 +11,7 @@ def test_quests_journals_and_insights(client):
     quest = client.post(
         "/api/v1/quests",
         headers=headers,
-        json={"title": "Ship MVP", "description": "phase1", "category": "work"},
+        json={"title": "Ship MVP", "description": "phase1", "category": "prowess"},
     )
     assert quest.status_code == 200
     quest_id = quest.json()["id"]
@@ -30,7 +30,12 @@ def test_quests_journals_and_insights(client):
     journal = client.post(
         "/api/v1/journals",
         headers=headers,
-        json={"title": "Day Log", "content": "Good progress", "tags": ["reflection"]},
+        json={
+            "title": "Day Log",
+            "content": "Good progress",
+            "tags": ["reflection"],
+            "category_tags": ["prowess", "psyche"],
+        },
     )
     assert journal.status_code == 200
 
@@ -44,3 +49,33 @@ def test_quests_journals_and_insights(client):
     assert "tasks" in body
     assert "quests" in body
     assert "journals" in body
+
+
+def test_dimension_validation_rejects_invalid_values(client):
+    headers = auth_headers(client)
+
+    task = client.post(
+        "/api/v1/tasks",
+        headers=headers,
+        json={
+            "title": "Invalid category task",
+            "category": "body",
+            "task_type": "recurring",
+            "schedule_type": "daily",
+        },
+    )
+    assert task.status_code == 422
+
+    quest = client.post(
+        "/api/v1/quests",
+        headers=headers,
+        json={"title": "Invalid category quest", "category": "work"},
+    )
+    assert quest.status_code == 422
+
+    journal = client.post(
+        "/api/v1/journals",
+        headers=headers,
+        json={"title": "Bad tags", "content": "test", "category_tags": ["mind"]},
+    )
+    assert journal.status_code == 422

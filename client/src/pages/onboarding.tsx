@@ -4,21 +4,23 @@ import { useAuth } from '../app/auth'
 import { AppShell } from '../components/layout'
 import { Icon } from '../components/icons'
 import { setOnboardingComplete } from '../lib/storage'
+import type { LifeDimension } from '../app/types'
+import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
 
-const dimensions = [
-  { name: 'Body & Vitality', desc: 'Physical health, sleep, nutrition, fitness', color: 'var(--cat-body)', icon: 'target' },
-  { name: 'Mind & Inner World', desc: 'Mental health, learning, emotional regulation', color: 'var(--cat-mind)', icon: 'eye' },
-  { name: 'Work & Mastery', desc: 'Career, skills, productivity, purpose', color: 'var(--cat-work)', icon: 'scroll' },
-  { name: 'Wealth & Resources', desc: 'Money, saving, investing, financial literacy', color: 'var(--cat-wealth)', icon: 'milestone' },
-  { name: 'Connection & Belonging', desc: 'Family, friendships, relationships', color: 'var(--cat-connection)', icon: 'user' },
-  { name: 'Meaning & Transcendence', desc: 'Values, creativity, legacy, purpose', color: 'var(--cat-meaning)', icon: 'compass' },
-]
+const dimensionIcons: Record<LifeDimension, 'target' | 'eye' | 'scroll' | 'milestone' | 'user' | 'compass'> = {
+  vitality: 'target',
+  psyche: 'eye',
+  prowess: 'scroll',
+  wealth: 'milestone',
+  alliance: 'user',
+  legacy: 'compass',
+}
 
 export function OnboardingPage() {
   const navigate = useNavigate()
   const { user, api } = useAuth()
   const [title, setTitle] = useState('10-minute walk')
-  const [category, setCategory] = useState(dimensions[0].name)
+  const [category, setCategory] = useState<LifeDimension>(DIMENSION_KEYS[0])
   const [taskType, setTaskType] = useState<'recurring' | 'one_time'>('recurring')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -48,14 +50,19 @@ export function OnboardingPage() {
     <AppShell title="Welcome to Odyssey" subtitle="Let us set up your chronicle">
       {/* Dimensions overview */}
       <section className="ody-card">
-        <h3 className="ody-section-title" style={{ marginBottom: 16 }}>The Six Life Dimensions</h3>
-        <div className="ody-grid three ody-stagger">
-          {dimensions.map((dim) => (
-            <div key={dim.name} className="ody-dim-card">
-              <span className="ody-cat-dot" style={{ background: dim.color, width: 8, height: 8 }} />
+          <h3 className="ody-section-title" style={{ marginBottom: 16 }}>The Six Life Dimensions</h3>
+          <div className="ody-grid three ody-stagger">
+          {DIMENSION_KEYS.map((dimensionKey) => (
+            <div key={dimensionKey} className="ody-dim-card">
+              <span className="ody-cat-dot" style={{ background: `var(${DIMENSIONS[dimensionKey].cssVar})`, width: 8, height: 8 }} />
               <div>
-                <div style={{ fontWeight: 500, fontSize: '0.85rem', marginBottom: 2 }}>{dim.name}</div>
-                <div className="ody-muted" style={{ fontSize: '0.72rem' }}>{dim.desc}</div>
+                <div style={{ fontWeight: 500, fontSize: '0.85rem', marginBottom: 2 }}>
+                  <span style={{ display: 'inline-flex', marginRight: 6, verticalAlign: 'middle' }}>
+                    <Icon name={dimensionIcons[dimensionKey]} size={12} />
+                  </span>
+                  {DIMENSIONS[dimensionKey].label}
+                </div>
+                <div className="ody-muted" style={{ fontSize: '0.72rem' }}>{DIMENSIONS[dimensionKey].description}</div>
               </div>
             </div>
           ))}
@@ -76,8 +83,12 @@ export function OnboardingPage() {
           <div className="ody-grid two">
             <label className="ody-field">
               <span className="ody-label">Category</span>
-              <select className="ody-select" value={category} onChange={(e) => setCategory(e.target.value)}>
-                {dimensions.map((d) => <option key={d.name} value={d.name}>{d.name}</option>)}
+              <select className="ody-select" value={category} onChange={(e) => setCategory(e.target.value as LifeDimension)}>
+                {DIMENSION_KEYS.map((dimensionKey) => (
+                  <option key={dimensionKey} value={dimensionKey}>
+                    {DIMENSIONS[dimensionKey].label}
+                  </option>
+                ))}
               </select>
             </label>
             <label className="ody-field">

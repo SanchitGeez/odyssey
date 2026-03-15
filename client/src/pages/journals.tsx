@@ -1,19 +1,13 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { AppShell } from '../components/layout'
 import { SlideOver } from '../components/modal'
+import { DimensionFilter } from '../components/dimension-filter'
+import { DimensionLabel } from '../components/dimension-label'
 import { Icon } from '../components/icons'
 import { useToast } from '../components/toast'
 import { useAuth } from '../app/auth'
-import type { Journal } from '../app/types'
-
-const categories = [
-  'Body & Vitality',
-  'Mind & Inner World',
-  'Work & Mastery',
-  'Wealth & Resources',
-  'Connection & Belonging',
-  'Meaning & Transcendence',
-]
+import type { Journal, LifeDimension } from '../app/types'
+import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
 
 export function JournalsPage() {
   const { api } = useAuth()
@@ -23,9 +17,10 @@ export function JournalsPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
-  const [categoryTags, setCategoryTags] = useState<string[]>([])
+  const [categoryTags, setCategoryTags] = useState<LifeDimension[]>([])
   const [loading, setLoading] = useState(true)
   const [panelOpen, setPanelOpen] = useState(false)
+  const [dimFilter, setDimFilter] = useState<LifeDimension | 'all'>('all')
 
   const load = async (query?: string) => {
     setLoading(true)
@@ -76,7 +71,12 @@ export function JournalsPage() {
     await load(search || undefined)
   }
 
-  const toggleCategory = (cat: string) => {
+  const filteredJournals = useMemo(
+    () => journals.filter((entry) => dimFilter === 'all' || Boolean(entry.category_tags?.includes(dimFilter))),
+    [dimFilter, journals],
+  )
+
+  const toggleCategory = (cat: LifeDimension) => {
     setCategoryTags((prev) => prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat])
   }
 
@@ -90,6 +90,8 @@ export function JournalsPage() {
         </button>
       }
     >
+      <DimensionFilter value={dimFilter} onChange={setDimFilter} />
+
       {/* Search */}
       <div className="ody-card" style={{ marginBottom: 16 }}>
         <form className="ody-row" onSubmit={runSearch}>
@@ -115,16 +117,16 @@ export function JournalsPage() {
         <div className="ody-grid">
           {[1, 2, 3].map((i) => <div key={i} className="ody-skeleton ody-skeleton-card" style={{ height: 90 }} />)}
         </div>
-      ) : journals.length === 0 ? (
+      ) : filteredJournals.length === 0 ? (
         <div className="ody-card">
           <div className="ody-empty">
             <div className="ody-empty-icon"><Icon name="book" size={22} /></div>
-            <h4>{search ? 'No Results' : 'No Journal Entries'}</h4>
-            <p>{search
-              ? 'Try different search terms.'
+            <h4>{search || dimFilter !== 'all' ? 'No Results' : 'No Journal Entries'}</h4>
+            <p>{search || dimFilter !== 'all'
+              ? 'Try different filters or search terms.'
               : 'Start writing to capture your reflections, gratitude, or random thoughts.'}
             </p>
-            {!search ? (
+            {!search && dimFilter === 'all' ? (
               <button className="ody-btn" onClick={() => setPanelOpen(true)} style={{ marginTop: 16 }}>
                 <Icon name="plus" size={14} /> Write Entry
               </button>
@@ -133,7 +135,7 @@ export function JournalsPage() {
         </div>
       ) : (
         <ul className="ody-list ody-stagger">
-          {journals.map((entry) => (
+          {filteredJournals.map((entry) => (
             <li key={entry.id} className="ody-list-item">
               <div className="ody-row">
                 <span className="ody-item-title">{entry.title || 'Untitled entry'}</span>
@@ -147,7 +149,7 @@ export function JournalsPage() {
               {((entry.tags && entry.tags.length > 0) || (entry.category_tags && entry.category_tags.length > 0)) ? (
                 <div className="ody-item-meta" style={{ marginTop: 10 }}>
                   {entry.category_tags?.map((t) => (
-                    <span key={t} className="ody-badge gold" style={{ fontSize: '0.62rem' }}>{t}</span>
+                    <DimensionLabel key={t} dim={t} />
                   ))}
                   {entry.tags?.map((t) => (
                     <span key={t} className="ody-badge" style={{ fontSize: '0.62rem' }}>{t}</span>
@@ -185,7 +187,7 @@ export function JournalsPage() {
           <div className="ody-field">
             <span className="ody-label">Life dimensions (optional)</span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {categories.map((cat) => (
+              {DIMENSION_KEYS.map((cat) => (
                 <button
                   key={cat}
                   type="button"
@@ -193,7 +195,7 @@ export function JournalsPage() {
                   style={{ cursor: 'pointer', fontSize: '0.64rem' }}
                   onClick={() => toggleCategory(cat)}
                 >
-                  {cat}
+                  {DIMENSIONS[cat].label}
                 </button>
               ))}
             </div>

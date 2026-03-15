@@ -18,7 +18,7 @@ def test_task_crud_and_daily_items(client):
         json={
             "title": "Workout",
             "description": "30 mins",
-            "category": "body",
+            "category": "vitality",
             "task_type": "recurring",
             "schedule_type": "daily",
             "schedule_config": {},
@@ -58,7 +58,7 @@ def test_specific_days_respects_selected_weekdays(client):
         json={
             "title": "Mon-Thu Habit",
             "description": "Only specific days",
-            "category": "body",
+            "category": "vitality",
             "task_type": "recurring",
             "schedule_type": "specific_days",
             "schedule_config": {"days_of_week": [0, 3]},
@@ -85,7 +85,7 @@ def test_specific_days_missing_config_falls_back_to_daily(client):
         json={
             "title": "Misconfigured specific-days task",
             "description": "No days configured",
-            "category": "mind",
+            "category": "psyche",
             "task_type": "recurring",
             "schedule_type": "specific_days",
             "schedule_config": {},
@@ -109,7 +109,7 @@ def test_x_per_week_missing_target_defaults_to_one(client):
         json={
             "title": "Weekly target missing",
             "description": "Should default to one completion",
-            "category": "work",
+            "category": "prowess",
             "task_type": "recurring",
             "schedule_type": "x_per_week",
             "schedule_config": {},

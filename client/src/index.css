@@ -1438,3 +1438,162 @@ input, select, textarea, button { font: inherit; }
 
   .ody-stat-value { font-size: 1.8rem; }
 }
+
+.ody-dim-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 0.68rem/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ody-dim-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ody-filter-bar {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.ody-filter-tab {
+  font: 400 0.72rem/1 var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  position: relative;
+  white-space: nowrap;
+  transition: color 240ms ease;
+}
+
+.ody-filter-tab:hover {
+  color: var(--text-primary);
+}
+
+.ody-filter-tab.active {
+  color: var(--accent-gold);
+}
+
+.ody-filter-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent-gold), transparent);
+}
+
+.ody-accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  cursor: pointer;
+  border: none;
+  border-bottom: 1px solid var(--border-soft);
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.ody-help-title {
+  display: block;
+  font: 500 0.9rem/1.2 var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ody-help-desc {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.ody-accordion-body {
+  padding: 16px 0 24px 18px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.ody-help-quote {
+  margin: 0 0 12px;
+  font: italic 500 0.95rem/1.65 'Cormorant Garamond', serif;
+  color: var(--text-secondary);
+}
+
+.ody-help-entails {
+  margin: 0 0 14px;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.ody-help-sub {
+  margin: 14px 0 8px;
+  font: 500 0.74rem/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.ody-help-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ody-example-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 240ms;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+
+.ody-example-item:hover {
+  color: var(--accent-gold);
+}
+
+.ody-help-use {
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.ody-help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ody-help-link:hover {
+  color: var(--accent-gold);
+}

@@ -24,5 +24,11 @@ class JournalRepository:
     def get(self, journal_id: str, user_id: str) -> JournalEntry | None:
         return self.db.scalar(select(JournalEntry).where(JournalEntry.id == journal_id, JournalEntry.user_id == user_id))
 
+    def update(self, row: JournalEntry, fields: dict[str, object]) -> JournalEntry:
+        for key, value in fields.items():
+            setattr(row, key, value)
+        self.db.flush()
+        return row
+
     def delete(self, row: JournalEntry) -> None:
         self.db.delete(row)

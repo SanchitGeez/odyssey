@@ -1,25 +1,27 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { AppShell } from '../components/layout'
-import { SlideOver } from '../components/modal'
 import { DimensionFilter } from '../components/dimension-filter'
 import { DimensionLabel } from '../components/dimension-label'
 import { Icon } from '../components/icons'
 import { useToast } from '../components/toast'
 import { useAuth } from '../app/auth'
 import type { Journal, LifeDimension } from '../app/types'
-import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
+
+function dateLabel(iso: string) {
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).format(new Date(iso))
+}
+
+function dayKey(iso: string) {
+  return iso.slice(0, 10)
+}
 
 export function JournalsPage() {
   const { api } = useAuth()
   const { toast } = useToast()
   const [journals, setJournals] = useState<Journal[]>([])
   const [search, setSearch] = useState('')
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-  const [tags, setTags] = useState('')
-  const [categoryTags, setCategoryTags] = useState<LifeDimension[]>([])
   const [loading, setLoading] = useState(true)
-  const [panelOpen, setPanelOpen] = useState(false)
   const [dimFilter, setDimFilter] = useState<LifeDimension | 'all'>('all')
 
   const load = async (query?: string) => {
@@ -35,37 +37,6 @@ export function JournalsPage() {
 
   useEffect(() => { void load() }, [])
 
-  const create = async (e: FormEvent) => {
-    e.preventDefault()
-    try {
-      await api.createJournal({
-        title: title || undefined,
-        content,
-        tags: tags.trim() ? tags.split(',').map((s) => s.trim()).filter(Boolean) : undefined,
-        category_tags: categoryTags.length > 0 ? categoryTags : undefined,
-      })
-      setTitle('')
-      setContent('')
-      setTags('')
-      setCategoryTags([])
-      setPanelOpen(false)
-      toast('Entry saved', 'success')
-      await load(search || undefined)
-    } catch (err) {
-      toast(err instanceof Error ? err.message : 'Journal save failed', 'error')
-    }
-  }
-
-  const remove = async (id: string) => {
-    try {
-      await api.deleteJournal(id)
-      toast('Entry deleted', 'success')
-      await load(search || undefined)
-    } catch (err) {
-      toast(err instanceof Error ? err.message : 'Delete failed', 'error')
-    }
-  }
-
   const runSearch = async (e: FormEvent) => {
     e.preventDefault()
     await load(search || undefined)
@@ -76,23 +47,31 @@ export function JournalsPage() {
     [dimFilter, journals],
   )
 
-  const toggleCategory = (cat: LifeDimension) => {
-    setCategoryTags((prev) => prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat])
-  }
+  const groupedByDay = useMemo(() => {
+    const groups = new Map<string, Journal[]>()
+    for (const journal of filteredJournals) {
+      const key = dayKey(journal.created_at)
+      const existing = groups.get(key) || []
+      existing.push(journal)
+      groups.set(key, existing)
+    }
+    return Array.from(groups.entries())
+  }, [filteredJournals])
 
   return (
     <AppShell
       title="Journal"
-      subtitle="Capture reflections and thoughts"
-      actions={
-        <button className="ody-btn" onClick={() => setPanelOpen(true)}>
-          <Icon name="plus" size={14} /> New Entry
-        </button>
-      }
+      subtitle="A timeline of your reflections"
+      actions={(
+        <Link to="/journals/new">
+          <button className="ody-btn">
+            <Icon name="plus" size={14} /> New Entry
+          </button>
+        </Link>
+      )}
     >
       <DimensionFilter value={dimFilter} onChange={setDimFilter} />
 
-      {/* Search */}
       <div className="ody-card" style={{ marginBottom: 16 }}>
         <form className="ody-row" onSubmit={runSearch}>
           <div style={{ display: 'flex', gap: 8, flex: 1, alignItems: 'center' }}>
@@ -112,12 +91,11 @@ export function JournalsPage() {
         </form>
       </div>
 
-      {/* Entries */}
       {loading ? (
         <div className="ody-grid">
-          {[1, 2, 3].map((i) => <div key={i} className="ody-skeleton ody-skeleton-card" style={{ height: 90 }} />)}
+          {[1, 2, 3].map((i) => <div key={i} className="ody-skeleton ody-skeleton-card" style={{ height: 96 }} />)}
         </div>
-      ) : filteredJournals.length === 0 ? (
+      ) : groupedByDay.length === 0 ? (
         <div className="ody-card">
           <div className="ody-empty">
             <div className="ody-empty-icon"><Icon name="book" size={22} /></div>
@@ -127,91 +105,45 @@ export function JournalsPage() {
               : 'Start writing to capture your reflections, gratitude, or random thoughts.'}
             </p>
             {!search && dimFilter === 'all' ? (
-              <button className="ody-btn" onClick={() => setPanelOpen(true)} style={{ marginTop: 16 }}>
-                <Icon name="plus" size={14} /> Write Entry
-              </button>
+              <Link to="/journals/new">
+                <button className="ody-btn" style={{ marginTop: 16 }}>
+                  <Icon name="plus" size={14} /> Write Entry
+                </button>
+              </Link>
             ) : null}
           </div>
         </div>
       ) : (
-        <ul className="ody-list ody-stagger">
-          {filteredJournals.map((entry) => (
-            <li key={entry.id} className="ody-list-item">
-              <div className="ody-row">
-                <span className="ody-item-title">{entry.title || 'Untitled entry'}</span>
-                <button className="ody-icon-btn" onClick={() => void remove(entry.id)} aria-label="Delete entry">
-                  <Icon name="trash" size={15} />
-                </button>
-              </div>
-              <p className="ody-muted" style={{ margin: '8px 0 0', fontSize: '0.84rem', lineHeight: 1.6 }}>
-                {entry.content.length > 200 ? `${entry.content.slice(0, 200)}...` : entry.content}
-              </p>
-              {((entry.tags && entry.tags.length > 0) || (entry.category_tags && entry.category_tags.length > 0)) ? (
-                <div className="ody-item-meta" style={{ marginTop: 10 }}>
-                  {entry.category_tags?.map((t) => (
-                    <DimensionLabel key={t} dim={t} />
-                  ))}
-                  {entry.tags?.map((t) => (
-                    <span key={t} className="ody-badge" style={{ fontSize: '0.62rem' }}>{t}</span>
-                  ))}
-                </div>
-              ) : null}
-            </li>
-          ))}
-        </ul>
+        <div className="ody-card">
+          <div className="ody-journal-timeline">
+            {groupedByDay.map(([date, entries]) => (
+              <section key={date}>
+                <div className="ody-journal-day">{dateLabel(date)}</div>
+                {entries.map((entry) => (
+                  <Link key={entry.id} to={`/journals/${entry.id}`} className="ody-journal-entry-node">
+                    <span className="ody-journal-dot" />
+                    <div className="ody-journal-entry-content">
+                      <div className="ody-row" style={{ gap: 8 }}>
+                        <strong className="ody-item-title">{entry.title || 'Untitled entry'}</strong>
+                      </div>
+                      <p className="ody-journal-preview">
+                        {entry.content}
+                      </p>
+                      {entry.category_tags?.length ? (
+                        <div className="ody-item-meta">
+                          {entry.category_tags.map((t) => (
+                            <DimensionLabel key={t} dim={t} />
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </Link>
+                ))}
+              </section>
+            ))}
+          </div>
+        </div>
       )}
-
-      {/* Create slide-over */}
-      <SlideOver
-        open={panelOpen}
-        onClose={() => setPanelOpen(false)}
-        title="New Journal Entry"
-        subtitle="Write freely — no structure required"
-      >
-        <form className="ody-grid" onSubmit={create}>
-          <label className="ody-field">
-            <span className="ody-label">Title (optional)</span>
-            <input className="ody-input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Give it a name, or leave blank" />
-          </label>
-          <label className="ody-field">
-            <span className="ody-label">Content</span>
-            <textarea
-              className="ody-textarea"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-              style={{ minHeight: 160 }}
-              placeholder="What's on your mind?"
-            />
-          </label>
-          <div className="ody-field">
-            <span className="ody-label">Life dimensions (optional)</span>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {DIMENSION_KEYS.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  className={`ody-badge${categoryTags.includes(cat) ? ' gold' : ''}`}
-                  style={{ cursor: 'pointer', fontSize: '0.64rem' }}
-                  onClick={() => toggleCategory(cat)}
-                >
-                  {DIMENSIONS[cat].label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <label className="ody-field">
-            <span className="ody-label">Tags (comma-separated)</span>
-            <input className="ody-input" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="gratitude, reflection, idea" />
-          </label>
-          <div style={{ display: 'flex', gap: 8, paddingTop: 8 }}>
-            <button className="ody-btn" type="submit">
-              <Icon name="check" size={14} /> Save Entry
-            </button>
-            <button className="ody-btn secondary" type="button" onClick={() => setPanelOpen(false)}>Cancel</button>
-          </div>
-        </form>
-      </SlideOver>
     </AppShell>
   )
 }

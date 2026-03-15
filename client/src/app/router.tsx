@@ -3,6 +3,8 @@ import { useAuth } from './auth'
 import { CheckInPage } from '../pages/checkin'
 import { InsightsPage } from '../pages/insights'
 import { JournalsPage } from '../pages/journals'
+import { JournalReadPage } from '../pages/journal-read'
+import { JournalWritePage } from '../pages/journal-write'
 import { HelpPage } from '../pages/help'
 import { LoginPage } from '../pages/login'
 import { OnboardingPage } from '../pages/onboarding'
@@ -56,6 +58,9 @@ export function AppRouter() {
           <Route path="/tasks" element={<TasksPage />} />
           <Route path="/quests" element={<QuestsPage />} />
           <Route path="/journals" element={<JournalsPage />} />
+          <Route path="/journals/new" element={<JournalWritePage />} />
+          <Route path="/journals/:id" element={<JournalReadPage />} />
+          <Route path="/journals/:id/edit" element={<JournalWritePage />} />
           <Route path="/insights" element={<InsightsPage />} />
           <Route path="/help" element={<HelpPage />} />
           <Route path="/settings" element={<SettingsPage />} />

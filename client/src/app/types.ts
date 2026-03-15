@@ -74,6 +74,8 @@ export type Journal = {
   content: string
   tags: string[] | null
   category_tags: LifeDimension[] | null
+  created_at: string
+  updated_at: string
 }
 
 export type InsightsOverview = {

@@ -4,9 +4,15 @@ from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
-from app.modules.journals.application.handlers import CreateJournalHandler, DeleteJournalHandler, ListJournalsHandler
+from app.modules.journals.application.handlers import (
+    CreateJournalHandler,
+    DeleteJournalHandler,
+    GetJournalHandler,
+    ListJournalsHandler,
+    UpdateJournalHandler,
+)
 from app.modules.journals.infrastructure.repository_impl import JournalRepository
-from app.modules.journals.presentation.schemas import JournalCreateIn, JournalOut
+from app.modules.journals.presentation.schemas import JournalCreateIn, JournalOut, JournalUpdateIn
 from app.shared.db.models import User
 from app.shared.db.session import get_db
 from app.shared.db.uow import UnitOfWork
@@ -27,6 +33,22 @@ def list_journals(
     user: User = Depends(get_current_user),
 ) -> list[JournalOut]:
     return ListJournalsHandler(JournalRepository(db)).execute(user.id, search)
+
+
+@router.get("/{journal_id}", response_model=JournalOut)
+def get_journal(journal_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> JournalOut:
+    return GetJournalHandler(JournalRepository(db)).execute(user.id, journal_id)
+
+
+@router.patch("/{journal_id}", response_model=JournalOut)
+def update_journal(
+    journal_id: str,
+    payload: JournalUpdateIn,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> JournalOut:
+    repo = JournalRepository(db)
+    return UpdateJournalHandler(repo, UnitOfWork(db)).execute(user.id, journal_id, payload)
 
 
 @router.delete("/{journal_id}", status_code=204, response_class=Response)

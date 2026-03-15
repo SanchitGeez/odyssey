@@ -48,6 +48,15 @@ type QuestPayload = {
 
 type QuestPatch = Partial<QuestPayload> & { status?: QuestStatus; progress_percent?: number }
 
+type JournalPayload = {
+  title?: string
+  content: string
+  tags?: string[]
+  category_tags?: LifeDimension[]
+}
+
+type JournalPatch = Partial<JournalPayload>
+
 type AppApi = {
   login: (email: string, password: string) => Promise<User>
   register: (email: string, password: string, timezone: string) => Promise<User>
@@ -66,7 +75,9 @@ type AppApi = {
   listQuestActivity: (questId: string) => Promise<QuestActivity[]>
   addQuestActivity: (questId: string, activityType: QuestActivityType, eventDate: string, payload?: Record<string, unknown>) => Promise<void>
   listJournals: (search?: string) => Promise<Journal[]>
-  createJournal: (payload: { title?: string; content: string; tags?: string[]; category_tags?: LifeDimension[] }) => Promise<Journal>
+  getJournal: (journalId: string) => Promise<Journal>
+  createJournal: (payload: JournalPayload) => Promise<Journal>
+  updateJournal: (journalId: string, payload: JournalPatch) => Promise<Journal>
   deleteJournal: (journalId: string) => Promise<void>
   getInsightsOverview: (fromDate: string, toDate: string) => Promise<InsightsOverview>
 }
@@ -263,9 +274,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const query = search ? `?search=${encodeURIComponent(search)}` : ''
         return authedFetch<Journal[]>(`/api/v1/journals${query}`)
       },
+      getJournal(journalId) {
+        return authedFetch<Journal>(`/api/v1/journals/${journalId}`)
+      },
       createJournal(payload) {
         return authedFetch<Journal>('/api/v1/journals', {
           method: 'POST',
+          body: JSON.stringify(trimPayload(payload)),
+        })
+      },
+      updateJournal(journalId, payload) {
+        return authedFetch<Journal>(`/api/v1/journals/${journalId}`, {
+          method: 'PATCH',
           body: JSON.stringify(trimPayload(payload)),
         })
       },

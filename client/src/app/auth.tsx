@@ -12,6 +12,7 @@ import type {
   QuestActivityType,
   QuestStatus,
   Task,
+  TaskHeatmapResponse,
   TaskActivityType,
   TaskStatus,
   TaskType,
@@ -63,6 +64,7 @@ type AppApi = {
   logout: () => void
   me: () => Promise<User>
   listTasks: () => Promise<Task[]>
+  getTaskHeatmap: (taskId: string, fromDate: string, toDate: string) => Promise<TaskHeatmapResponse>
   createTask: (payload: TaskPayload) => Promise<Task>
   updateTask: (taskId: string, payload: TaskPatch) => Promise<Task>
   deleteTask: (taskId: string) => Promise<void>
@@ -214,6 +216,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       listTasks() {
         return authedFetch<Task[]>('/api/v1/tasks')
+      },
+      getTaskHeatmap(taskId, fromDate, toDate) {
+        const query = `from_date=${encodeURIComponent(fromDate)}&to_date=${encodeURIComponent(toDate)}`
+        return authedFetch<TaskHeatmapResponse>(`/api/v1/tasks/by-id/${taskId}/heatmap?${query}`)
       },
       createTask(payload) {
         return authedFetch<Task>('/api/v1/tasks', {

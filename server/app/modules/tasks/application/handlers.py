@@ -1,12 +1,21 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, timedelta
 
 from fastapi import HTTPException
 
 from app.modules.tasks.infrastructure.repository_impl import TaskRepository
-from app.modules.tasks.presentation.schemas import DailyItem, DailyItemsOut, TaskCreateIn, TaskOut, TaskRespondIn, TaskUpdateIn
-from app.modules.tasks.domain.services import list_due_tasks, refresh_checkin_day
+from app.modules.tasks.domain.services import list_due_tasks, refresh_checkin_day, task_due_on
+from app.modules.tasks.presentation.schemas import (
+    DailyItem,
+    DailyItemsOut,
+    TaskCreateIn,
+    TaskHeatmapOut,
+    TaskHeatmapSummary,
+    TaskOut,
+    TaskRespondIn,
+    TaskUpdateIn,
+)
 from app.shared.db.models import Task, TaskActivity, TaskActivityType, TaskStatus, TaskType
 from app.shared.db.uow import UnitOfWork
 
@@ -117,3 +126,58 @@ class RespondTaskDailyItemHandler:
 
         refresh_checkin_day(self.repo.db, user_id, body.event_date)
         self.uow.commit()
+
+
+class GetTaskHeatmapHandler:
+    def __init__(self, repo: TaskRepository) -> None:
+        self.repo = repo
+
+    def execute(self, user_id: str, task_id: str, from_date: date, to_date: date) -> TaskHeatmapOut:
+        if from_date > to_date:
+            raise HTTPException(status_code=400, detail="from_date must be on or before to_date")
+        if (to_date - from_date).days > 366:
+            raise HTTPException(status_code=400, detail="Date range cannot exceed 366 days")
+
+        task = self.repo.get_task(task_id, user_id)
+        if not task:
+            raise HTTPException(status_code=404, detail="Task not found")
+
+        activities = self.repo.get_activities_in_range(user_id, task_id, from_date, to_date)
+        activity_by_date: dict[date, TaskActivityType] = {}
+        for activity in activities:
+            existing = activity_by_date.get(activity.event_date)
+            if existing == TaskActivityType.done:
+                continue
+            if activity.activity_type == TaskActivityType.done:
+                activity_by_date[activity.event_date] = TaskActivityType.done
+            elif activity.activity_type == TaskActivityType.skipped and existing is None:
+                activity_by_date[activity.event_date] = TaskActivityType.skipped
+
+        today = date.today()
+        summary = {"done": 0, "skipped": 0, "missed": 0, "not_due": 0}
+        statuses: dict[date, str] = {}
+        cursor = from_date
+        while cursor <= to_date:
+            if not task_due_on(self.repo.db, task, cursor):
+                status = "not_due"
+            else:
+                activity = activity_by_date.get(cursor)
+                if activity == TaskActivityType.done:
+                    status = "done"
+                elif activity == TaskActivityType.skipped:
+                    status = "skipped"
+                elif cursor < today:
+                    status = "missed"
+                else:
+                    status = "not_due"
+            summary[status] += 1
+            statuses[cursor] = status
+            cursor += timedelta(days=1)
+
+        return TaskHeatmapOut(
+            task_id=task.id,
+            from_date=from_date,
+            to_date=to_date,
+            dates=statuses,
+            summary=TaskHeatmapSummary(**summary),
+        )

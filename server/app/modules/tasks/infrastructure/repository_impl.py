@@ -40,6 +40,19 @@ class TaskRepository:
             )
         ).all()
 
+    def get_activities_in_range(self, user_id: str, task_id: str, from_date: date, to_date: date) -> list[TaskActivity]:
+        return self.db.scalars(
+            select(TaskActivity).where(
+                and_(
+                    TaskActivity.user_id == user_id,
+                    TaskActivity.task_id == task_id,
+                    TaskActivity.event_date >= from_date,
+                    TaskActivity.event_date <= to_date,
+                    TaskActivity.activity_type.in_([TaskActivityType.done, TaskActivityType.skipped]),
+                )
+            )
+        ).all()
+
     def remove_done_skipped_for_date(self, task_id: str, user_id: str, event_date: date) -> None:
         rows = self.db.scalars(
             select(TaskActivity).where(

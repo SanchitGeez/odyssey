@@ -2,6 +2,7 @@ export type TaskType = 'one_time' | 'recurring'
 export type TaskStatus = 'active' | 'completed' | 'archived'
 export type TaskActivityType = 'done' | 'skipped' | 'value_logged' | 'status_changed' | 'deadline_extended' | 'note_added'
 export type LifeDimension = 'vitality' | 'psyche' | 'prowess' | 'wealth' | 'alliance' | 'legacy'
+export type TaskHeatmapStatus = 'done' | 'skipped' | 'missed' | 'not_due'
 
 export type QuestStatus = 'active' | 'paused' | 'completed' | 'archived'
 export type QuestActivityType = 'progress_updated' | 'status_changed' | 'milestone_added' | 'milestone_completed' | 'note_added'
@@ -95,5 +96,18 @@ export type InsightsOverview = {
   }
   journals: {
     entries: number
+  }
+}
+
+export type TaskHeatmapResponse = {
+  task_id: string
+  from_date: string
+  to_date: string
+  dates: Record<string, TaskHeatmapStatus>
+  summary: {
+    done: number
+    skipped: number
+    missed: number
+    not_due: number
   }
 }

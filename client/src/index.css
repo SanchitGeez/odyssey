@@ -903,6 +903,247 @@ input, select, textarea, button { font: inherit; }
   margin-top: var(--space-2);
 }
 
+.ody-heatmap-panel {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid rgba(149, 157, 171, 0.16);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.ody-heatmap-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.ody-heatmap-range-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-soft);
+  padding-bottom: 4px;
+}
+
+.ody-heatmap-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font: 400 0.72rem/1 var(--font-body);
+  padding: 4px 0;
+  cursor: pointer;
+  position: relative;
+  transition: color 240ms ease;
+  white-space: nowrap;
+}
+
+.ody-heatmap-toggle:hover {
+  color: var(--text-primary);
+}
+
+.ody-heatmap-toggle.active {
+  color: var(--accent-gold);
+}
+
+.ody-heatmap-toggle.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent-gold), transparent);
+}
+
+.ody-heatmap-month-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-soft);
+  padding-bottom: 4px;
+}
+
+.ody-heatmap-month-label {
+  color: var(--text-secondary);
+  font: 400 0.68rem/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-width: 210px;
+  text-align: center;
+}
+
+.ody-heatmap-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font: 400 0.72rem/1 var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  padding: 4px 0;
+  position: relative;
+  transition: color 240ms ease;
+}
+
+.ody-heatmap-link:hover {
+  color: var(--text-primary);
+}
+
+.ody-heatmap-link:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ody-heatmap-custom-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ody-heatmap-custom-range .ody-input {
+  width: 145px;
+  padding: 8px 10px;
+  font-size: 0.76rem;
+}
+
+.ody-heatmap-custom-range .ody-btn.secondary {
+  padding: 8px 12px;
+}
+
+.ody-heatmap-status {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ody-heatmap-status.danger {
+  color: var(--state-danger);
+}
+
+.ody-heatmap-wrap {
+  display: grid;
+  gap: 8px;
+}
+
+.ody-heatmap-months {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 12px;
+  gap: 2px;
+  padding-left: 20px;
+}
+
+.ody-heatmap-months span {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ody-heatmap-grid-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.ody-heatmap-days {
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  gap: 2px;
+  width: 14px;
+}
+
+.ody-heatmap-days span {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  line-height: 12px;
+}
+
+.ody-heatmap-grid {
+  display: grid;
+  gap: 2px;
+}
+
+.ody-heatmap-week {
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  gap: 2px;
+}
+
+.ody-heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(149, 157, 171, 0.16);
+  border-radius: 2px;
+  display: block;
+}
+
+.ody-heatmap-cell[data-status="done"] {
+  background: color-mix(in srgb, var(--state-success) 72%, transparent);
+  border-color: color-mix(in srgb, var(--state-success) 52%, transparent);
+}
+
+.ody-heatmap-cell[data-status="skipped"] {
+  background: color-mix(in srgb, var(--state-warning) 40%, transparent);
+  border-color: color-mix(in srgb, var(--state-warning) 36%, transparent);
+}
+
+.ody-heatmap-cell[data-status="missed"] {
+  background: color-mix(in srgb, var(--state-danger) 34%, transparent);
+  border-color: color-mix(in srgb, var(--state-danger) 32%, transparent);
+}
+
+.ody-heatmap-cell[data-status="not_due"] {
+  background: rgba(149, 157, 171, 0.12);
+  border-color: rgba(149, 157, 171, 0.2);
+}
+
+.ody-heatmap-cell[data-status="empty"] {
+  border-color: transparent;
+  background: transparent;
+}
+
+.ody-heatmap-cell:focus-visible {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 2px rgba(201, 164, 76, 0.2);
+}
+
+.ody-heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ody-heatmap-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ody-heatmap-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 /* ── terminal block ─────────────────────────────────── */
 .ody-terminal {
   border: 1px solid rgba(158, 163, 170, 0.2);

@@ -10,13 +10,14 @@ from app.modules.tasks.application.handlers import (
     CreateTaskHandler,
     DeleteTaskHandler,
     GetDailyItemsHandler,
+    GetTaskHeatmapHandler,
     GetTaskHandler,
     ListTasksHandler,
     RespondTaskDailyItemHandler,
     UpdateTaskHandler,
 )
 from app.modules.tasks.infrastructure.repository_impl import TaskRepository
-from app.modules.tasks.presentation.schemas import DailyItemsOut, TaskCreateIn, TaskOut, TaskRespondIn, TaskUpdateIn
+from app.modules.tasks.presentation.schemas import DailyItemsOut, TaskCreateIn, TaskHeatmapOut, TaskOut, TaskRespondIn, TaskUpdateIn
 from app.shared.db.models import User
 from app.shared.db.session import get_db
 from app.shared.db.uow import UnitOfWork
@@ -73,3 +74,14 @@ def respond_task(
     repo = TaskRepository(db)
     RespondTaskDailyItemHandler(repo, UnitOfWork(db)).execute(user.id, task_id, body)
     return {"status": "ok"}
+
+
+@router.get("/by-id/{task_id}/heatmap", response_model=TaskHeatmapOut)
+def get_task_heatmap(
+    task_id: str,
+    from_date: date = Query(...),
+    to_date: date = Query(...),
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> TaskHeatmapOut:
+    return GetTaskHeatmapHandler(TaskRepository(db)).execute(user.id, task_id, from_date, to_date)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -59,3 +59,21 @@ class TaskRespondIn(BaseModel):
     response: TaskActivityType
     event_date: date
     payload: dict[str, Any] | None = None
+
+
+HeatmapStatus = Literal["done", "skipped", "missed", "not_due"]
+
+
+class TaskHeatmapSummary(BaseModel):
+    done: int
+    skipped: int
+    missed: int
+    not_due: int
+
+
+class TaskHeatmapOut(BaseModel):
+    task_id: str
+    from_date: date
+    to_date: date
+    dates: dict[date, HeatmapStatus]
+    summary: TaskHeatmapSummary

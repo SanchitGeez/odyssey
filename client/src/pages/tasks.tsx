@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AppShell } from '../components/layout'
 import { SlideOver } from '../components/modal'
 import { DimensionFilter } from '../components/dimension-filter'
 import { DimensionLabel } from '../components/dimension-label'
+import { Heatmap } from '../components/heatmap'
 import { Icon } from '../components/icons'
 import { useToast } from '../components/toast'
 import { useAuth } from '../app/auth'
-import type { LifeDimension, Task, TaskStatus, TaskType } from '../app/types'
+import type { LifeDimension, Task, TaskHeatmapResponse, TaskStatus, TaskType } from '../app/types'
 import { formatDate } from '../lib/date'
 import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
 
@@ -65,6 +66,33 @@ function parseDaysOfWeek(value: unknown): number[] {
     .filter((day) => Number.isInteger(day) && day >= 0 && day <= 6)
 }
 
+type RangeMode = 'month' | 'custom'
+
+function toIsoDate(value: Date): string {
+  const year = value.getFullYear()
+  const month = String(value.getMonth() + 1).padStart(2, '0')
+  const day = String(value.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function threeMonthBounds(offset: number): { fromDate: string; toDate: string } {
+  const now = new Date()
+  const endMonth = new Date(now.getFullYear(), now.getMonth() + offset, 1)
+  const startMonth = new Date(endMonth.getFullYear(), endMonth.getMonth() - 2, 1)
+  const start = new Date(startMonth.getFullYear(), startMonth.getMonth(), 1)
+  const end = new Date(endMonth.getFullYear(), endMonth.getMonth() + 1, 0)
+  return { fromDate: toIsoDate(start), toDate: toIsoDate(end) }
+}
+
+function threeMonthLabel(offset: number): string {
+  const now = new Date()
+  const endMonth = new Date(now.getFullYear(), now.getMonth() + offset, 1)
+  const startMonth = new Date(endMonth.getFullYear(), endMonth.getMonth() - 2, 1)
+  const startLabel = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(startMonth)
+  const endLabel = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(endMonth)
+  return `${startLabel} - ${endLabel}`
+}
+
 export function TasksPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const { api } = useAuth()
@@ -79,6 +107,16 @@ export function TasksPage() {
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null)
+  const [rangeMode, setRangeMode] = useState<RangeMode>('month')
+  const [monthOffset, setMonthOffset] = useState(0)
+  const [customFromDate, setCustomFromDate] = useState('')
+  const [customToDate, setCustomToDate] = useState('')
+  const [appliedCustomFromDate, setAppliedCustomFromDate] = useState('')
+  const [appliedCustomToDate, setAppliedCustomToDate] = useState('')
+  const [heatmapCache, setHeatmapCache] = useState<Record<string, TaskHeatmapResponse>>({})
+  const [heatmapLoadingKey, setHeatmapLoadingKey] = useState<string | null>(null)
+  const [heatmapError, setHeatmapError] = useState('')
 
   const load = async () => {
     setLoading(true)
@@ -218,6 +256,47 @@ export function TasksPage() {
     }
   }
 
+  const currentRange = useMemo(() => {
+    if (rangeMode === 'custom' && appliedCustomFromDate && appliedCustomToDate) {
+      return { fromDate: appliedCustomFromDate, toDate: appliedCustomToDate }
+    }
+    return threeMonthBounds(monthOffset)
+  }, [appliedCustomFromDate, appliedCustomToDate, monthOffset, rangeMode])
+
+  const heatmapKeyFor = useCallback(
+    (taskId: string) => `${taskId}:${currentRange.fromDate}:${currentRange.toDate}`,
+    [currentRange.fromDate, currentRange.toDate],
+  )
+
+  const loadHeatmap = useCallback(async (taskId: string) => {
+    const cacheKey = heatmapKeyFor(taskId)
+    if (heatmapCache[cacheKey]) return
+    setHeatmapLoadingKey(cacheKey)
+    setHeatmapError('')
+    try {
+      const data = await api.getTaskHeatmap(taskId, currentRange.fromDate, currentRange.toDate)
+      setHeatmapCache((prev) => ({ ...prev, [cacheKey]: data }))
+    } catch (err) {
+      setHeatmapError(err instanceof Error ? err.message : 'Failed to load heatmap')
+    } finally {
+      setHeatmapLoadingKey((prev) => (prev === cacheKey ? null : prev))
+    }
+  }, [api, currentRange.fromDate, currentRange.toDate, heatmapCache, heatmapKeyFor])
+
+  const toggleHeatmap = (taskId: string) => {
+    if (expandedTaskId === taskId) {
+      setExpandedTaskId(null)
+      return
+    }
+    setExpandedTaskId(taskId)
+    void loadHeatmap(taskId)
+  }
+
+  useEffect(() => {
+    if (!expandedTaskId) return
+    void loadHeatmap(expandedTaskId)
+  }, [expandedTaskId, loadHeatmap])
+
   return (
     <AppShell
       title="Tasks"
@@ -315,6 +394,11 @@ export function TasksPage() {
                   </span>
                 ) : null}
                 <div style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
+                  {task.task_type === 'recurring' ? (
+                    <button className="ody-icon-btn" onClick={() => toggleHeatmap(task.id)} aria-label="Toggle heatmap">
+                      <Icon name="calendar" size={15} />
+                    </button>
+                  ) : null}
                   <button className="ody-icon-btn" onClick={() => openEdit(task)} aria-label="Edit task">
                     <Icon name="edit" size={15} />
                   </button>
@@ -323,6 +407,109 @@ export function TasksPage() {
                   </button>
                 </div>
               </div>
+              {task.task_type === 'recurring' && expandedTaskId === task.id ? (
+                <div className="ody-heatmap-panel">
+                  <div className="ody-heatmap-toolbar">
+                    <div className="ody-heatmap-range-switch">
+                      <button
+                        type="button"
+                        className={`ody-heatmap-toggle${rangeMode === 'month' ? ' active' : ''}`}
+                        onClick={() => setRangeMode('month')}
+                      >
+                        Monthly
+                      </button>
+                      <button
+                        type="button"
+                        className={`ody-heatmap-toggle${rangeMode === 'custom' ? ' active' : ''}`}
+                        onClick={() => setRangeMode('custom')}
+                      >
+                        Range
+                      </button>
+                    </div>
+
+                    {rangeMode === 'month' ? (
+                      <div className="ody-heatmap-month-nav">
+                        <button
+                          type="button"
+                          className="ody-heatmap-link"
+                          onClick={() => setMonthOffset((prev) => prev - 3)}
+                          aria-label="Previous 3 months"
+                        >
+                          <Icon name="arrow-left" size={13} /> Previous
+                        </button>
+                        <span className="ody-heatmap-month-label">{threeMonthLabel(monthOffset)}</span>
+                        <button
+                          type="button"
+                          className="ody-heatmap-link"
+                          onClick={() => setMonthOffset((prev) => Math.min(prev + 3, 0))}
+                          aria-label="Next 3 months"
+                          disabled={monthOffset >= 0}
+                        >
+                          Next <Icon name="arrow-right" size={13} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="ody-heatmap-custom-range">
+                        <input
+                          className="ody-input"
+                          type="date"
+                          value={customFromDate}
+                          onChange={(e) => setCustomFromDate(e.target.value)}
+                        />
+                        <input
+                          className="ody-input"
+                          type="date"
+                          value={customToDate}
+                          onChange={(e) => setCustomToDate(e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          className="ody-btn secondary"
+                          onClick={() => {
+                            if (!customFromDate || !customToDate) {
+                              toast('Select both start and end dates', 'error')
+                              return
+                            }
+                            if (customFromDate > customToDate) {
+                              toast('Start date must be before end date', 'error')
+                              return
+                            }
+                            setAppliedCustomFromDate(customFromDate)
+                            setAppliedCustomToDate(customToDate)
+                            void loadHeatmap(task.id)
+                          }}
+                        >
+                          Apply
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {(() => {
+                    const cacheKey = heatmapKeyFor(task.id)
+                    const data = heatmapCache[cacheKey]
+                    if (heatmapLoadingKey === cacheKey && !data) {
+                      return <p className="ody-heatmap-status">Loading heatmap...</p>
+                    }
+                    if (heatmapError && !data) {
+                      return <p className="ody-heatmap-status danger">{heatmapError}</p>
+                    }
+                    if (!data) {
+                      return <p className="ody-heatmap-status">No heatmap data for this range.</p>
+                    }
+                    return (
+                      <>
+                        <Heatmap dates={data.dates} />
+                        <div className="ody-heatmap-summary">
+                          <span className="ody-badge success">Done: {data.summary.done}</span>
+                          <span className="ody-badge">Skipped: {data.summary.skipped}</span>
+                          <span className="ody-badge danger">Missed: {data.summary.missed}</span>
+                        </div>
+                      </>
+                    )
+                  })()}
+                </div>
+              ) : null}
             </li>
           ))}
         </ul>

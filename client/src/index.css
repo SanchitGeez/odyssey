@@ -191,7 +191,8 @@ input, select, textarea, button { font: inherit; }
 
 .ody-nav {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-10);
+  align-items: start;
   flex: 1;
 }
 
@@ -202,7 +203,7 @@ input, select, textarea, button { font: inherit; }
   text-decoration: none;
   border: none;
   border-radius: 0;
-  padding: 4px 0;
+  padding: 6px 0;
   color: var(--text-muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;

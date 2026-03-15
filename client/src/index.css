@@ -695,6 +695,48 @@ input, select, textarea, button { font: inherit; }
   resize: vertical;
 }
 
+.ody-day-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ody-day-toggle {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font: 400 0.72rem/1 var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 240ms ease;
+}
+
+.ody-day-toggle:hover {
+  border-color: rgba(201, 164, 76, 0.48);
+}
+
+.ody-day-toggle:focus-visible {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(201, 164, 76, 0.12);
+}
+
+.ody-day-toggle.active {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  background: var(--accent-gold-dim);
+}
+
+.ody-field-error {
+  margin: 0;
+  color: var(--state-danger);
+  font-size: 0.76rem;
+}
+
 /* ── buttons ────────────────────────────────────────── */
 .ody-btn {
   display: inline-flex;

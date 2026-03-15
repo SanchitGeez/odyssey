@@ -25,6 +25,16 @@ const categoryColors: Record<string, string> = {
   'Meaning & Transcendence': 'var(--cat-meaning)',
 }
 
+const dayOptions = [
+  { label: 'Mon', value: 0 },
+  { label: 'Tue', value: 1 },
+  { label: 'Wed', value: 2 },
+  { label: 'Thu', value: 3 },
+  { label: 'Fri', value: 4 },
+  { label: 'Sat', value: 5 },
+  { label: 'Sun', value: 6 },
+]
+
 type TaskForm = {
   id?: string
   title: string
@@ -32,6 +42,8 @@ type TaskForm = {
   category: string
   task_type: TaskType
   schedule_type: string
+  days_of_week: number[]
+  target_count: number
   due_window_type: string
   due_date: string
 }
@@ -42,8 +54,29 @@ const initialForm: TaskForm = {
   category: categories[0],
   task_type: 'recurring',
   schedule_type: 'daily',
+  days_of_week: [],
+  target_count: 3,
   due_window_type: 'none',
   due_date: '',
+}
+
+function getScheduleConfig(value: unknown): Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {}
+}
+
+function normalizeTargetCount(value: unknown): number {
+  const raw = typeof value === 'number' ? value : Number(value)
+  if (!Number.isFinite(raw)) return 3
+  return Math.max(1, Math.min(7, Math.round(raw)))
+}
+
+function parseDaysOfWeek(value: unknown): number[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .map((day) => Number(day))
+    .filter((day) => Number.isInteger(day) && day >= 0 && day <= 6)
 }
 
 export function TasksPage() {
@@ -51,6 +84,7 @@ export function TasksPage() {
   const { toast } = useToast()
   const [tasks, setTasks] = useState<Task[]>([])
   const [form, setForm] = useState<TaskForm>(initialForm)
+  const [scheduleError, setScheduleError] = useState('')
   const [panelOpen, setPanelOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState<'all' | TaskStatus>('all')
   const [typeFilter, setTypeFilter] = useState<'all' | TaskType>('all')
@@ -86,33 +120,58 @@ export function TasksPage() {
 
   const openCreate = () => {
     setForm(initialForm)
+    setScheduleError('')
     setPanelOpen(true)
   }
 
   const openEdit = (task: Task) => {
+    const scheduleConfig = getScheduleConfig(task.schedule_config)
+    const isLegacyOncePerWeek = task.schedule_type === 'once_per_week'
     setForm({
       id: task.id,
       title: task.title,
       description: task.description || '',
       category: task.category,
       task_type: task.task_type,
-      schedule_type: task.schedule_type || 'daily',
+      schedule_type: isLegacyOncePerWeek ? 'x_per_week' : (task.schedule_type || 'daily'),
+      days_of_week: parseDaysOfWeek(scheduleConfig.days_of_week),
+      target_count: scheduleConfig.target_count === undefined
+        ? (isLegacyOncePerWeek ? 1 : 3)
+        : normalizeTargetCount(scheduleConfig.target_count),
       due_window_type: task.due_window_type || 'none',
       due_date: task.due_date || '',
     })
+    setScheduleError('')
     setPanelOpen(true)
   }
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
+    setScheduleError('')
+
+    if (form.task_type === 'recurring' && form.schedule_type === 'specific_days' && form.days_of_week.length === 0) {
+      setScheduleError('Select at least one day for specific-days schedule.')
+      return
+    }
+
     setSaving(true)
     try {
+      let schedule_config: Record<string, unknown> | undefined
+      if (form.task_type === 'recurring') {
+        if (form.schedule_type === 'specific_days') {
+          schedule_config = { days_of_week: [...form.days_of_week].sort((a, b) => a - b) }
+        } else if (form.schedule_type === 'x_per_week') {
+          schedule_config = { target_count: normalizeTargetCount(form.target_count) }
+        }
+      }
+
       const payload = {
         title: form.title,
         description: form.description,
         category: form.category,
         task_type: form.task_type,
         schedule_type: form.task_type === 'recurring' ? form.schedule_type : undefined,
+        schedule_config,
         due_window_type: form.task_type === 'one_time' ? form.due_window_type : undefined,
         due_date: form.task_type === 'one_time' && form.due_window_type === 'date' ? form.due_date : undefined,
       }
@@ -279,21 +338,92 @@ export function TasksPage() {
           </label>
           <label className="ody-field">
             <span className="ody-label">Type</span>
-            <select className="ody-select" value={form.task_type} onChange={(e) => setForm((f) => ({ ...f, task_type: e.target.value as TaskType }))}>
+            <select
+              className="ody-select"
+              value={form.task_type}
+              onChange={(e) => {
+                setScheduleError('')
+                setForm((f) => ({ ...f, task_type: e.target.value as TaskType }))
+              }}
+            >
               <option value="recurring">Recurring</option>
               <option value="one_time">One-Time</option>
             </select>
           </label>
           {form.task_type === 'recurring' ? (
-            <label className="ody-field">
-              <span className="ody-label">Schedule</span>
-              <select className="ody-select" value={form.schedule_type} onChange={(e) => setForm((f) => ({ ...f, schedule_type: e.target.value }))}>
-                <option value="daily">Daily</option>
-                <option value="specific_days">Specific days</option>
-                <option value="x_per_week">X per week</option>
-                <option value="once_per_week">Once per week</option>
-              </select>
-            </label>
+            <>
+              <label className="ody-field">
+                <span className="ody-label">Schedule</span>
+                <select
+                  className="ody-select"
+                  value={form.schedule_type}
+                  onChange={(e) => {
+                    const scheduleType = e.target.value
+                    setScheduleError('')
+                    setForm((f) => {
+                      if (scheduleType === 'specific_days') {
+                        return { ...f, schedule_type: scheduleType, target_count: 3 }
+                      }
+                      if (scheduleType === 'x_per_week') {
+                        return { ...f, schedule_type: scheduleType, days_of_week: [] }
+                      }
+                      return { ...f, schedule_type: scheduleType, days_of_week: [], target_count: 3 }
+                    })
+                  }}
+                >
+                  <option value="daily">Daily</option>
+                  <option value="specific_days">Specific days</option>
+                  <option value="x_per_week">X per week</option>
+                </select>
+              </label>
+              {form.schedule_type === 'specific_days' ? (
+                <div className="ody-field">
+                  <span className="ody-label">Days</span>
+                  <div className="ody-day-picker">
+                    {dayOptions.map((day) => {
+                      const active = form.days_of_week.includes(day.value)
+                      return (
+                        <button
+                          key={day.value}
+                          type="button"
+                          className={`ody-day-toggle${active ? ' active' : ''}`}
+                          aria-pressed={active}
+                          onClick={() => {
+                            setScheduleError('')
+                            setForm((f) => ({
+                              ...f,
+                              days_of_week: f.days_of_week.includes(day.value)
+                                ? f.days_of_week.filter((d) => d !== day.value)
+                                : [...f.days_of_week, day.value],
+                            }))
+                          }}
+                        >
+                          {day.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ) : null}
+              {form.schedule_type === 'x_per_week' ? (
+                <label className="ody-field">
+                  <span className="ody-label">Times per week</span>
+                  <input
+                    className="ody-input"
+                    type="number"
+                    min={1}
+                    max={7}
+                    step={1}
+                    value={form.target_count}
+                    onChange={(e) => {
+                      setScheduleError('')
+                      setForm((f) => ({ ...f, target_count: normalizeTargetCount(e.target.value) }))
+                    }}
+                  />
+                </label>
+              ) : null}
+              {scheduleError ? <p className="ody-field-error">{scheduleError}</p> : null}
+            </>
           ) : (
             <>
               <label className="ody-field">

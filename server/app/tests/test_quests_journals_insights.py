@@ -122,3 +122,120 @@ def test_dimension_validation_rejects_invalid_values(client):
         json={"title": "Bad tags", "content": "test", "category_tags": ["mind"]},
     )
     assert journal.status_code == 422
+
+
+def test_quest_milestones_recalculate_progress_and_log_completion(client):
+    headers = auth_headers(client)
+
+    quest = client.post(
+        "/api/v1/quests",
+        headers=headers,
+        json={"title": "Run a marathon", "category": "vitality"},
+    )
+    assert quest.status_code == 200
+    quest_id = quest.json()["id"]
+
+    first = client.post(
+        f"/api/v1/quests/{quest_id}/milestones",
+        headers=headers,
+        json={"title": "Run 5K"},
+    )
+    second = client.post(
+        f"/api/v1/quests/{quest_id}/milestones",
+        headers=headers,
+        json={"title": "Run 10K"},
+    )
+    assert first.status_code == 201
+    assert second.status_code == 201
+    first_id = first.json()["id"]
+
+    updated = client.patch(
+        f"/api/v1/quests/{quest_id}/milestones/{first_id}",
+        headers=headers,
+        json={"is_completed": True},
+    )
+    assert updated.status_code == 200
+    assert updated.json()["is_completed"] is True
+
+    quest_after = client.get("/api/v1/quests", headers=headers)
+    assert quest_after.status_code == 200
+    assert quest_after.json()[0]["progress_percent"] == 50
+
+    activity = client.get(f"/api/v1/quests/{quest_id}/activity", headers=headers)
+    assert activity.status_code == 200
+    milestone_events = [entry for entry in activity.json() if entry["activity_type"] == "milestone_completed"]
+    assert len(milestone_events) == 1
+
+
+def test_quest_update_ignores_manual_progress_when_milestones_exist(client):
+    headers = auth_headers(client)
+
+    quest = client.post(
+        "/api/v1/quests",
+        headers=headers,
+        json={"title": "Learn piano", "category": "prowess"},
+    )
+    assert quest.status_code == 200
+    quest_id = quest.json()["id"]
+
+    first = client.post(
+        f"/api/v1/quests/{quest_id}/milestones",
+        headers=headers,
+        json={"title": "Learn scales"},
+    )
+    second = client.post(
+        f"/api/v1/quests/{quest_id}/milestones",
+        headers=headers,
+        json={"title": "Play one song"},
+    )
+    assert first.status_code == 201
+    assert second.status_code == 201
+
+    updated = client.patch(
+        f"/api/v1/quests/{quest_id}",
+        headers=headers,
+        json={"title": "Learn piano fundamentals", "progress_percent": 80},
+    )
+    assert updated.status_code == 200
+    assert updated.json()["title"] == "Learn piano fundamentals"
+    assert updated.json()["progress_percent"] == 0
+
+
+def test_completed_quest_forces_progress_to_hundred_even_with_milestone_updates(client):
+    headers = auth_headers(client)
+
+    quest = client.post(
+        "/api/v1/quests",
+        headers=headers,
+        json={"title": "Launch app", "category": "prowess"},
+    )
+    assert quest.status_code == 200
+    quest_id = quest.json()["id"]
+
+    milestone = client.post(
+        f"/api/v1/quests/{quest_id}/milestones",
+        headers=headers,
+        json={"title": "Ship beta"},
+    )
+    assert milestone.status_code == 201
+    milestone_id = milestone.json()["id"]
+
+    completed = client.patch(
+        f"/api/v1/quests/{quest_id}",
+        headers=headers,
+        json={"status": "completed"},
+    )
+    assert completed.status_code == 200
+    assert completed.json()["progress_percent"] == 100
+
+    toggled = client.patch(
+        f"/api/v1/quests/{quest_id}/milestones/{milestone_id}",
+        headers=headers,
+        json={"is_completed": True},
+    )
+    assert toggled.status_code == 200
+
+    quest_after = client.get("/api/v1/quests", headers=headers)
+    assert quest_after.status_code == 200
+    assert quest_after.json()[0]["status"] == "completed"
+    assert quest_after.json()[0]["progress_percent"] == 100

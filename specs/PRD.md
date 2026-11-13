@@ -189,9 +189,15 @@ Free-form writing space for reflection and notes.
 - Active Quests Summary: Name + progress % for each active quest
 - Activity Timeline: Chronological feed of task completions/skips, quest updates, and journal entries; filterable by category/type
 
-#### Category Health Score (Auto-Calculated)
+#### Dimension Follow-through Score (Current Implementation)
 
-- Weighted average of recurring habit completion rate, one-time task completion, quest progress signals, and recent activity level
+- Completed actions ÷ actions due × 100 over the last 28 finished local days.
+- Fixed 0–100% axes; show completed/due counts. No opportunities means “No data.”
+- Recurring tasks count scheduled occurrences; flexible weekly quotas count when their week ends.
+- One-time tasks count once at their deadline, with credit for finishing by that date.
+- Skipped/missed actions are incomplete. Undated tasks and standalone quests add no points.
+- Archived/completed tasks keep their history. This measures follow-through, not life health.
+- See README for schedule-edit and deletion behavior. Stage 2's weighted score below remains a future concept.
 
 #### Backend Analytics Decisions (Phase 1)
 

@@ -60,8 +60,10 @@ class UpdateTaskHandler:
         task = self.repo.get_task(task_id, user_id)
         if not task:
             raise HTTPException(status_code=404, detail="Task not found")
+        previous_status = task.status
         for k, v in payload.model_dump(exclude_unset=True).items():
             setattr(task, k, v)
+        self.repo.record_status_change(task, previous_status)
         self.uow.commit()
         return TaskOut.model_validate(task, from_attributes=True)
 
@@ -122,7 +124,9 @@ class RespondTaskDailyItemHandler:
         )
 
         if task.task_type == TaskType.one_time and body.response == TaskActivityType.done:
+            previous_status = task.status
             task.status = TaskStatus.archived
+            self.repo.record_status_change(task, previous_status)
 
         refresh_checkin_day(self.repo.db, user_id, body.event_date)
         self.uow.commit()

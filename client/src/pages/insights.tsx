@@ -4,9 +4,8 @@ import { AppShell } from '../components/layout'
 import { Icon } from '../components/icons'
 import { DimensionRadar } from '../components/dimension-radar'
 import { useAuth } from '../app/auth'
-import type { InsightsOverview } from '../app/types'
+import type { DimensionScores, InsightsOverview } from '../app/types'
 import { defaultInsightsWindow, formatDate, todayIso } from '../lib/date'
-import { summarizeDimensions, type DimensionSummary } from '../lib/dimension-summary'
 
 export function InsightsPage() {
   const { api } = useAuth()
@@ -15,7 +14,7 @@ export function InsightsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [rangeError, setRangeError] = useState('')
-  const [dimensions, setDimensions] = useState<DimensionSummary | null>(null)
+  const [dimensions, setDimensions] = useState<DimensionScores | null>(null)
   const [dimensionsLoading, setDimensionsLoading] = useState(true)
   const [dimensionsError, setDimensionsError] = useState('')
 
@@ -23,8 +22,7 @@ export function InsightsPage() {
     setDimensionsLoading(true)
     setDimensionsError('')
     try {
-      const [tasks, quests] = await Promise.all([api.listTasks(), api.listQuests()])
-      setDimensions(summarizeDimensions(tasks, quests))
+      setDimensions(await api.getDimensionScores())
     } catch (err) {
       setDimensionsError(err instanceof Error ? err.message : 'Could not load your life dimensions. Try again.')
     } finally {
@@ -66,6 +64,14 @@ export function InsightsPage() {
       subtitle="A clear view of the work you have put in."
       actions={<Link className="ody-btn" to="/check-in"><Icon name="shield" size={18} /> Check In</Link>}
     >
+      <section className="ody-card dimension-radar-section" aria-labelledby="life-dimensions-heading">
+        <h2 id="life-dimensions-heading" className="ody-section-title">Life dimensions</h2>
+        <p className="dimension-radar-intro">Follow-through over the last 28 finished days.</p>
+        {dimensionsLoading ? <div className="dimension-radar-loading" role="status" aria-label="Loading life dimensions" aria-busy="true"><div className="ody-skeleton" /><div className="ody-skeleton" /></div>
+        : dimensionsError ? <div className="dimension-radar-error" role="alert"><p>{dimensionsError}</p><button className="ody-btn secondary" onClick={() => void loadDimensions()}>Retry dimensions</button></div>
+        : dimensions ? <DimensionRadar scores={dimensions} /> : null}
+      </section>
+
       <form className="ody-insights-window" onSubmit={submitWindow}>
         <label className="ody-field">
           <span className="ody-label">From</span>
@@ -80,14 +86,6 @@ export function InsightsPage() {
         </button>
       </form>
       {rangeError ? <p className="ody-field-error" role="alert">{rangeError}</p> : null}
-
-      <section className="ody-card dimension-radar-section" aria-labelledby="life-dimensions-heading">
-        <h2 id="life-dimensions-heading" className="ody-section-title">Life dimensions</h2>
-        <p className="dimension-radar-intro">Active tasks and quests by dimension. Current library snapshot.</p>
-        {dimensionsLoading ? <div className="dimension-radar-loading" role="status" aria-label="Loading life dimensions" aria-busy="true"><div className="ody-skeleton" /><div className="ody-skeleton" /></div>
-        : dimensionsError ? <div className="dimension-radar-error" role="alert"><p>{dimensionsError}</p><button className="ody-btn secondary" onClick={() => void loadDimensions()}>Retry dimensions</button></div>
-        : dimensions ? <DimensionRadar summary={dimensions} /> : null}
-      </section>
 
       {loading ? (
         <div className="ody-grid three" aria-label="Loading activity" aria-busy="true">

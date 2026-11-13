@@ -1,17 +1,24 @@
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
-from app.modules.insights.application.handlers import GetInsightsOverviewHandler
+from app.modules.insights.application.handlers import GetDimensionScoresHandler, GetInsightsOverviewHandler
 from app.modules.insights.infrastructure.repository_impl import InsightsRepository
 from app.shared.db.models import User
+from app.shared.core.dates import local_date
 from app.shared.db.session import get_db
 
 router = APIRouter(prefix="/api/v1/insights", tags=["insights"])
+
+
+@router.get("/dimensions")
+def get_dimension_scores(db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> dict:
+    today = local_date(datetime.now(UTC), user.timezone)
+    return GetDimensionScoresHandler(InsightsRepository(db)).execute(user.id, today, user.timezone)
 
 
 @router.get("/overview")

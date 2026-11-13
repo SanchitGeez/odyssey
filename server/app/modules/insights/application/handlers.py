@@ -3,6 +3,21 @@ from __future__ import annotations
 from datetime import date, timedelta
 
 from app.modules.insights.infrastructure.repository_impl import InsightsRepository
+from app.modules.insights.domain.scoring import score_dimensions
+
+
+class GetDimensionScoresHandler:
+    def __init__(self, repo: InsightsRepository) -> None:
+        self.repo = repo
+
+    def execute(self, user_id: str, today: date, timezone: str) -> dict:
+        end = today - timedelta(days=1)
+        start = end - timedelta(days=27)
+        tasks, activities = self.repo.scoring_records(user_id)
+        return {
+            "window": {"from_date": start.isoformat(), "to_date": end.isoformat()},
+            "dimensions": score_dimensions(tasks, activities, start, end, timezone),
+        }
 
 
 class GetInsightsOverviewHandler:

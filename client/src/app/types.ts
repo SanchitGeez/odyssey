@@ -109,6 +109,11 @@ export type InsightsOverview = {
   }
 }
 
+export type DimensionScores = {
+  window: { from_date: string; to_date: string }
+  dimensions: Record<LifeDimension, { completed: number; due: number; score: number | null }>
+}
+
 export type TaskHeatmapResponse = {
   task_id: string
   from_date: string

@@ -15,6 +15,30 @@ def week_bounds(d: date) -> tuple[date, date]:
     return start, start + timedelta(days=6)
 
 
+def scheduled_weekdays(config: dict) -> set[int]:
+    raw_days = config.get("days_of_week", [])
+    if not isinstance(raw_days, list):
+        return set(range(7))
+    days = set()
+    for raw_day in raw_days:
+        try:
+            day = int(raw_day)
+        except (TypeError, ValueError):
+            continue
+        if 0 <= day <= 6:
+            days.add(day)
+    return days or set(range(7))
+
+
+def weekly_target(schedule_type: str, config: dict) -> int:
+    if schedule_type == "once_per_week":
+        return 1
+    try:
+        return max(1, int(config.get("target_count", 1)))
+    except (TypeError, ValueError):
+        return 1
+
+
 def task_due_on(db: Session, task: Task, target_date: date) -> bool:
     if task.status != TaskStatus.active:
         return False
@@ -37,31 +61,9 @@ def task_due_on(db: Session, task: Task, target_date: date) -> bool:
     if schedule_type == "daily":
         return True
     if schedule_type == "specific_days":
-        raw_days = config.get("days_of_week", [])
-        if not isinstance(raw_days, list):
-            return True
-        days: list[int] = []
-        for raw_day in raw_days:
-            try:
-                day = int(raw_day)
-            except (TypeError, ValueError):
-                continue
-            if 0 <= day <= 6:
-                days.append(day)
-        if not days:
-            return True
-        return target_date.weekday() in days
+        return target_date.weekday() in scheduled_weekdays(config)
     if schedule_type in {"x_per_week", "once_per_week"}:
-        if schedule_type == "once_per_week":
-            target_count = 1
-        else:
-            raw_target_count = config.get("target_count", 1)
-            try:
-                target_count = int(raw_target_count)
-            except (TypeError, ValueError):
-                target_count = 1
-            if target_count < 1:
-                target_count = 1
+        target_count = weekly_target(schedule_type, config)
         start, end = week_bounds(target_date)
         done_count = db.scalar(
             select(func.count(TaskActivity.id)).where(

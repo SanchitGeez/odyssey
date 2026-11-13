@@ -37,8 +37,22 @@ modules. Routes accept HTTP requests; application handlers coordinate work;
 repositories read and write the database. Alembic maintains the database schema.
 Docker Compose runs the frontend, backend and PostgreSQL together. Tasks record
 daily activity, quests group milestones, journals store reflections, and Insights
-summarizes actual records. The UI's hexagon separately counts current active
-tasks and categorized quests across the six life dimensions.
+summarizes actual records. The hexagon shows follow-through across the six life
+dimensions: completed actions divided by actions due over the last 28 finished
+days in the user's timezone. Each axis uses a fixed 0–100% scale and shows the
+completion counts; dimensions with nothing due show “No data.”
+
+Daily and specific-day habits count scheduled occurrences. Flexible weekly
+habits count their target when the Monday–Sunday week ends, capped by the number
+of days the task was active in that week. One-time tasks count once at their date
+or window-end deadline, with credit for completion on or before that deadline.
+Undated tasks and quests add no points. Skips and misses count as incomplete.
+Completed and archived tasks retain historical credit; inactive days do not add
+new opportunities. Creating a task never adds opportunities before its creation.
+The chart's fixed window is independent of the activity date filter below it.
+
+Scores use current task schedules and categories; editing those recalculates
+the window. Deleting a task deletes its history; archive it to retain its scores.
 
 ## Current Status
 
@@ -189,6 +203,7 @@ Journals:
 Insights:
 
 - `GET /api/v1/insights/overview`
+- `GET /api/v1/insights/dimensions`
 
 ## Notes
 

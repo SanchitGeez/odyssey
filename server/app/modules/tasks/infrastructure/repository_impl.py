@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import UTC, date, datetime
 
 from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
-from app.shared.db.models import Task, TaskActivity, TaskActivityType
+from app.shared.core.dates import local_date
+from app.shared.db.models import Task, TaskActivity, TaskActivityType, TaskStatus, User
 
 
 class TaskRepository:
@@ -69,3 +70,28 @@ class TaskRepository:
 
     def add_activity(self, activity: TaskActivity) -> None:
         self.db.add(activity)
+
+    def record_status_change(self, task: Task, previous: TaskStatus) -> None:
+        if previous == task.status:
+            return
+        user = self.db.get(User, task.user_id)
+        day = local_date(datetime.now(UTC), user.timezone)
+        existing = self.db.scalar(select(TaskActivity).where(
+            TaskActivity.task_id == task.id,
+            TaskActivity.activity_type == TaskActivityType.status_changed,
+            TaskActivity.event_date == day,
+        ))
+        payload = {"previous_status": previous.value, "status": task.status.value,
+                   "statuses": [previous.value, task.status.value]}
+        if existing:
+            old_payload = existing.payload or {}
+            payload["previous_status"] = old_payload.get("previous_status", previous.value)
+            payload["statuses"] = list(dict.fromkeys([
+                *old_payload.get("statuses", [payload["previous_status"], previous.value]), task.status.value,
+            ]))
+            existing.payload = payload
+        else:
+            self.add_activity(TaskActivity(
+                task_id=task.id, user_id=task.user_id,
+                activity_type=TaskActivityType.status_changed, event_date=day, payload=payload,
+            ))

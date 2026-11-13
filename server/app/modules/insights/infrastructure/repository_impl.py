@@ -12,6 +12,14 @@ class InsightsRepository:
     def __init__(self, db: Session) -> None:
         self.db = db
 
+    def scoring_records(self, user_id: str) -> tuple[list[Task], list[TaskActivity]]:
+        tasks = list(self.db.scalars(select(Task).where(Task.user_id == user_id)).all())
+        activities = list(self.db.scalars(select(TaskActivity).where(
+            TaskActivity.user_id == user_id,
+            TaskActivity.activity_type.in_([TaskActivityType.done, TaskActivityType.status_changed]),
+        )).all())
+        return tasks, activities
+
     def checkin_completed(self, user_id: str, day: date) -> bool:
         row = self.db.scalar(select(CheckinDay).where(CheckinDay.user_id == user_id, CheckinDay.for_date == day, CheckinDay.completed.is_(True)))
         return bool(row)

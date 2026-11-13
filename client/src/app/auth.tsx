@@ -4,6 +4,7 @@ import { getStoredTokens, setStoredTokens } from '../lib/storage'
 import type {
   AuthTokens,
   DailyItemsResponse,
+  DimensionScores,
   InsightsOverview,
   Journal,
   LifeDimension,
@@ -82,6 +83,7 @@ type AppApi = {
   updateJournal: (journalId: string, payload: JournalPatch) => Promise<Journal>
   deleteJournal: (journalId: string) => Promise<void>
   getInsightsOverview: (fromDate: string, toDate: string) => Promise<InsightsOverview>
+  getDimensionScores: () => Promise<DimensionScores>
 }
 
 type AuthContextValue = {
@@ -327,6 +329,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       getInsightsOverview(fromDate, toDate) {
         return authedFetch<InsightsOverview>(`/api/v1/insights/overview?from_date=${fromDate}&to_date=${toDate}`)
+      },
+      getDimensionScores() {
+        return authedFetch<DimensionScores>('/api/v1/insights/dimensions')
       },
     }),
     // Methods read tokensRef; stable identity keeps a refreshing session from resetting editors.

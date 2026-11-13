@@ -1,0 +1,9 @@
+{
+  "incomplete": [
+    "aria-prohibited-attr",
+    "color-contrast"
+  ],
+  "passes": 45,
+  "url": "/insights",
+  "violations": []
+}

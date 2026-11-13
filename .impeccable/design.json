@@ -1,0 +1,642 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-13T20:04:36.311985Z",
+  "title": "Design System: Odyssey",
+  "extensions": {
+    "colorMeta": {
+      "bg-base": {
+        "role": "neutral",
+        "displayName": "Olive Black",
+        "tonalRamp": [
+          "oklch(15% 0.0081 181.83)",
+          "oklch(26% 0.0081 181.83)",
+          "oklch(38% 0.0081 181.83)",
+          "oklch(49% 0.0081 181.83)",
+          "oklch(61% 0.0081 181.83)",
+          "oklch(72% 0.0081 181.83)",
+          "oklch(84% 0.0081 181.83)",
+          "oklch(95% 0.0081 181.83)"
+        ]
+      },
+      "bg-secondary": {
+        "role": "neutral",
+        "displayName": "Bg Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0120 167.23)",
+          "oklch(26% 0.0120 167.23)",
+          "oklch(38% 0.0120 167.23)",
+          "oklch(49% 0.0120 167.23)",
+          "oklch(61% 0.0120 167.23)",
+          "oklch(72% 0.0120 167.23)",
+          "oklch(84% 0.0120 167.23)",
+          "oklch(95% 0.0120 167.23)"
+        ]
+      },
+      "bg-panel": {
+        "role": "neutral",
+        "displayName": "Bg Panel",
+        "tonalRamp": [
+          "oklch(15% 0.0129 160.14)",
+          "oklch(26% 0.0129 160.14)",
+          "oklch(38% 0.0129 160.14)",
+          "oklch(49% 0.0129 160.14)",
+          "oklch(61% 0.0129 160.14)",
+          "oklch(72% 0.0129 160.14)",
+          "oklch(84% 0.0129 160.14)",
+          "oklch(95% 0.0129 160.14)"
+        ]
+      },
+      "bg-panel-strong": {
+        "role": "neutral",
+        "displayName": "Bg Panel Strong",
+        "tonalRamp": [
+          "oklch(15% 0.0149 157.69)",
+          "oklch(26% 0.0149 157.69)",
+          "oklch(38% 0.0149 157.69)",
+          "oklch(49% 0.0149 157.69)",
+          "oklch(61% 0.0149 157.69)",
+          "oklch(72% 0.0149 157.69)",
+          "oklch(84% 0.0149 157.69)",
+          "oklch(95% 0.0149 157.69)"
+        ]
+      },
+      "bg-terminal": {
+        "role": "neutral",
+        "displayName": "Bg Terminal",
+        "tonalRamp": [
+          "oklch(15% 0.0122 155.90)",
+          "oklch(26% 0.0122 155.90)",
+          "oklch(38% 0.0122 155.90)",
+          "oklch(49% 0.0122 155.90)",
+          "oklch(61% 0.0122 155.90)",
+          "oklch(72% 0.0122 155.90)",
+          "oklch(84% 0.0122 155.90)",
+          "oklch(95% 0.0122 155.90)"
+        ]
+      },
+      "bg-elevated": {
+        "role": "neutral",
+        "displayName": "Bg Elevated",
+        "tonalRamp": [
+          "oklch(15% 0.0191 148.15)",
+          "oklch(26% 0.0191 148.15)",
+          "oklch(38% 0.0191 148.15)",
+          "oklch(49% 0.0191 148.15)",
+          "oklch(61% 0.0191 148.15)",
+          "oklch(72% 0.0191 148.15)",
+          "oklch(84% 0.0191 148.15)",
+          "oklch(95% 0.0191 148.15)"
+        ]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Ivory",
+        "tonalRamp": [
+          "oklch(15% 0.0140 88.69)",
+          "oklch(26% 0.0140 88.69)",
+          "oklch(38% 0.0140 88.69)",
+          "oklch(49% 0.0140 88.69)",
+          "oklch(61% 0.0140 88.69)",
+          "oklch(72% 0.0140 88.69)",
+          "oklch(84% 0.0140 88.69)",
+          "oklch(95% 0.0140 88.69)"
+        ]
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Text Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0180 113.89)",
+          "oklch(26% 0.0180 113.89)",
+          "oklch(38% 0.0180 113.89)",
+          "oklch(49% 0.0180 113.89)",
+          "oklch(61% 0.0180 113.89)",
+          "oklch(72% 0.0180 113.89)",
+          "oklch(84% 0.0180 113.89)",
+          "oklch(95% 0.0180 113.89)"
+        ]
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Text Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0234 132.60)",
+          "oklch(26% 0.0234 132.60)",
+          "oklch(38% 0.0234 132.60)",
+          "oklch(49% 0.0234 132.60)",
+          "oklch(61% 0.0234 132.60)",
+          "oklch(72% 0.0234 132.60)",
+          "oklch(84% 0.0234 132.60)",
+          "oklch(95% 0.0234 132.60)"
+        ]
+      },
+      "border-soft": {
+        "role": "neutral",
+        "displayName": "Border Soft",
+        "tonalRamp": [
+          "oklch(15% 0.0211 142.37)",
+          "oklch(26% 0.0211 142.37)",
+          "oklch(38% 0.0211 142.37)",
+          "oklch(49% 0.0211 142.37)",
+          "oklch(61% 0.0211 142.37)",
+          "oklch(72% 0.0211 142.37)",
+          "oklch(84% 0.0211 142.37)",
+          "oklch(95% 0.0211 142.37)"
+        ]
+      },
+      "border-default": {
+        "role": "neutral",
+        "displayName": "Border Default",
+        "tonalRamp": [
+          "oklch(15% 0.0299 132.47)",
+          "oklch(26% 0.0299 132.47)",
+          "oklch(38% 0.0299 132.47)",
+          "oklch(49% 0.0299 132.47)",
+          "oklch(61% 0.0299 132.47)",
+          "oklch(72% 0.0299 132.47)",
+          "oklch(84% 0.0299 132.47)",
+          "oklch(95% 0.0299 132.47)"
+        ]
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "Border Strong",
+        "tonalRamp": [
+          "oklch(15% 0.0864 81.63)",
+          "oklch(26% 0.0864 81.63)",
+          "oklch(38% 0.0864 81.63)",
+          "oklch(49% 0.0864 81.63)",
+          "oklch(61% 0.0864 81.63)",
+          "oklch(72% 0.0864 81.63)",
+          "oklch(84% 0.0864 81.63)",
+          "oklch(95% 0.0864 81.63)"
+        ]
+      },
+      "accent-gold": {
+        "role": "primary",
+        "displayName": "Burnished Gold",
+        "tonalRamp": [
+          "oklch(15% 0.0907 84.93)",
+          "oklch(26% 0.0907 84.93)",
+          "oklch(38% 0.0907 84.93)",
+          "oklch(49% 0.0907 84.93)",
+          "oklch(61% 0.0907 84.93)",
+          "oklch(72% 0.0907 84.93)",
+          "oklch(84% 0.0907 84.93)",
+          "oklch(95% 0.0907 84.93)"
+        ]
+      },
+      "accent-gold-dim": {
+        "role": "primary",
+        "displayName": "Accent Gold Dim",
+        "tonalRamp": [
+          "oklch(15% 0.0223 84.43)",
+          "oklch(26% 0.0223 84.43)",
+          "oklch(38% 0.0223 84.43)",
+          "oklch(49% 0.0223 84.43)",
+          "oklch(61% 0.0223 84.43)",
+          "oklch(72% 0.0223 84.43)",
+          "oklch(84% 0.0223 84.43)",
+          "oklch(95% 0.0223 84.43)"
+        ]
+      },
+      "accent-silver": {
+        "role": "neutral",
+        "displayName": "Accent Silver",
+        "tonalRamp": [
+          "oklch(15% 0.0208 128.75)",
+          "oklch(26% 0.0208 128.75)",
+          "oklch(38% 0.0208 128.75)",
+          "oklch(49% 0.0208 128.75)",
+          "oklch(61% 0.0208 128.75)",
+          "oklch(72% 0.0208 128.75)",
+          "oklch(84% 0.0208 128.75)",
+          "oklch(95% 0.0208 128.75)"
+        ]
+      },
+      "accent-red": {
+        "role": "secondary",
+        "displayName": "Accent Red",
+        "tonalRamp": [
+          "oklch(15% 0.0911 24.65)",
+          "oklch(26% 0.0911 24.65)",
+          "oklch(38% 0.0911 24.65)",
+          "oklch(49% 0.0911 24.65)",
+          "oklch(61% 0.0911 24.65)",
+          "oklch(72% 0.0911 24.65)",
+          "oklch(84% 0.0911 24.65)",
+          "oklch(95% 0.0911 24.65)"
+        ]
+      },
+      "cat-body": {
+        "role": "secondary",
+        "displayName": "Cat Body",
+        "tonalRamp": [
+          "oklch(15% 0.0638 150.55)",
+          "oklch(26% 0.0638 150.55)",
+          "oklch(38% 0.0638 150.55)",
+          "oklch(49% 0.0638 150.55)",
+          "oklch(61% 0.0638 150.55)",
+          "oklch(72% 0.0638 150.55)",
+          "oklch(84% 0.0638 150.55)",
+          "oklch(95% 0.0638 150.55)"
+        ]
+      },
+      "cat-mind": {
+        "role": "secondary",
+        "displayName": "Cat Mind",
+        "tonalRamp": [
+          "oklch(15% 0.0624 265.47)",
+          "oklch(26% 0.0624 265.47)",
+          "oklch(38% 0.0624 265.47)",
+          "oklch(49% 0.0624 265.47)",
+          "oklch(61% 0.0624 265.47)",
+          "oklch(72% 0.0624 265.47)",
+          "oklch(84% 0.0624 265.47)",
+          "oklch(95% 0.0624 265.47)"
+        ]
+      },
+      "cat-work": {
+        "role": "secondary",
+        "displayName": "Cat Work",
+        "tonalRamp": [
+          "oklch(15% 0.0907 84.93)",
+          "oklch(26% 0.0907 84.93)",
+          "oklch(38% 0.0907 84.93)",
+          "oklch(49% 0.0907 84.93)",
+          "oklch(61% 0.0907 84.93)",
+          "oklch(72% 0.0907 84.93)",
+          "oklch(84% 0.0907 84.93)",
+          "oklch(95% 0.0907 84.93)"
+        ]
+      },
+      "cat-wealth": {
+        "role": "secondary",
+        "displayName": "Cat Wealth",
+        "tonalRamp": [
+          "oklch(15% 0.0840 79.33)",
+          "oklch(26% 0.0840 79.33)",
+          "oklch(38% 0.0840 79.33)",
+          "oklch(49% 0.0840 79.33)",
+          "oklch(61% 0.0840 79.33)",
+          "oklch(72% 0.0840 79.33)",
+          "oklch(84% 0.0840 79.33)",
+          "oklch(95% 0.0840 79.33)"
+        ]
+      },
+      "cat-connection": {
+        "role": "secondary",
+        "displayName": "Cat Connection",
+        "tonalRamp": [
+          "oklch(15% 0.0801 14.16)",
+          "oklch(26% 0.0801 14.16)",
+          "oklch(38% 0.0801 14.16)",
+          "oklch(49% 0.0801 14.16)",
+          "oklch(61% 0.0801 14.16)",
+          "oklch(72% 0.0801 14.16)",
+          "oklch(84% 0.0801 14.16)",
+          "oklch(95% 0.0801 14.16)"
+        ]
+      },
+      "cat-meaning": {
+        "role": "secondary",
+        "displayName": "Cat Meaning",
+        "tonalRamp": [
+          "oklch(15% 0.0646 304.59)",
+          "oklch(26% 0.0646 304.59)",
+          "oklch(38% 0.0646 304.59)",
+          "oklch(49% 0.0646 304.59)",
+          "oklch(61% 0.0646 304.59)",
+          "oklch(72% 0.0646 304.59)",
+          "oklch(84% 0.0646 304.59)",
+          "oklch(95% 0.0646 304.59)"
+        ]
+      },
+      "state-success": {
+        "role": "secondary",
+        "displayName": "State Success",
+        "tonalRamp": [
+          "oklch(15% 0.0644 146.33)",
+          "oklch(26% 0.0644 146.33)",
+          "oklch(38% 0.0644 146.33)",
+          "oklch(49% 0.0644 146.33)",
+          "oklch(61% 0.0644 146.33)",
+          "oklch(72% 0.0644 146.33)",
+          "oklch(84% 0.0644 146.33)",
+          "oklch(95% 0.0644 146.33)"
+        ]
+      },
+      "state-warning": {
+        "role": "secondary",
+        "displayName": "State Warning",
+        "tonalRamp": [
+          "oklch(15% 0.0840 79.33)",
+          "oklch(26% 0.0840 79.33)",
+          "oklch(38% 0.0840 79.33)",
+          "oklch(49% 0.0840 79.33)",
+          "oklch(61% 0.0840 79.33)",
+          "oklch(72% 0.0840 79.33)",
+          "oklch(84% 0.0840 79.33)",
+          "oklch(95% 0.0840 79.33)"
+        ]
+      },
+      "state-danger": {
+        "role": "secondary",
+        "displayName": "State Danger",
+        "tonalRamp": [
+          "oklch(15% 0.0908 27.69)",
+          "oklch(26% 0.0908 27.69)",
+          "oklch(38% 0.0908 27.69)",
+          "oklch(49% 0.0908 27.69)",
+          "oklch(61% 0.0908 27.69)",
+          "oklch(72% 0.0908 27.69)",
+          "oklch(84% 0.0908 27.69)",
+          "oklch(95% 0.0908 27.69)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Shared page title."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Check-in introduction."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Task title."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Ordinary reading and controls."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels."
+      },
+      "journal": {
+        "displayName": "Journal",
+        "purpose": "Long-form writing and reading."
+      }
+    },
+    "shadows": [
+      {
+        "name": "panel",
+        "value": "0 20px 60px #05090570",
+        "purpose": "Dialogs and account popovers."
+      },
+      {
+        "name": "lift",
+        "value": "0 12px 30px #05090550",
+        "purpose": "Toast feedback."
+      },
+      {
+        "name": "gold",
+        "value": "0 12px 32px #75604025",
+        "purpose": "Available warm shadow token."
+      },
+      {
+        "name": "button-hover",
+        "value": "0 8px 24px #b5995820",
+        "purpose": "Primary and shared button hover."
+      },
+      {
+        "name": "select-menu",
+        "value": "0 18px 45px #05090570",
+        "purpose": "Shared themed select menus across filters, forms, categories, and journal Text style."
+      },
+      {
+        "name": "journal-scroll",
+        "value": "0 24px 64px #050b0870",
+        "purpose": "Focused writing surface."
+      },
+      {
+        "name": "journal-cap",
+        "value": "0 4px 12px #050b0866",
+        "purpose": "Rolled scroll caps."
+      },
+      {
+        "name": "checkin-card",
+        "value": "0 20px 44px rgb(4 9 6 / .3)",
+        "purpose": "Foreground commitment stack."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "Shared control and entrance easing."
+      },
+      {
+        "name": "ease-spring",
+        "value": "cubic-bezier(.22,1,.36,1)",
+        "purpose": "Available shared easing token."
+      },
+      {
+        "name": "control-duration",
+        "value": "160ms–220ms",
+        "purpose": "Observed control state transition range; individual declarations remain authoritative."
+      },
+      {
+        "name": "route-entrance",
+        "value": "360ms",
+        "purpose": "Opacity and 10px upward entrance, suppressed for reduced motion."
+      },
+      {
+        "name": "panel-entrance",
+        "value": "380ms",
+        "purpose": "Panel opacity and 40px horizontal entrance."
+      },
+      {
+        "name": "panel-exit",
+        "value": "180ms",
+        "purpose": "Closing panel and overlay."
+      },
+      {
+        "name": "toast-entrance",
+        "value": "300ms",
+        "purpose": "Opacity and 12px upward entrance."
+      },
+      {
+        "name": "navigation-spring",
+        "value": "stiffness: 420; damping: 38",
+        "purpose": "Shared active indicator in application navigation."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Disable CSS animation and transitions; route/auth entrances use the reduced-motion hook."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "minimum-viewport",
+        "value": "320px"
+      },
+      {
+        "name": "narrow-dates",
+        "value": "360px"
+      },
+      {
+        "name": "phone-layout",
+        "value": "640px"
+      },
+      {
+        "name": "phone-writing-checkin",
+        "value": "767px"
+      },
+      {
+        "name": "mobile-navigation",
+        "value": "900px"
+      },
+      {
+        "name": "compact-radar",
+        "value": "1100px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1120px"
+      },
+      {
+        "name": "wide-desktop",
+        "value": "1600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Shared labeled action with hover, focus, active, and disabled states.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Save changes</button>",
+      "css": ".ds-btn-primary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:46px;padding:11px 20px;border-radius:var(--radius-sm,8px);border:1px solid transparent;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body,'Manrope',sans-serif);transition:transform .22s var(--ease-out,cubic-bezier(.16,1,.3,1)),background .2s,box-shadow .2s;background:var(--accent-gold,#d5b675);color:#171d14;border-color:transparent;}.ds-btn-primary:hover:not(:disabled){background:#e3c78e;transform:translateY(-2px);box-shadow:0 8px 24px #b5995820;}.ds-btn-primary:active:not(:disabled){transform:scale(.97)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-btn-primary:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-btn-primary{transition:none}.ds-btn-primary:hover:not(:disabled),.ds-btn-primary:active:not(:disabled){transform:none}}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Shared labeled action with hover, focus, active, and disabled states.",
+      "html": "<button class=\"ds-btn-secondary\" type=\"button\">Cancel</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:46px;padding:11px 20px;border-radius:var(--radius-sm,8px);border:1px solid transparent;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body,'Manrope',sans-serif);transition:transform .22s var(--ease-out,cubic-bezier(.16,1,.3,1)),background .2s,box-shadow .2s;background:#20291f;color:#e4dfce;border-color:#586148;}.ds-btn-secondary:hover:not(:disabled){background:#30392a;transform:translateY(-2px);box-shadow:0 8px 24px #b5995820;}.ds-btn-secondary:active:not(:disabled){transform:scale(.97)}.ds-btn-secondary:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-btn-secondary:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-btn-secondary{transition:none}.ds-btn-secondary:hover:not(:disabled),.ds-btn-secondary:active:not(:disabled){transform:none}}"
+    },
+    {
+      "name": "Destructive Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Shared labeled action with hover, focus, active, and disabled states.",
+      "html": "<button class=\"ds-btn-danger\" type=\"button\">Delete task</button>",
+      "css": ".ds-btn-danger{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:46px;padding:11px 20px;border-radius:var(--radius-sm,8px);border:1px solid transparent;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body,'Manrope',sans-serif);transition:transform .22s var(--ease-out,cubic-bezier(.16,1,.3,1)),background .2s,box-shadow .2s;background:#542d29;color:#ffd3c9;border-color:#986158;}.ds-btn-danger:hover:not(:disabled){background:#69352e;transform:translateY(-2px);box-shadow:0 8px 24px #b5995820;}.ds-btn-danger:active:not(:disabled){transform:scale(.97)}.ds-btn-danger:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-btn-danger:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-btn-danger{transition:none}.ds-btn-danger:hover:not(:disabled),.ds-btn-danger:active:not(:disabled){transform:none}}"
+    },
+    {
+      "name": "Labeled Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Recessed field with readable placeholder and gold focus.",
+      "html": "<label class=\"ds-field\"><span>Task name</span><input class=\"ds-input\" placeholder=\"What will you commit to?\" /></label>",
+      "css": ".ds-field{display:grid;gap:7px;color:var(--text-secondary,#c3c5b8);font-size:13px;font-weight:600;font-family:var(--font-body,'Manrope',sans-serif);}.ds-input{width:100%;min-width:0;min-height:46px;padding:11px 14px;border-radius:var(--radius-sm,8px);border:1px solid #4a5445;background:#101711;color:var(--text-primary,#eeeae0);font-size:16px;line-height:1.5;font-family:var(--font-body,'Manrope',sans-serif);transition:border-color .2s,background .2s}.ds-input::placeholder{color:#a1aa99;opacity:1}.ds-input:hover{border-color:#798168}.ds-input:focus-visible{border-color:var(--accent-gold,#d5b675);outline:2px solid var(--accent-gold,#d5b675);outline-offset:2px}.ds-input:disabled{opacity:.5}@media(prefers-reduced-motion:reduce){.ds-input{transition:none}}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-link",
+      "description": "Current desktop destination, with warm backing and quiet hover.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Preview navigation\"><a class=\"ds-nav-link ds-current\" href=\"#check-in\" aria-current=\"page\">Check-In</a><a class=\"ds-nav-link\" href=\"#tasks\">Tasks</a><a class=\"ds-nav-link\" href=\"#journals\">Journal</a></nav>",
+      "css": ".ds-nav{display:grid;gap:6px;width:196px;background:#101611;padding:12px;font-family:var(--font-body,'Manrope',sans-serif);}.ds-nav-link{display:flex;align-items:center;min-height:48px;padding:10px 14px;font-size:14px;font-weight:500;color:var(--text-muted,#a5ae9f);text-decoration:none;border-radius:var(--radius-sm,8px);border:1px solid transparent;transition:color .2s,background .2s}.ds-nav-link:hover{color:var(--text-primary,#eeeae0);background:#ffffff05}.ds-nav-link.ds-current{color:#efcf91;background:#d5b67512;border-color:#d5b67525}.ds-nav-link:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-nav-link{transition:none}}"
+    },
+    {
+      "name": "Six Dimension Emblems",
+      "kind": "chip",
+      "refersTo": "dimension-chip",
+      "description": "The same original symbols and names used throughout the application.",
+      "html": "<div class=\"ds-dimensions\"><span class=\"ds-dimension-chip\" style=\"--ds-dimension-color:var(--cat-body,#9cc5a4)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M14 27C6 23 3 16 6 7m12 20c8-4 11-11 8-20M6 10c5-1 7 1 7 5-4 0-6-1-7-5Zm0 8c4-2 7-1 8 3-4 1-6 0-8-3Zm20-8c-5-1-7 1-7 5 4 0 6-1 7-5Zm0 8c-4-2-7-1-8 3 4 1 6 0 8-3Z\"></path><path d=\"m13 28 3-3 3 3\"></path></svg><span>Vitality</span></span><span class=\"ds-dimension-chip\" style=\"--ds-dimension-color:var(--cat-mind,#a5b8e1)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m7 5 4 3a13 13 0 0 1 10 0l4-3v14c0 6-4 9-9 10-5-1-9-4-9-10V5Z\"></path><circle cx=\"11.5\" cy=\"14\" r=\"4\"></circle><circle cx=\"20.5\" cy=\"14\" r=\"4\"></circle><path d=\"m14 19 2 3 2-3M12 25l4 4 4-4\"></path><circle cx=\"11.5\" cy=\"14\" r=\".7\" fill=\"currentColor\"></circle><circle cx=\"20.5\" cy=\"14\" r=\".7\" fill=\"currentColor\"></circle></svg><span>Psyche</span></span><span class=\"ds-dimension-chip\" style=\"--ds-dimension-color:var(--cat-work,#d5b675)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m10 21 13-16 4-1-1 5-14 14M7 17l9 9M6 26l5-5M4 27l2-2 3 3-2 2-3-3Z\"></path><path d=\"m13 19 9-11\"></path></svg><span>Prowess</span></span><span class=\"ds-dimension-chip\" style=\"--ds-dimension-color:var(--cat-wealth,#dfbc83)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><ellipse cx=\"12\" cy=\"9\" rx=\"8\" ry=\"4\"></ellipse><path d=\"M4 9v6c0 2 4 4 8 4m-8-7c0 2 4 4 8 4m8-7v5\"></path><ellipse cx=\"21\" cy=\"20\" rx=\"7\" ry=\"3.5\"></ellipse><path d=\"M14 20v6c0 2 3 3 7 3s7-1 7-3v-6m-14 3c0 2 3 3 7 3s7-1 7-3\"></path></svg><span>Wealth</span></span><span class=\"ds-dimension-chip\" style=\"--ds-dimension-color:var(--cat-connection,#e3a0a5)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 13 5-5 5 1 5-2 5 3 6 6-5 6-6 5-6-2-9-8 4-5m2-1 5-1-4 5c2 2 4 2 6 0l2-2 7 7M3 13l-2 3 4 5 3-2m21-6 2 3-4 5-3-2M12 20l5 5m0-9 6 6\"></path></svg><span>Alliance</span></span><span class=\"ds-dimension-chip\" style=\"--ds-dimension-color:var(--cat-meaning,#c5b2de)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 11 13-7 13 7H3Zm2 4h22M4 28h24M7 15v10m6-10v10m6-10v10m6-10v10M3 25h26\"></path><path d=\"M12 9h8\"></path></svg><span>Legacy</span></span></div>",
+      "css": ".ds-dimensions{display:flex;flex-wrap:wrap;gap:12px;padding:12px;background:var(--bg-panel,#171e1a)}.ds-dimension-chip{display:inline-flex;align-items:center;gap:10px;padding:5px 9px;background:#ffffff04;border-radius:6px;color:var(--text-secondary,#c3c5b8);font-size:14px;white-space:nowrap;font-family:var(--font-body,'Manrope',sans-serif);}.ds-dimension-chip svg{flex-shrink:0;color:var(--ds-dimension-color,var(--accent-gold,#d5b675))}"
+    },
+    {
+      "name": "Task Card",
+      "kind": "card",
+      "refersTo": "task-card",
+      "description": "Image-free commitment surface with category, schedule, and practical actions.",
+      "html": "<article class=\"ds-task-card\" tabindex=\"0\"><h3>Make time to reflect</h3><div class=\"ds-task-meta\"><span class=\"ds-dimension-chip\" style=\"--ds-dimension-color:var(--cat-meaning,#c5b2de)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 11 13-7 13 7H3Zm2 4h22M4 28h24M7 15v10m6-10v10m6-10v10m6-10v10M3 25h26\"></path><path d=\"M12 9h8\"></path></svg><span>Legacy</span></span><span>Every day</span></div><p>A small commitment, one day at a time.</p><div class=\"ds-task-actions\"><button type=\"button\">History</button><button type=\"button\">Edit</button></div></article>",
+      "css": ".ds-task-card{max-width:560px;min-width:0;background:linear-gradient(115deg,#20291f,#182019 75%);border:1px solid #3d4936;border-radius:var(--radius-md,12px);padding:22px 24px;color:var(--text-primary,#eeeae0);font-family:var(--font-body,'Manrope',sans-serif);transition:background .22s,border-color .22s}.ds-task-card:hover{border-color:#7f7951;background:linear-gradient(115deg,#263024,#1c251d 75%)}.ds-task-card:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-task-card h3{font-size:19px;line-height:1.5;letter-spacing:-.02em;margin:0 0 12px;font-weight:600}.ds-task-meta{display:flex;gap:16px;align-items:center;flex-wrap:wrap;color:#bdc3af;font-size:12px}.ds-task-card p{font-size:13px;line-height:1.7;color:var(--text-muted,#a5ae9f);margin:12px 0 0;max-width:60ch}.ds-task-actions{display:flex;gap:6px;margin-top:14px}.ds-task-actions button{display:inline-flex;align-items:center;min-height:40px;border:1px solid #526044;background:#263322;border-radius:7px;padding:8px 11px;color:#d6d8c7;font-size:12px;cursor:pointer;font-family:var(--font-body,'Manrope',sans-serif);}.ds-task-actions button:hover{background:#d5b67518;color:#f1d49b;border-color:#a58f58}.ds-task-actions button:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-dimension-chip{display:inline-flex;align-items:center;gap:10px;padding:5px 9px;background:#ffffff04;border-radius:6px;color:var(--text-secondary,#c3c5b8);font-size:14px;white-space:nowrap;font-family:var(--font-body,'Manrope',sans-serif);}.ds-dimension-chip svg{flex-shrink:0;color:var(--ds-dimension-color,var(--accent-gold,#d5b675))}@media(max-width:640px){.ds-task-card{padding:20px}.ds-task-actions button{min-height:44px}}@media(prefers-reduced-motion:reduce){.ds-task-card{transition:none}}"
+    },
+    {
+      "name": "Zen Journal Workspace",
+      "kind": "custom",
+      "refersTo": "journal-scroll",
+      "description": "Clean date/title/prose paper with Format collapsed by default and Entry details outside the page. Isolated preview scopes a stationary header to its scroll frame; production uses a fixed measured header and React portal.",
+      "html": "<section class=\"ds-zen\"><header class=\"ds-zen-header\"><a class=\"ds-zen-back\" href=\"#journals\">Journal</a><span class=\"ds-zen-status\">A new page</span><details class=\"ds-zen-format\"><summary>Format</summary><div class=\"ds-zen-tools\" role=\"group\" aria-label=\"Formatting tools\"><button class=\"ds-zen-style\" type=\"button\" aria-label=\"Text style\">Paragraph</button><button type=\"button\" aria-label=\"Bold\"><strong>B</strong></button><button type=\"button\" aria-label=\"Italic\"><em>I</em></button><button type=\"button\" aria-label=\"Bullet list\">•</button><button type=\"button\" aria-label=\"Numbered list\">1.</button><button type=\"button\" aria-label=\"Checklist\">☑</button><button type=\"button\" aria-label=\"Quotation\">“</button><button type=\"button\" aria-label=\"Add or edit link\">Link</button><button type=\"button\" aria-label=\"Undo\">Undo</button><button type=\"button\" aria-label=\"Redo\" disabled>Redo</button></div></details><details class=\"ds-zen-details\"><summary>Details</summary><aside class=\"ds-zen-details-panel\" aria-label=\"Entry details\"><h3>Entry details</h3><dl><div><dt>Length</dt><dd>4 words</dd></div><div><dt>Last saved</dt><dd>Not saved yet</dd></div></dl><h4>Life dimensions</h4><p>No dimensions selected.</p><label>Tags<input placeholder=\"Add tags, separated by commas\" /></label><p>Changes autosave with your writing.</p></aside></details><button class=\"ds-zen-save\" type=\"button\">Save &amp; close</button></header><main class=\"ds-zen-writing\"><div class=\"ds-zen-cap\"></div><section class=\"ds-zen-paper\"><time class=\"ds-zen-date\">November 14, 2026</time><textarea class=\"ds-zen-title\" rows=\"1\" aria-label=\"Entry title (optional)\" placeholder=\"Give this moment a title\">A little further</textarea><div class=\"ds-zen-prose\" contenteditable=\"true\" role=\"textbox\" aria-multiline=\"true\" aria-label=\"Journal content\"><p>Make room for reflection.</p></div></section><div class=\"ds-zen-cap ds-zen-cap-bottom\"></div></main></section>",
+      "css": ".ds-zen{position:relative;height:660px;overflow:auto;background:var(--bg-base,#0c1110);color:var(--text-primary,#eeeae0);font-family:var(--font-body,'Manrope',sans-serif);}.ds-zen-header{position:sticky;top:0;z-index:10;display:grid;grid-template-columns:1fr auto auto auto auto;align-items:center;gap:6px 12px;padding:12px clamp(16px,3vw,48px);border-bottom:1px solid var(--border-soft,#30392f);background:#0d1411}.ds-zen-back{display:inline-flex;align-items:center;min-height:44px;color:var(--text-primary,#eeeae0);font-size:14px;text-decoration:none}.ds-zen-status{font-size:12px;color:var(--text-secondary,#c3c5b8);white-space:nowrap}.ds-zen-format,.ds-zen-details{display:contents}.ds-zen-header summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border-radius:7px;color:var(--text-secondary,#c3c5b8);font-size:13px;cursor:pointer;transition:background 160ms ease,color 160ms ease}.ds-zen-header summary::-webkit-details-marker{display:none}.ds-zen-header summary:hover,.ds-zen-header details[open]>summary{color:#ead3a1;background:#c9aa6415}.ds-zen-header summary:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-zen-back:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-zen-save{min-height:44px;padding:11px 20px;border:1px solid transparent;border-radius:8px;background:var(--accent-gold,#d5b675);color:#171d14;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--font-body,'Manrope',sans-serif);transition:background .2s,transform .22s}.ds-zen-save:hover{background:#e3c78e;transform:translateY(-2px)}.ds-zen-save:active{transform:scale(.97)}.ds-zen-save:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-zen-tools{grid-column:1/-1;grid-row:2;display:flex;align-items:center;flex-wrap:nowrap;gap:3px;min-width:0;max-width:1120px;padding:7px 0 5px;border-top:1px solid #e4d4a31c;overflow-x:auto;scrollbar-width:thin;overscroll-behavior-x:contain}.ds-zen-format:not([open]) .ds-zen-tools{display:none}.ds-zen-tools button{flex-shrink:0;min-width:44px;width:44px;height:44px;padding:10px;border:0;border-radius:7px;background:transparent;color:var(--text-secondary,#c3c5b8);font-size:16px;cursor:pointer;transition:background 160ms ease,color 160ms ease,transform 160ms ease}.ds-zen-tools button:hover{background:#c9aa6422;color:#e3c78d}.ds-zen-tools button:active{transform:scale(.94)}.ds-zen-tools button:disabled{opacity:.35;cursor:not-allowed}.ds-zen-tools button:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-zen-tools .ds-zen-style{width:126px;text-align:left;padding:0 8px;font-size:13px;color:#d9d0b8}.ds-zen-details-panel{position:absolute;right:12px;top:12px;width:min(360px,calc(100% - 24px));max-height:540px;overflow:auto;z-index:20;padding:26px;border:1px solid #566046;border-radius:16px;background:#1a221b;box-shadow:var(--shadow-panel,0 20px 60px #05090570)}.ds-zen-details:not([open]) .ds-zen-details-panel{display:none}.ds-zen-details-panel h3{font-family:var(--font-display,Cinzel,Georgia,serif);font-size:23px;font-weight:500;margin:0 0 26px}.ds-zen-details-panel dl{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-bottom:24px;border-bottom:1px solid var(--border-soft,#30392f);margin:0 0 26px}.ds-zen-details-panel dt{font-size:12px;font-weight:500;color:var(--text-muted,#a5ae9f);margin-bottom:7px}.ds-zen-details-panel dd{margin:0;font-size:14px}.ds-zen-details-panel h4,.ds-zen-details-panel label{font-size:13px;color:var(--text-secondary,#c3c5b8)}.ds-zen-details-panel p{font-size:13px;line-height:1.65;color:var(--text-muted,#a5ae9f)}.ds-zen-details-panel input{display:block;width:100%;margin-top:12px;min-height:46px;padding:11px 14px;border:1px solid #4a5445;border-radius:8px;background:#101711;color:var(--text-primary,#eeeae0);font-size:16px;font-family:var(--font-body,'Manrope',sans-serif);}.ds-zen-details-panel input:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-zen-writing{width:min(860px,calc(100% - 48px));margin:48px auto 64px}.ds-zen-paper{padding:44px clamp(24px,6vw,76px) 52px;background:linear-gradient(90deg,#ac926a0d,transparent 8%,transparent 94%,#ac926a0f),#20231d;box-shadow:0 24px 64px #050b0870;color:#e1dbc9}.ds-zen-cap{height:10px;width:calc(100% + 16px);margin-left:-8px;border-radius:6px;background:linear-gradient(180deg,#726347,#38382b 45%,#494534);box-shadow:0 4px 12px #050b0866}.ds-zen-cap-bottom{background:linear-gradient(180deg,#494534,#34362a 65%,#726347)}.ds-zen-date{display:block;padding-bottom:24px;font-size:13px;color:#bcb49f}.ds-zen-title{display:block;width:100%;padding:0;margin:0 0 30px;background:none;border:0;border-radius:0;color:#f0e7d3;font-family:var(--font-display,Cinzel,Georgia,serif);font-size:clamp(28px,3vw,36px);font-weight:500;line-height:1.4;letter-spacing:-.02em;resize:none;overflow:hidden;outline-offset:8px}.ds-zen-title:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-zen-prose{min-height:340px;font-family:var(--font-journal,Literata,Georgia,serif);color:#e1dbc9;font-size:19px;line-height:1.85;overflow-wrap:anywhere;outline:none;caret-color:#e7c888}.ds-zen-prose p{margin:0 0 1em}@media(max-width:767px){.ds-zen-header{padding:10px 16px 8px;gap:2px;grid-template-columns:44px auto auto auto}.ds-zen-back{grid-column:1}.ds-zen-status{grid-column:1/-1;grid-row:2;min-height:20px;padding-top:3px;text-align:center;font-size:11px}.ds-zen-header summary{font-size:12px;padding:8px}.ds-zen-save{font-size:12px;padding-inline:11px}.ds-zen-tools{grid-row:3;gap:1px;padding:7px 0}.ds-zen-tools .ds-zen-style{width:132px;font-size:16px}.ds-zen-writing{width:calc(100% - 32px);margin:24px auto 40px}.ds-zen-paper{padding:28px 22px 38px}.ds-zen-cap{height:8px;width:calc(100% + 8px);margin-left:-4px}.ds-zen-date{font-size:12px;padding-bottom:22px}.ds-zen-title{font-size:27px;line-height:1.45;margin-bottom:26px}.ds-zen-prose{font-size:18px}}@media(max-width:359px){.ds-zen-header{padding-inline:10px}.ds-zen-writing{width:calc(100% - 24px)}}@media(prefers-reduced-motion:reduce){.ds-zen button,.ds-zen summary{transition:none}.ds-zen button:hover,.ds-zen button:active{transform:none}}"
+    },
+    {
+      "name": "Quest Detail Drawer",
+      "kind": "custom",
+      "refersTo": "quest-detail-panel",
+      "description": "Open-state preview of the click-selected quest: 600px desktop drawer and full-viewport phone detail, with uninterrupted sections.",
+      "html": "<div class=\"ds-quest-preview\"><div class=\"ds-quest-overlay\"></div><section class=\"ds-quest-panel\" role=\"dialog\" aria-label=\"Quest details\"><header class=\"ds-quest-header\"><div><h2>Quest details</h2><p>Milestones, progress and the story so far.</p></div><button class=\"ds-quest-close\" type=\"button\" aria-label=\"Close panel\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"m6 6 12 12M18 6 6 18\"></path></svg></button></header><div class=\"ds-quest-body\"><section class=\"ds-quest-section\"><h3>Milestones</h3><p class=\"ds-quest-summary\">0 / 0 milestones</p><div class=\"ds-quest-progress\"></div><p>No milestones yet. Add the first checkpoint below.</p><div class=\"ds-quest-milestone\"><input placeholder=\"Add milestone\" aria-label=\"New milestone title\" /><button type=\"button\">Add</button></div></section><section class=\"ds-quest-section\"><h3>Log Update</h3><textarea placeholder=\"Write what happened...\" aria-label=\"Quest update\"></textarea><button class=\"ds-quest-submit\" type=\"button\">Submit</button></section><section class=\"ds-quest-section\"><h3>No Timeline Yet</h3><p>Complete a milestone or submit an update to start your quest history.</p></section></div></section></div>",
+      "css": ".ds-quest-preview{position:relative;height:620px;min-height:380px;overflow:hidden;background:var(--bg-base,#0c1110);font-family:var(--font-body,'Manrope',sans-serif);}.ds-quest-overlay{position:absolute;inset:0;background:#060b08b8}.ds-quest-panel{position:absolute;inset:12px 12px 12px auto;width:min(600px,calc(100% - 24px));display:flex;flex-direction:column;max-height:calc(100% - 24px);border:1px solid #566046;border-radius:16px;background:#1a221b;color:var(--text-primary,#eeeae0);box-shadow:var(--shadow-panel,0 20px 60px #05090570);overflow:hidden}.ds-quest-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:26px;border-bottom:1px solid var(--border-soft,#30392f)}.ds-quest-header h2{margin:0;font-size:23px;font-family:var(--font-display,Cinzel,Georgia,serif);font-weight:500}.ds-quest-header p{font-size:13px;color:var(--text-muted,#a5ae9f);margin:6px 0 0}.ds-quest-close{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:9px;flex-shrink:0;border:0;background:transparent;color:var(--text-muted,#a5ae9f);border-radius:8px;cursor:pointer;transition:background .18s,color .18s,transform .18s}.ds-quest-close:hover{color:#f1d7a1;background:#d5b67512}.ds-quest-close:active{transform:scale(.94)}.ds-quest-close:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-quest-body{display:grid;gap:28px;padding:26px;overflow-y:auto;overscroll-behavior:contain}.ds-quest-section{background:transparent;padding:0;margin:0;border:0;border-radius:0;box-shadow:none}.ds-quest-section+.ds-quest-section{padding-top:24px;border-top:1px solid var(--border-soft,#30392f)}.ds-quest-section h3{font-size:19px;font-weight:500;line-height:1.5;margin:0 0 12px}.ds-quest-section p{font-size:13px;line-height:1.7;color:var(--text-muted,#a5ae9f)}.ds-quest-summary{font-size:12px}.ds-quest-progress{height:4px;background:#3c4433;border-radius:4px;overflow:hidden;margin-bottom:12px}.ds-quest-milestone{display:flex;align-items:end;gap:10px;margin-top:18px}.ds-quest-section input,.ds-quest-section textarea{min-width:0;min-height:46px;padding:11px 14px;border-radius:8px;border:1px solid #4a5445;color:var(--text-primary,#eeeae0);background:#101711;font-size:16px;line-height:1.5;font-family:var(--font-body,'Manrope',sans-serif);}.ds-quest-section input{flex:1;width:100%}.ds-quest-section textarea{width:100%;min-height:82px;resize:vertical}.ds-quest-section input::placeholder,.ds-quest-section textarea::placeholder{color:#a1aa99;opacity:1}.ds-quest-section input:hover,.ds-quest-section textarea:hover{border-color:#798168}.ds-quest-section input:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-quest-section textarea:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-quest-section button{display:inline-flex;justify-content:center;align-items:center;min-height:46px;padding:11px 20px;border-radius:8px;border:1px solid transparent;background:var(--accent-gold,#d5b675);color:#171d14;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body,'Manrope',sans-serif);transition:background .2s,transform .22s}.ds-quest-section button:hover{background:#e3c78e;transform:translateY(-2px)}.ds-quest-section button:active{transform:scale(.97)}.ds-quest-section button:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-quest-submit{margin-top:20px}@media(max-width:640px){.ds-quest-panel{inset:0;width:100%;max-width:100%;max-height:100%;border:0;border-radius:0}.ds-quest-header,.ds-quest-body{padding:22px}}@media(prefers-reduced-motion:reduce){.ds-quest-preview button{transition:none}.ds-quest-preview button:hover,.ds-quest-preview button:active{transform:none}}"
+    },
+    {
+      "name": "Life Dimensions Hexagon",
+      "kind": "custom",
+      "refersTo": "dimension-radar",
+      "description": "Zero-input preview of real active task/quest counts; production populates the polygon and legend from the current library, independently of the activity date range.",
+      "html": "<section class=\"ds-radar\"><h2>Life dimensions</h2><p class=\"ds-radar-intro\">Active tasks and quests by dimension. Current library snapshot.</p><div class=\"ds-radar-layout\"><figure><svg class=\"ds-radar-chart\" viewBox=\"0 0 360 340\" role=\"img\" aria-label=\"No active categorized tasks or quests. All six dimensions are zero. Counts include active tasks and categorized active quests in your current library. These are not health or balance scores.\"><g class=\"ds-radar-grid\" aria-hidden=\"true\"><polygon points=\"180.000,145.000 201.651,157.500 201.651,182.500 180.000,195.000 158.349,182.500 158.349,157.500\"></polygon><polygon points=\"180.000,120.000 223.301,145.000 223.301,195.000 180.000,220.000 136.699,195.000 136.699,145.000\"></polygon><polygon points=\"180.000,95.000 244.952,132.500 244.952,207.500 180.000,245.000 115.048,207.500 115.048,132.500\"></polygon><polygon points=\"180.000,70.000 266.603,120.000 266.603,220.000 180.000,270.000 93.397,220.000 93.397,120.000\"></polygon><line x1=\"180\" y1=\"170\" x2=\"180.000\" y2=\"70.000\"></line><line x1=\"180\" y1=\"170\" x2=\"266.603\" y2=\"120.000\"></line><line x1=\"180\" y1=\"170\" x2=\"266.603\" y2=\"220.000\"></line><line x1=\"180\" y1=\"170\" x2=\"180.000\" y2=\"270.000\"></line><line x1=\"180\" y1=\"170\" x2=\"93.397\" y2=\"220.000\"></line><line x1=\"180\" y1=\"170\" x2=\"93.397\" y2=\"120.000\"></line></g><text class=\"ds-radar-zero\" x=\"180\" y=\"175\" text-anchor=\"middle\" aria-hidden=\"true\">0 active</text><g class=\"ds-radar-axis-labels\" aria-hidden=\"true\"><text x=\"180.000\" y=\"24.000\" text-anchor=\"middle\"><tspan x=\"180.000\">Vitality</tspan><tspan class=\"ds-radar-axis-count\" x=\"180.000\" dy=\"19\">0</tspan></text><text x=\"303.842\" y=\"95.500\" text-anchor=\"middle\"><tspan x=\"303.842\">Psyche</tspan><tspan class=\"ds-radar-axis-count\" x=\"303.842\" dy=\"19\">0</tspan></text><text x=\"303.842\" y=\"238.500\" text-anchor=\"middle\"><tspan x=\"303.842\">Prowess</tspan><tspan class=\"ds-radar-axis-count\" x=\"303.842\" dy=\"19\">0</tspan></text><text x=\"180.000\" y=\"310.000\" text-anchor=\"middle\"><tspan x=\"180.000\">Wealth</tspan><tspan class=\"ds-radar-axis-count\" x=\"180.000\" dy=\"19\">0</tspan></text><text x=\"56.158\" y=\"238.500\" text-anchor=\"middle\"><tspan x=\"56.158\">Alliance</tspan><tspan class=\"ds-radar-axis-count\" x=\"56.158\" dy=\"19\">0</tspan></text><text x=\"56.158\" y=\"95.500\" text-anchor=\"middle\"><tspan x=\"56.158\">Legacy</tspan><tspan class=\"ds-radar-axis-count\" x=\"56.158\" dy=\"19\">0</tspan></text></g></svg><figcaption>Axis maximum: 1 active item (empty scale).</figcaption></figure><div><dl class=\"ds-radar-legend\"><div class=\"ds-radar-row\"><dt><span class=\"ds-radar-dimension\" style=\"--ds-category:var(--cat-body,#9cc5a4)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M14 27C6 23 3 16 6 7m12 20c8-4 11-11 8-20M6 10c5-1 7 1 7 5-4 0-6-1-7-5Zm0 8c4-2 7-1 8 3-4 1-6 0-8-3Zm20-8c-5-1-7 1-7 5 4 0 6-1 7-5Zm0 8c-4-2-7-1-8 3 4 1 6 0 8-3Z\"></path><path d=\"m13 28 3-3 3 3\"></path></svg><span>Vitality</span></span><span>0 tasks, 0 quests</span></dt><dd aria-label=\"0 active items\">0</dd></div><div class=\"ds-radar-row\"><dt><span class=\"ds-radar-dimension\" style=\"--ds-category:var(--cat-mind,#a5b8e1)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m7 5 4 3a13 13 0 0 1 10 0l4-3v14c0 6-4 9-9 10-5-1-9-4-9-10V5Z\"></path><circle cx=\"11.5\" cy=\"14\" r=\"4\"></circle><circle cx=\"20.5\" cy=\"14\" r=\"4\"></circle><path d=\"m14 19 2 3 2-3M12 25l4 4 4-4\"></path><circle cx=\"11.5\" cy=\"14\" r=\".7\" fill=\"currentColor\"></circle><circle cx=\"20.5\" cy=\"14\" r=\".7\" fill=\"currentColor\"></circle></svg><span>Psyche</span></span><span>0 tasks, 0 quests</span></dt><dd aria-label=\"0 active items\">0</dd></div><div class=\"ds-radar-row\"><dt><span class=\"ds-radar-dimension\" style=\"--ds-category:var(--cat-work,#d5b675)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m10 21 13-16 4-1-1 5-14 14M7 17l9 9M6 26l5-5M4 27l2-2 3 3-2 2-3-3Z\"></path><path d=\"m13 19 9-11\"></path></svg><span>Prowess</span></span><span>0 tasks, 0 quests</span></dt><dd aria-label=\"0 active items\">0</dd></div><div class=\"ds-radar-row\"><dt><span class=\"ds-radar-dimension\" style=\"--ds-category:var(--cat-wealth,#dfbc83)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><ellipse cx=\"12\" cy=\"9\" rx=\"8\" ry=\"4\"></ellipse><path d=\"M4 9v6c0 2 4 4 8 4m-8-7c0 2 4 4 8 4m8-7v5\"></path><ellipse cx=\"21\" cy=\"20\" rx=\"7\" ry=\"3.5\"></ellipse><path d=\"M14 20v6c0 2 3 3 7 3s7-1 7-3v-6m-14 3c0 2 3 3 7 3s7-1 7-3\"></path></svg><span>Wealth</span></span><span>0 tasks, 0 quests</span></dt><dd aria-label=\"0 active items\">0</dd></div><div class=\"ds-radar-row\"><dt><span class=\"ds-radar-dimension\" style=\"--ds-category:var(--cat-connection,#e3a0a5)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 13 5-5 5 1 5-2 5 3 6 6-5 6-6 5-6-2-9-8 4-5m2-1 5-1-4 5c2 2 4 2 6 0l2-2 7 7M3 13l-2 3 4 5 3-2m21-6 2 3-4 5-3-2M12 20l5 5m0-9 6 6\"></path></svg><span>Alliance</span></span><span>0 tasks, 0 quests</span></dt><dd aria-label=\"0 active items\">0</dd></div><div class=\"ds-radar-row\"><dt><span class=\"ds-radar-dimension\" style=\"--ds-category:var(--cat-meaning,#c5b2de)\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 32 32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 11 13-7 13 7H3Zm2 4h22M4 28h24M7 15v10m6-10v10m6-10v10m6-10v10M3 25h26\"></path><path d=\"M12 9h8\"></path></svg><span>Legacy</span></span><span>0 tasks, 0 quests</span></dt><dd aria-label=\"0 active items\">0</dd></div></dl><p class=\"ds-radar-note\">Your active commitments will shape this view. <a href=\"#tasks\">Create a task</a> or <a href=\"#quests\">plan a quest</a> to begin.</p></div></div></section>",
+      "css": ".ds-radar{background:var(--bg-panel,#171e1a);color:var(--text-primary,#eeeae0);border-radius:var(--radius-md,12px);padding:26px;font-family:var(--font-body,'Manrope',sans-serif);}.ds-radar h2{font-size:19px;font-weight:500;line-height:1.5;margin:0 0 8px}.ds-radar-intro{font-size:14px;line-height:1.7;color:var(--text-secondary,#c3c5b8);margin:0;max-width:65ch}.ds-radar-layout{display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);align-items:center;gap:36px;margin-top:20px}.ds-radar figure{margin:0;min-width:0}.ds-radar-chart{display:block;width:100%;max-width:420px;height:auto;margin:0 auto;overflow:visible}.ds-radar-grid{fill:none;stroke:#485041;stroke-width:1}.ds-radar-grid line{stroke:#414b3c}.ds-radar-axis-labels{font-size:15px;fill:var(--text-secondary,#c3c5b8);font-family:var(--font-body,'Manrope',sans-serif);}.ds-radar-axis-count{fill:var(--accent-gold,#d5b675);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}.ds-radar-zero{fill:var(--text-muted,#a5ae9f);font-size:14px;font-family:var(--font-body,'Manrope',sans-serif);}.ds-radar figcaption{font-size:13px;color:var(--text-muted,#a5ae9f);text-align:center;line-height:1.6;margin-top:4px}.ds-radar-legend{margin:0}.ds-radar-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0}.ds-radar-row+.ds-radar-row{border-top:1px solid var(--border-soft,#30392f)}.ds-radar-row dt{display:flex;align-items:center;flex-wrap:wrap;column-gap:16px;row-gap:3px;min-width:0}.ds-radar-row dt>span:last-child{color:var(--text-muted,#a5ae9f);font-size:13px}.ds-radar-dimension{display:inline-flex;align-items:center;gap:8px;min-width:118px;color:var(--text-primary,#eeeae0);font-size:12px;white-space:nowrap}.ds-radar-dimension svg{color:var(--ds-category);flex-shrink:0}.ds-radar-row dd{margin:0;font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--accent-gold,#d5b675)}.ds-radar-note{margin:20px 0 0;color:var(--text-muted,#a5ae9f);font-size:13px;line-height:1.7;max-width:54ch}.ds-radar-note a{color:var(--accent-gold,#d5b675);text-underline-offset:3px}.ds-radar-note a:hover{text-decoration-thickness:2px}.ds-radar-note a:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}@media(max-width:1100px){.ds-radar-layout{gap:22px;grid-template-columns:minmax(230px,1fr) minmax(200px,1fr)}.ds-radar-row dt{display:block}.ds-radar-row dt>span:last-child{display:block;margin-top:3px}}@media(max-width:767px){.ds-radar{padding:20px}.ds-radar-layout{grid-template-columns:minmax(0,1fr);gap:18px;margin-top:18px}.ds-radar-chart{max-width:360px}.ds-radar-row dt{display:flex}.ds-radar-row dt>span:last-child{margin:0}}"
+    },
+    {
+      "name": "Shared Select / Filter",
+      "kind": "custom",
+      "refersTo": "select-field",
+      "description": "Themed task-status filter open-state preview; the same primitive serves quest/onboarding fields, category pills, and journal Text style.",
+      "html": "<div class=\"ds-filter-preview\"><label class=\"ds-filter-label\">Status</label><button class=\"ds-select-field\" type=\"button\" aria-label=\"Status\" aria-expanded=\"true\"><span>Active</span><svg class=\"ds-select-caret\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"></path></svg></button><div class=\"ds-select-menu\" role=\"listbox\" aria-label=\"Status options\"><button class=\"ds-select-option\" type=\"button\" role=\"option\" aria-selected=\"false\">All statuses</button><button class=\"ds-select-option\" type=\"button\" role=\"option\" aria-selected=\"true\">Active<span class=\"ds-select-check\" aria-hidden=\"true\">✓</span></button><button class=\"ds-select-option\" type=\"button\" role=\"option\" aria-selected=\"false\">Completed</button><button class=\"ds-select-option\" type=\"button\" role=\"option\" aria-selected=\"false\">Archived</button></div></div>",
+      "css": ".ds-filter-preview{display:grid;gap:7px;max-width:320px;padding:16px;background:var(--bg-panel,#171e1a);font-family:var(--font-body,'Manrope',sans-serif);}.ds-filter-label{font-size:12px;color:var(--text-muted,#a5ae9f)}.ds-select-field{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;width:100%;min-width:0;padding:9px 13px;background:#101711;border:1px solid #4a5445;border-radius:8px;color:var(--text-primary,#eeeae0);font-size:16px;text-align:left;cursor:pointer;font-family:var(--font-body,'Manrope',sans-serif);transition:border-color .18s,background .18s}.ds-select-field:hover{border-color:#8d956e;background:#151e15}.ds-select-field[aria-expanded=true]{border-color:var(--accent-gold,#d5b675);background:#192219}.ds-select-caret{display:inline-flex;color:#bfc5b2;flex-shrink:0}.ds-select-field[aria-expanded=true] .ds-select-caret{transform:rotate(180deg);color:var(--accent-gold,#d5b675)}.ds-select-field:focus-visible{outline:2px solid var(--accent-gold,#d5b675);outline-offset:4px}.ds-select-menu{background:#202a20;border:1px solid #6c7556;border-radius:12px;padding:6px;max-height:380px;overflow:auto;box-shadow:0 18px 45px #05090570;font-family:var(--font-body,'Manrope',sans-serif);}.ds-select-option{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:9px 11px;min-height:44px;width:100%;border:0;border-radius:7px;outline:none;font-size:14px;color:#e2e3d3;background:transparent;cursor:pointer;text-align:left;font-family:var(--font-body,'Manrope',sans-serif);}.ds-select-option:hover,.ds-select-option:focus-visible{background:#d5b6751c;outline:1px solid #d5b67565;outline-offset:-1px}.ds-select-option[aria-selected=true]{background:#d5b67512;color:#f0d59d}.ds-select-option:disabled{opacity:.45;cursor:not-allowed}.ds-select-check{color:var(--accent-gold,#d5b675);margin-left:auto}.ds-select-option:active{background:#d5b6751c}@media(prefers-reduced-motion:reduce){.ds-select-field{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Dark Sanctuary",
+    "overview": "Odyssey is a personal journey through a dark sanctuary. Charcoal olive working surfaces, ivory text, burnished gold, and subtle colored light make daily commitments feel considered and close at hand. Classical artwork carries the emotional world while clear controls support everyday work. The application is deliberately dark only, following the user's brief.\n\nThis is an Operate product: phone check-ins, desktop planning and writing, and responsive access to every route. The identity is code-led from the approved textual direction; no UI raster comp is an approved layout authority. Keep the Odyssey name and current route paths. Sanctuary material belongs around a stable working foreground, with restrained movement and consistent category identity.",
+    "keyCharacteristics": [
+      "Charcoal olive, ivory, and restrained burnished gold.",
+      "Classical display lettering, practical controls, and literary long-form prose.",
+      "Original bronze, temple, and sunset-voyage artwork with adjacent provenance.",
+      "One shared family of six colored dimension emblems.",
+      "Clear selections, visible focus, and generous phone targets."
+    ],
+    "rules": [
+      {
+        "name": "The Working Foreground Rule",
+        "body": "Keep text and controls on stable dark working surfaces; atmospheric artwork supports their hierarchy.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Voices Rule",
+        "body": "Use Cinzel for classical headings, Manrope for controls and ordinary reading, and Literata for sustained reflection.",
+        "section": "typography"
+      },
+      {
+        "name": "The Quiet Depth Rule",
+        "body": "Use tonal separation at rest and reserve stronger lift for floating surfaces, focused writing, and deliberate interaction.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do reuse the root CSS tokens and the existing typography roles.",
+      "Do preserve all six dimension emblems, names, and colors in labels, filters, journal chips, help, and category pickers.",
+      "Do retain the full-height bronze and column sidebar scene with a readable navigation foreground.",
+      "Do leave the established 24px gap below the task filters.",
+      "Do preserve the phone check-in traveler and sunset above the commitment card, with visible Skip and Done controls.",
+      "Do keep original raster provenance beside every shipping image and honor reduced-motion preferences."
+    ],
+    "donts": [
+      "Don't add images inside task cards.",
+      "Don't substitute generic dots, emoji, or unrelated icons for the six custom category emblems.",
+      "Don't turn the continuous sidebar scene back into an inset image tile.",
+      "Don't replace the dark-only brief with an invented light theme.",
+      "Don't stretch phone check-in art to card height and crop away its traveler.",
+      "Don't describe partial contrast measurements or static screenshots as full accessibility, motion, Safari, or touch certification."
+    ]
+  }
+}

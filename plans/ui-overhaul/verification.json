@@ -1,0 +1,28 @@
+{
+  "scope": "Planning artifacts only; this is not verification of an implemented app redesign",
+  "date": "2026-11-13",
+  "staticReview": {
+    "url": "http://localhost:15174/",
+    "desktopScreenshot": "Inspected at 1440x1000",
+    "mobileScreenshot": "Inspected at 390x844",
+    "mobileDocumentWidth": 390,
+    "mobileViewportWidth": 390,
+    "conceptOriginalPreviewPromptLinks": "12 of 12 returned HTTP 200",
+    "preferenceSaveAndReload": "Passed; test preference cleared afterward",
+    "generatedConceptCount": 4,
+    "acceptanceCriteriaCount": 14
+  },
+  "structuredPlan": {
+    "offlineLint": "Passed",
+    "localBridgeAndPreflight": "Passed",
+    "fullRendererSchemaValidation": "Not run; CLI keeps source local",
+    "hostedViewer": "Connection screen reached; local network permission blocked automated connection",
+    "fallback": "Self-contained static review is working"
+  },
+  "application": {
+    "clientServerAndSpecsSourceDiff": "Empty",
+    "dockerCompose": "Client, API and healthy PostgreSQL remain running",
+    "existingDockerComposeModification": "Preserved",
+    "appTestsRerunForThisPlanningPass": false
+  }
+}

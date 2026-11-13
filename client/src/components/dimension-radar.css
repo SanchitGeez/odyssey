@@ -1,0 +1,28 @@
+.dimension-radar-section { margin: 28px 0; }
+.dimension-radar-section > .ody-section-title { margin-bottom: 8px; }
+.dimension-radar-intro { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin: 0; max-width: 65ch; }
+.dimension-radar-layout { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr); align-items: center; gap: 36px; margin-top: 20px; }
+.dimension-radar-figure { margin: 0; min-width: 0; }
+.dimension-radar-chart { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto; overflow: visible; }
+.dimension-radar-grid { fill: none; stroke: #485041; stroke-width: 1; }
+.dimension-radar-grid line { stroke: #414b3c; }
+.dimension-radar-data { fill: rgb(213 182 117 / .17); stroke: var(--accent-gold); stroke-width: 2; stroke-linejoin: round; }
+.dimension-radar-point { fill: #e6cc94; stroke: #20291f; stroke-width: 2; }
+.dimension-radar-axis-labels { font-family: var(--font-body); font-size: 15px; fill: var(--text-secondary); }
+.dimension-radar-axis-count { fill: var(--accent-gold); font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dimension-radar-zero { fill: var(--text-muted); font-size: 14px; font-family: var(--font-body); }
+.dimension-radar-figure figcaption { font-size: 13px; color: var(--text-muted); text-align: center; line-height: 1.6; margin-top: 4px; }
+.dimension-radar-legend { margin: 0; }
+.dimension-radar-legend-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+.dimension-radar-legend-row + .dimension-radar-legend-row { border-top: 1px solid var(--border-soft); }
+.dimension-radar-legend-row dt { display: flex; align-items: center; flex-wrap: wrap; column-gap: 16px; row-gap: 3px; min-width: 0; }
+.dimension-radar-legend-row dt > span:last-child { color: var(--text-muted); font-size: 13px; }
+.dimension-radar-legend-row .ody-dim-label { min-width: 118px; color: var(--text-primary); }
+.dimension-radar-legend-row dd { margin: 0; font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--accent-gold); }
+.dimension-radar-note { margin: 20px 0 0; color: var(--text-muted); font-size: 13px; line-height: 1.7; max-width: 54ch; }
+.dimension-radar-note a { color: var(--accent-gold); text-underline-offset: 3px; }
+.dimension-radar-loading { min-height: 300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; padding: 30px 0; }
+.dimension-radar-loading > .ody-skeleton { min-height: 220px; }
+.dimension-radar-error { margin-top: 20px; color: var(--text-secondary); font-size: 14px; line-height: 1.7; }
+@media (max-width: 1100px) { .dimension-radar-layout { gap: 22px; grid-template-columns: minmax(230px, 1fr) minmax(200px, 1fr); } .dimension-radar-legend-row dt { display: block; } .dimension-radar-legend-row dt > span:last-child { display: block; margin-top: 3px; } }
+@media (max-width: 767px) { .dimension-radar-layout { grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 18px; } .dimension-radar-chart { max-width: 360px; } .dimension-radar-legend-row dt { display: flex; } .dimension-radar-legend-row dt > span:last-child { margin: 0; } .dimension-radar-loading { grid-template-columns: 1fr; gap: 22px; } .dimension-radar-loading > .ody-skeleton { min-height: 180px; } }

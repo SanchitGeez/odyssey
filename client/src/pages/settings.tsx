@@ -11,7 +11,7 @@ export function SettingsPage() {
       <div className="ody-grid" style={{ maxWidth: 560 }}>
         <article className="ody-card">
           <div className="ody-section-header">
-            <h3 className="ody-section-title">Account</h3>
+            <h2 className="ody-section-title">Account</h2>
             <Icon name="user" size={18} className="ody-muted" />
           </div>
           <div className="ody-grid" style={{ gap: 12 }}>
@@ -28,7 +28,7 @@ export function SettingsPage() {
 
         <article className="ody-card">
           <div className="ody-section-header">
-            <h3 className="ody-section-title">Session</h3>
+            <h2 className="ody-section-title">Session</h2>
             <Icon name="logout" size={18} className="ody-muted" />
           </div>
           <p className="ody-muted" style={{ margin: '0 0 16px', fontSize: '0.82rem', lineHeight: 1.5 }}>
@@ -41,30 +41,25 @@ export function SettingsPage() {
 
         <article className="ody-card">
           <div className="ody-section-header">
-            <h3 className="ody-section-title">Guide</h3>
+            <h2 className="ody-section-title">Guide</h2>
             <Icon name="scroll" size={18} className="ody-muted" />
           </div>
           <p className="ody-muted" style={{ margin: '0 0 16px', fontSize: '0.82rem', lineHeight: 1.6 }}>
             Read the full Life Dimensions guide with practical examples for habits and goals.
           </p>
-          <Link to="/help" style={{ textDecoration: 'none' }}>
-            <button className="ody-btn secondary">
+          <Link to="/help" className="ody-btn secondary">
               <Icon name="book" size={14} /> Open Guide
-            </button>
           </Link>
         </article>
 
         <article className="ody-card">
           <div className="ody-section-header">
-            <h3 className="ody-section-title">About</h3>
+            <h2 className="ody-section-title">About</h2>
           </div>
           <p className="ody-muted" style={{ margin: 0, fontSize: '0.82rem', lineHeight: 1.6 }}>
-            Odyssey Chronicle — a holistic life management app.
-            Track across 6 life dimensions in 60 seconds a day.
+            Odyssey brings your commitments, quests, and reflections together across six life dimensions.
           </p>
-          <p className="ody-muted" style={{ margin: '8px 0 0', fontSize: '0.72rem', letterSpacing: '0.06em' }}>
-            Stage 1 MVP &middot; Version 1.1
-          </p>
+
         </article>
       </div>
     </AppShell>

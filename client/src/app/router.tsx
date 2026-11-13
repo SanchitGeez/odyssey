@@ -1,10 +1,11 @@
-import { Navigate, Outlet, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+import { Navigate, Outlet, Route, RouterProvider, ScrollRestoration, createBrowserRouter, createRoutesFromElements, useLocation } from 'react-router-dom'
 import { useAuth } from './auth'
 import { CheckInPage } from '../pages/checkin'
 import { InsightsPage } from '../pages/insights'
 import { JournalsPage } from '../pages/journals'
-import { JournalReadPage } from '../pages/journal-read'
-import { JournalWritePage } from '../pages/journal-write'
+const JournalReadPage = lazy(() => import('../pages/journal-read').then(module => ({ default: module.JournalReadPage })))
+const JournalWritePage = lazy(() => import('../pages/journal-write').then(module => ({ default: module.JournalWritePage })))
 import { HelpPage } from '../pages/help'
 import { LoginPage } from '../pages/login'
 import { OnboardingPage } from '../pages/onboarding'
@@ -43,10 +44,9 @@ function PublicOnlyRoute() {
   return <Outlet />
 }
 
-export function AppRouter() {
-  return (
-    <Router>
-      <Routes>
+function NavigationRoot() { return <><ScrollRestoration /><Outlet /></> }
+
+const router = createBrowserRouter(createRoutesFromElements(<Route element={<NavigationRoot />}>
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -68,7 +68,8 @@ export function AppRouter() {
 
         <Route path="/" element={<Navigate to="/check-in" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
-  )
+</Route>))
+
+export function AppRouter() {
+  return <Suspense fallback={<div className="journal-loading" role="status">Opening your journal...</div>}><RouterProvider router={router} /></Suspense>
 }

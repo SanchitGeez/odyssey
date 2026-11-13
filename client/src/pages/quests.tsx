@@ -1,15 +1,19 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AppShell } from '../components/layout'
 import { SlideOver } from '../components/modal'
+import { ConfirmDialog } from '../components/confirm-dialog'
 import { DimensionFilter } from '../components/dimension-filter'
+import { DimensionSelect } from '../components/dimension-select'
+import { SelectField } from '../components/select-field'
 import { DimensionLabel } from '../components/dimension-label'
 import { Icon } from '../components/icons'
 import { useToast } from '../components/toast'
 import { useAuth } from '../app/auth'
 import type { LifeDimension, Quest, QuestActivity, QuestMilestone, QuestStatus } from '../app/types'
 import { formatDate, todayIso } from '../lib/date'
-import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
+import { DIMENSIONS } from '../lib/dimensions'
+import '../quest.css'
 
 const activityLabels: Record<string, string> = {
   milestone_completed: 'Completed',
@@ -33,7 +37,9 @@ type QuestForm = {
 type QuestsWorkspaceProps = {
   filteredQuests: Quest[]
   selectedQuestId: string
-  setSelectedQuestId: (id: string) => void
+  openDetails: (id: string) => void
+  detailsOpen: boolean
+  closeDetails: () => void
   openEdit: (quest: Quest) => void
   removeQuest: (qid: string) => Promise<void>
   selectedQuest?: Quest
@@ -49,6 +55,10 @@ type QuestsWorkspaceProps = {
   setUpdateNote: (note: string) => void
   addUpdate: (e: FormEvent) => Promise<void>
   activity: QuestActivity[]
+  detailsLoading: boolean
+  detailsError: string
+  retryDetails: () => void
+  mutationBusy: boolean
 }
 
 const initialForm: QuestForm = {
@@ -70,7 +80,9 @@ function calculateProgressPercent(milestones: QuestMilestone[]): number {
 function QuestsWorkspace({
   filteredQuests,
   selectedQuestId,
-  setSelectedQuestId,
+  openDetails,
+  detailsOpen,
+  closeDetails,
   openEdit,
   removeQuest,
   selectedQuest,
@@ -86,20 +98,22 @@ function QuestsWorkspace({
   setUpdateNote,
   addUpdate,
   activity,
+  detailsLoading,
+  detailsError,
+  retryDetails,
+  mutationBusy,
 }: QuestsWorkspaceProps) {
   return (
-    <div className="ody-grid two" style={{ alignItems: 'start' }}>
+    <div className="ody-quest-list-workspace">
       <div className="ody-grid">
         <ul className="ody-list ody-stagger">
           {filteredQuests.map((quest) => (
             <li
               key={quest.id}
-              className={`ody-list-item${selectedQuestId === quest.id ? ' selected' : ''}`}
-              style={{ cursor: 'pointer' }}
-              onClick={() => setSelectedQuestId(quest.id)}
+              className={`ody-list-item${detailsOpen && selectedQuestId === quest.id ? ' selected' : ''}`}
             >
               <div className="ody-row">
-                <span className="ody-item-title">{quest.title}</span>
+                <button type="button" className="ody-quest-select ody-item-title" aria-haspopup="dialog" aria-expanded={detailsOpen && selectedQuestId === quest.id} disabled={mutationBusy} onClick={() => openDetails(quest.id)}>{quest.title}</button>
                 <span className={`ody-badge${quest.status === 'active' ? ' success' : quest.status === 'completed' ? ' gold' : ''}`}>
                   {quest.status}
                 </span>
@@ -118,10 +132,10 @@ function QuestsWorkspace({
               <div className="ody-item-meta" style={{ marginTop: 8 }}>
                 {quest.category ? <DimensionLabel dim={quest.category} /> : <span className="ody-muted" style={{ fontSize: '0.72rem' }}>No dimension</span>}
                 <div style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
-                  <button className="ody-icon-btn" onClick={(e) => { e.stopPropagation(); openEdit(quest) }} aria-label="Edit quest">
+                  <button className="ody-icon-btn" onClick={(e) => { e.stopPropagation(); openEdit(quest) }} aria-label={`Edit quest ${quest.title}`}>
                     <Icon name="edit" size={15} />
                   </button>
-                  <button className="ody-icon-btn" onClick={(e) => { e.stopPropagation(); void removeQuest(quest.id) }} aria-label="Delete quest">
+                  <button className="ody-icon-btn" onClick={(e) => { e.stopPropagation(); void removeQuest(quest.id) }} aria-label={`Delete quest ${quest.title}`}>
                     <Icon name="trash" size={15} />
                   </button>
                 </div>
@@ -131,11 +145,22 @@ function QuestsWorkspace({
         </ul>
       </div>
 
-      <div className="ody-grid">
-        {selectedQuest ? (
+      <SlideOver
+        open={detailsOpen && Boolean(selectedQuest)}
+        onClose={closeDetails}
+        title={selectedQuest?.title ?? 'Quest details'}
+        subtitle="Milestones, progress and the story so far."
+        width="600px"
+      >
+        <div className="ody-quest-details">
+        {detailsLoading ? (
+          <div className="ody-skeleton ody-skeleton-card" aria-label="Loading quest details" aria-busy="true" />
+        ) : detailsError ? (
+          <div className="ody-card ody-inline-error" role="alert"><p>{detailsError}</p><button className="ody-btn secondary" onClick={retryDetails}>Retry details</button></div>
+        ) : selectedQuest ? (
           <>
             <div className="ody-card">
-              <h3 className="ody-section-title" style={{ marginBottom: 8 }}>{selectedQuest.title}</h3>
+              <h3 className="ody-section-title" style={{ marginBottom: 8 }}>Milestones</h3>
               <div className="ody-row" style={{ marginBottom: 10, alignItems: 'center' }}>
                 {selectedQuest.category ? <DimensionLabel dim={selectedQuest.category} /> : null}
                 <span className="ody-milestone-summary">
@@ -145,6 +170,7 @@ function QuestsWorkspace({
               <div className="ody-progress" style={{ marginBottom: 12 }}>
                 <div className="ody-progress-bar" style={{ width: `${progressPercent}%` }} />
               </div>
+              {selectedQuest.description ? <p className="ody-muted">{selectedQuest.description}</p> : null}
               {selectedQuest.success_criteria ? (
                 <p className="ody-muted" style={{ fontSize: '0.82rem', margin: '0 0 12px', lineHeight: 1.5 }}>
                   {selectedQuest.success_criteria}
@@ -160,13 +186,14 @@ function QuestsWorkspace({
                           className="ody-checkbox"
                           type="checkbox"
                           checked={milestone.is_completed}
+                          disabled={mutationBusy}
                           onChange={(e) => {
                             void toggleMilestone(milestone, e.target.checked)
                           }}
                         />
                         <span>{milestone.title}</span>
                       </label>
-                      <button className="ody-icon-btn" onClick={() => { void deleteMilestone(milestone.id) }} aria-label="Delete milestone">
+                      <button className="ody-icon-btn" onClick={() => { void deleteMilestone(milestone.id) }} disabled={mutationBusy} aria-label={`Delete milestone ${milestone.title}`}>
                         <Icon name="trash" size={14} />
                       </button>
                     </div>
@@ -179,17 +206,19 @@ function QuestsWorkspace({
                   <input
                     className="ody-input"
                     placeholder="Add milestone"
+                    aria-label="New milestone title"
+                    required
                     value={milestoneTitle}
                     onChange={(e) => setMilestoneTitle(e.target.value)}
                     style={{ flex: 1 }}
                   />
-                  <button className="ody-btn" type="submit"><Icon name="plus" size={14} /> Add</button>
+                  <button className="ody-btn" type="submit" disabled={mutationBusy}><Icon name="plus" size={14} /> Add</button>
                 </form>
               </div>
             </div>
 
             <div className="ody-card">
-              <h4 className="ody-section-title" style={{ marginBottom: 12 }}>Log Update</h4>
+              <h3 className="ody-section-title" style={{ marginBottom: 12 }}>Log Update</h3>
               <form className="ody-grid" onSubmit={addUpdate}>
                 <textarea
                   className="ody-textarea"
@@ -197,8 +226,10 @@ function QuestsWorkspace({
                   onChange={(e) => setUpdateNote(e.target.value)}
                   style={{ minHeight: 82 }}
                   placeholder="Write what happened..."
+                  aria-label="Quest update"
+                  required
                 />
-                <button className="ody-btn" type="submit">
+                <button className="ody-btn" type="submit" disabled={mutationBusy}>
                   <Icon name="plus" size={14} /> Submit
                 </button>
               </form>
@@ -206,7 +237,7 @@ function QuestsWorkspace({
 
             {activity.length > 0 ? (
               <div className="ody-card">
-                <h4 className="ody-section-title" style={{ marginBottom: 12 }}>Timeline</h4>
+                <h3 className="ody-section-title" style={{ marginBottom: 12 }}>Timeline</h3>
                 <div className="ody-timeline">
                   {activity.map((entry, i) => {
                     const payload = entry.payload as Record<string, unknown> | null
@@ -246,16 +277,9 @@ function QuestsWorkspace({
               </div>
             )}
           </>
-        ) : (
-          <div className="ody-card">
-            <div className="ody-empty">
-              <div className="ody-empty-icon"><Icon name="compass" size={20} /></div>
-              <h4>Select a Quest</h4>
-              <p>Choose a quest from the list to track milestones and updates.</p>
-            </div>
-          </div>
-        )}
-      </div>
+        ) : null}
+        </div>
+      </SlideOver>
     </div>
   )
 }
@@ -266,6 +290,7 @@ export function QuestsPage() {
   const { toast } = useToast()
   const [quests, setQuests] = useState<Quest[]>([])
   const [selectedQuestId, setSelectedQuestId] = useState('')
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const [activity, setActivity] = useState<QuestActivity[]>([])
   const [milestones, setMilestones] = useState<QuestMilestone[]>([])
   const [milestoneCountsByQuestId, setMilestoneCountsByQuestId] = useState<Record<string, number>>({})
@@ -275,19 +300,29 @@ export function QuestsPage() {
   const [milestoneTitle, setMilestoneTitle] = useState('')
   const [loading, setLoading] = useState(true)
   const [dimFilter, setDimFilter] = useState<LifeDimension | 'all'>('all')
+  const [loadError, setLoadError] = useState('')
+  const [detailsError, setDetailsError] = useState('')
+  const [detailsLoading, setDetailsLoading] = useState(false)
+  const [detailsAttempt, setDetailsAttempt] = useState(0)
+  const [saving, setSaving] = useState(false)
+  const [mutationBusy, setMutationBusy] = useState(false)
+  const [pendingDelete, setPendingDelete] = useState<{ kind: 'quest' | 'milestone'; id: string } | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const activeQuestRef = useRef('')
 
-  const loadQuests = async () => {
+  const loadQuests = useCallback(async () => {
     setLoading(true)
+    setLoadError('')
     try {
       const data = await api.listQuests()
       setQuests(data)
-      if (!selectedQuestId && data.length > 0) setSelectedQuestId(data[0].id)
+      setSelectedQuestId((current) => data.some((quest) => quest.id === current) ? current : '')
     } catch (err) {
-      toast(err instanceof Error ? err.message : 'Failed to load quests', 'error')
+      setLoadError(err instanceof Error ? err.message : 'Could not load quests. Try again.')
     } finally {
       setLoading(false)
     }
-  }
+  }, [api])
 
   const setQuestProgressLocal = (questId: string, progressPercent: number) => {
     setQuests((current) =>
@@ -295,35 +330,40 @@ export function QuestsPage() {
     )
   }
 
-  const loadActivity = async (qid: string) => {
+  const loadActivity = useCallback(async (qid: string) => {
     try {
       const activityData = await api.listQuestActivity(qid)
-      setActivity(activityData)
+      if (activeQuestRef.current === qid) setActivity(activityData)
     } catch (err) {
-      toast(err instanceof Error ? err.message : 'Failed to load activity', 'error')
+      if (activeQuestRef.current === qid) setDetailsError(err instanceof Error ? err.message : 'Could not load quest activity. Try again.')
     }
-  }
+  }, [api])
 
-  const loadMilestones = async (qid: string) => {
+  const loadMilestones = useCallback(async (qid: string) => {
     try {
       const milestoneData = await api.listQuestMilestones(qid)
-      setMilestones(milestoneData)
+      if (activeQuestRef.current === qid) setMilestones(milestoneData)
       setMilestoneCountsByQuestId((current) => ({ ...current, [qid]: milestoneData.length }))
     } catch (err) {
-      toast(err instanceof Error ? err.message : 'Failed to load milestones', 'error')
+      if (activeQuestRef.current === qid) setDetailsError(err instanceof Error ? err.message : 'Could not load milestones. Try again.')
     }
-  }
+  }, [api])
 
-  useEffect(() => { void loadQuests() }, [])
+  useEffect(() => { void loadQuests() }, [loadQuests])
 
   useEffect(() => {
-    if (selectedQuestId) {
-      void Promise.all([loadActivity(selectedQuestId), loadMilestones(selectedQuestId)])
-      return
-    }
+    activeQuestRef.current = detailsOpen ? selectedQuestId : ''
+    if (!detailsOpen || !selectedQuestId) return
     setActivity([])
     setMilestones([])
-  }, [selectedQuestId])
+    setDetailsError('')
+    let cancelled = false
+    setDetailsLoading(true)
+    void Promise.all([loadActivity(selectedQuestId), loadMilestones(selectedQuestId)]).finally(() => {
+      if (!cancelled) setDetailsLoading(false)
+    })
+    return () => { cancelled = true }
+  }, [selectedQuestId, detailsOpen, detailsAttempt, loadActivity, loadMilestones])
 
   useEffect(() => {
     if (searchParams.get('prefill') !== 'true') return
@@ -350,26 +390,35 @@ export function QuestsPage() {
     [dimFilter, quests],
   )
 
-  const selectedQuest = filteredQuests.find((q) => q.id === selectedQuestId) ?? filteredQuests[0]
+  const selectedQuest = quests.find((q) => q.id === selectedQuestId)
 
   useEffect(() => {
-    if (filteredQuests.length === 0) {
-      setSelectedQuestId('')
-      setActivity([])
-      setMilestones([])
-      return
+    if (detailsOpen && !filteredQuests.some((quest) => quest.id === selectedQuestId)) {
+      setDetailsOpen(false)
     }
-    if (!filteredQuests.some((quest) => quest.id === selectedQuestId)) {
-      setSelectedQuestId(filteredQuests[0].id)
+  }, [detailsOpen, filteredQuests, selectedQuestId])
+
+  const openDetails = (questId: string) => {
+    if (questId !== selectedQuestId) {
+      setMilestoneTitle('')
+      setUpdateNote('')
     }
-  }, [filteredQuests, selectedQuestId])
+    setActivity([])
+    setMilestones([])
+    setDetailsError('')
+    setDetailsLoading(true)
+    setSelectedQuestId(questId)
+    setDetailsOpen(true)
+  }
 
   const openCreate = () => {
+    setDetailsOpen(false)
     setForm(initialForm)
     setPanelOpen(true)
   }
 
   const openEdit = (quest: Quest) => {
+    setDetailsOpen(false)
     setForm({
       id: quest.id,
       title: quest.title,
@@ -399,22 +448,24 @@ export function QuestsPage() {
 
   const saveQuest = async (e: FormEvent) => {
     e.preventDefault()
+    if (saving) return
+    setSaving(true)
     try {
       if (form.id) {
         const patch: {
           title: string
-          description: string
-          category?: LifeDimension
-          target_date: string
-          success_criteria: string
+          description: string | null
+          category?: LifeDimension | null
+          target_date: string | null
+          success_criteria: string | null
           status: QuestStatus
           progress_percent?: number
         } = {
           title: form.title,
-          description: form.description,
-          category: form.category || undefined,
-          target_date: form.target_date,
-          success_criteria: form.success_criteria,
+          description: form.description.trim() || null,
+          category: form.category || null,
+          target_date: form.target_date || null,
+          success_criteria: form.success_criteria.trim() || null,
           status: form.status,
         }
         if (canEditManualProgress) {
@@ -439,6 +490,8 @@ export function QuestsPage() {
       await loadQuests()
     } catch (err) {
       toast(err instanceof Error ? err.message : 'Could not save quest', 'error')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -450,16 +503,18 @@ export function QuestsPage() {
         setActivity([])
         setMilestones([])
       }
+      setPendingDelete(null)
       toast('Quest deleted', 'success')
       await loadQuests()
     } catch (err) {
-      toast(err instanceof Error ? err.message : 'Delete failed', 'error')
+      throw err instanceof Error ? err : new Error('Could not delete quest. Try again.')
     }
   }
 
   const addUpdate = async (e: FormEvent) => {
     e.preventDefault()
-    if (!selectedQuestId || !updateNote.trim()) return
+    if (!selectedQuestId || !updateNote.trim() || mutationBusy) return
+    setMutationBusy(true)
     try {
       await api.addQuestActivity(selectedQuestId, 'note_added', todayIso(), { note: updateNote.trim() })
       setUpdateNote('')
@@ -467,12 +522,15 @@ export function QuestsPage() {
       await loadActivity(selectedQuestId)
     } catch (err) {
       toast(err instanceof Error ? err.message : 'Could not add update', 'error')
+    } finally {
+      setMutationBusy(false)
     }
   }
 
   const addMilestone = async (e: FormEvent) => {
     e.preventDefault()
-    if (!selectedQuestId || !milestoneTitle.trim()) return
+    if (!selectedQuestId || !milestoneTitle.trim() || mutationBusy) return
+    setMutationBusy(true)
     try {
       const created = await api.createQuestMilestone(selectedQuestId, milestoneTitle.trim())
       const nextMilestones = [...milestones, created].sort((a, b) => a.sort_order - b.sort_order)
@@ -483,11 +541,14 @@ export function QuestsPage() {
       toast('Milestone added', 'success')
     } catch (err) {
       toast(err instanceof Error ? err.message : 'Could not add milestone', 'error')
+    } finally {
+      setMutationBusy(false)
     }
   }
 
   const toggleMilestone = async (milestone: QuestMilestone, nextCompleted: boolean) => {
-    if (!selectedQuestId) return
+    if (!selectedQuestId || mutationBusy) return
+    setMutationBusy(true)
     const previousMilestones = milestones
     const previousProgress = selectedQuest?.progress_percent ?? 0
     const nextMilestones = milestones.map((item) =>
@@ -506,11 +567,12 @@ export function QuestsPage() {
     try {
       await api.updateQuestMilestone(selectedQuestId, milestone.id, { is_completed: nextCompleted })
       await loadActivity(selectedQuestId)
-      await loadQuests()
     } catch (err) {
       setMilestones(previousMilestones)
       setQuestProgressLocal(selectedQuestId, Number(previousProgress))
       toast(err instanceof Error ? err.message : 'Could not update milestone', 'error')
+    } finally {
+      setMutationBusy(false)
     }
   }
 
@@ -526,17 +588,18 @@ export function QuestsPage() {
 
     try {
       await api.deleteQuestMilestone(selectedQuestId, milestoneId)
+      setPendingDelete(null)
       toast('Milestone removed', 'success')
     } catch (err) {
       setMilestones(previousMilestones)
       setMilestoneCountsByQuestId((current) => ({ ...current, [selectedQuestId]: previousMilestones.length }))
       setQuestProgressLocal(selectedQuestId, Number(previousProgress))
-      toast(err instanceof Error ? err.message : 'Could not remove milestone', 'error')
+      throw err instanceof Error ? err : new Error('Could not remove milestone. Try again.')
     }
   }
 
   const completedMilestones = milestones.filter((milestone) => milestone.is_completed).length
-  const progressPercent = useMemo(() => calculateProgressPercent(milestones), [milestones])
+  const progressPercent = milestones.length > 0 ? calculateProgressPercent(milestones) : Number(selectedQuest?.progress_percent ?? 0)
 
   return (
     <AppShell
@@ -554,11 +617,13 @@ export function QuestsPage() {
         <div className="ody-grid">
           {[1, 2].map((i) => <div key={i} className="ody-skeleton ody-skeleton-card" />)}
         </div>
+      ) : loadError ? (
+        <div className="ody-card ody-inline-error" role="alert"><p>{loadError}</p><button className="ody-btn secondary" onClick={() => void loadQuests()}>Retry</button></div>
       ) : filteredQuests.length === 0 ? (
         <div className="ody-card">
           <div className="ody-empty">
             <div className="ody-empty-icon"><Icon name="compass" size={22} /></div>
-            <h4>{quests.length === 0 ? 'No Quests Yet' : 'No Matches'}</h4>
+            <h2>{quests.length === 0 ? 'No Quests Yet' : 'No Matches'}</h2>
             <p>{quests.length === 0 ? 'Quests are multi-step goals that live outside your daily check-in.' : 'Try selecting another dimension.'}</p>
             {quests.length === 0 ? (
               <button className="ody-btn" onClick={openCreate} style={{ marginTop: 16 }}>
@@ -571,9 +636,11 @@ export function QuestsPage() {
         <QuestsWorkspace
           filteredQuests={filteredQuests}
           selectedQuestId={selectedQuestId}
-          setSelectedQuestId={setSelectedQuestId}
+          openDetails={openDetails}
+          detailsOpen={detailsOpen}
+          closeDetails={() => setDetailsOpen(false)}
           openEdit={openEdit}
-          removeQuest={removeQuest}
+          removeQuest={async (id) => setPendingDelete({ kind: 'quest', id })}
           selectedQuest={selectedQuest}
           milestones={milestones}
           completedMilestones={completedMilestones}
@@ -582,13 +649,33 @@ export function QuestsPage() {
           setMilestoneTitle={setMilestoneTitle}
           addMilestone={addMilestone}
           toggleMilestone={toggleMilestone}
-          deleteMilestone={deleteMilestone}
+          deleteMilestone={async (id) => setPendingDelete({ kind: 'milestone', id })}
           updateNote={updateNote}
           setUpdateNote={setUpdateNote}
           addUpdate={addUpdate}
           activity={activity}
+          detailsLoading={detailsLoading}
+          detailsError={detailsError}
+          retryDetails={() => setDetailsAttempt((attempt) => attempt + 1)}
+          mutationBusy={mutationBusy}
         />
       )}
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        onClose={() => { if (!deleting) setPendingDelete(null) }}
+        onConfirm={async () => {
+          if (!pendingDelete || deleting) return
+          setDeleting(true)
+          try {
+            if (pendingDelete.kind === 'quest') await removeQuest(pendingDelete.id)
+            else await deleteMilestone(pendingDelete.id)
+          } finally { setDeleting(false) }
+        }}
+        title={pendingDelete?.kind === 'milestone' ? 'Delete milestone?' : 'Delete quest?'}
+        description={pendingDelete?.kind === 'milestone' ? 'This milestone will be removed and quest progress recalculated. This cannot be undone.' : 'This quest, its milestones and its activity history will be permanently deleted. This cannot be undone.'}
+        busy={deleting}
+      />
 
       <SlideOver
         open={panelOpen}
@@ -607,18 +694,7 @@ export function QuestsPage() {
           </label>
           <label className="ody-field">
             <span className="ody-label">Category</span>
-            <select
-              className="ody-select"
-              value={form.category}
-              onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as LifeDimension | '' }))}
-            >
-              <option value="">Select category</option>
-              {DIMENSION_KEYS.map((dimensionKey) => (
-                <option key={dimensionKey} value={dimensionKey}>
-                  {DIMENSIONS[dimensionKey].label}
-                </option>
-              ))}
-            </select>
+            <DimensionSelect value={form.category} allowEmpty onChange={(value) => setForm((f) => ({ ...f, category: value }))} />
           </label>
           <label className="ody-field">
             <span className="ody-label">Target date</span>
@@ -632,12 +708,12 @@ export function QuestsPage() {
             <>
               <label className="ody-field">
                 <span className="ody-label">Status</span>
-                <select className="ody-select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as QuestStatus }))}>
-                  <option value="active">Active</option>
-                  <option value="paused">Paused</option>
-                  <option value="completed">Completed</option>
-                  <option value="archived">Archived</option>
-                </select>
+                <SelectField label="Status" value={form.status} onValueChange={(value) => setForm((f) => ({ ...f, status: value as QuestStatus }))} options={[
+                  { value: 'active', label: 'Active', icon: 'play' },
+                  { value: 'paused', label: 'Paused', icon: 'pause' },
+                  { value: 'completed', label: 'Completed', icon: 'check' },
+                  { value: 'archived', label: 'Archived', icon: 'archive' },
+                ]} />
               </label>
               {canEditManualProgress ? (
                 <label className="ody-field">
@@ -648,7 +724,7 @@ export function QuestsPage() {
             </>
           ) : null}
           <div style={{ display: 'flex', gap: 8, paddingTop: 8 }}>
-            <button className="ody-btn" type="submit">{form.id ? 'Update Quest' : 'Create Quest'}</button>
+            <button className="ody-btn" type="submit" disabled={saving}>{saving ? 'Saving...' : form.id ? 'Update Quest' : 'Create Quest'}</button>
             <button className="ody-btn secondary" type="button" onClick={() => setPanelOpen(false)}>Cancel</button>
           </div>
         </form>

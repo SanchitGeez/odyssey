@@ -1,149 +1,43 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ArrowUpRight, Feather, MagnifyingGlass, Plus, WarningCircle } from '@phosphor-icons/react'
 import { AppShell } from '../components/layout'
 import { DimensionFilter } from '../components/dimension-filter'
 import { DimensionLabel } from '../components/dimension-label'
-import { Icon } from '../components/icons'
-import { useToast } from '../components/toast'
 import { useAuth } from '../app/auth'
 import type { Journal, LifeDimension } from '../app/types'
+import { journalPreview, parseJournalContent } from '../lib/journal-format'
+import './journal.css'
 
-function dateLabel(iso: string) {
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).format(new Date(iso))
-}
-
-function dayKey(iso: string) {
-  return iso.slice(0, 10)
-}
+function dateLabel(iso: string) { return new Intl.DateTimeFormat(undefined, { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(iso)) }
+function dayKey(iso: string) { const date = new Date(iso); return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}` }
 
 export function JournalsPage() {
   const { api } = useAuth()
-  const { toast } = useToast()
   const [journals, setJournals] = useState<Journal[]>([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [dimFilter, setDimFilter] = useState<LifeDimension | 'all'>('all')
-
-  const load = async (query?: string) => {
-    setLoading(true)
-    try {
-      setJournals(await api.listJournals(query))
-    } catch (err) {
-      toast(err instanceof Error ? err.message : 'Failed to load journals', 'error')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => { void load() }, [])
-
-  const runSearch = async (e: FormEvent) => {
-    e.preventDefault()
-    await load(search || undefined)
-  }
-
-  const filteredJournals = useMemo(
-    () => journals.filter((entry) => dimFilter === 'all' || Boolean(entry.category_tags?.includes(dimFilter))),
-    [dimFilter, journals],
-  )
-
+  const load = useCallback(async () => {
+    setLoading(true); setError('')
+    try { setJournals(await api.listJournals()) }
+    catch (nextError) { setError(nextError && typeof nextError === 'object' && 'message' in nextError ? String(nextError.message) : 'Could not load your journal. Please try again.') }
+    finally { setLoading(false) }
+  }, [api])
+  useEffect(() => { void load() }, [load])
   const groupedByDay = useMemo(() => {
+    const query = search.toLocaleLowerCase().trim()
+    const filtered = journals.filter((entry) => (dimFilter === 'all' || entry.category_tags?.includes(dimFilter)) && (!query || [entry.title || '', parseJournalContent(entry.content).plainText, ...(entry.tags || [])].join(' ').toLocaleLowerCase().includes(query)))
     const groups = new Map<string, Journal[]>()
-    for (const journal of filteredJournals) {
-      const key = dayKey(journal.created_at)
-      const existing = groups.get(key) || []
-      existing.push(journal)
-      groups.set(key, existing)
-    }
-    return Array.from(groups.entries())
-  }, [filteredJournals])
-
+    for (const entry of filtered) { const key = dayKey(entry.created_at); groups.set(key, [...(groups.get(key) || []), entry]) }
+    return [...groups.entries()]
+  }, [dimFilter, journals, search])
   return (
-    <AppShell
-      title="Journal"
-      subtitle="A timeline of your reflections"
-      actions={(
-        <Link to="/journals/new">
-          <button className="ody-btn">
-            <Icon name="plus" size={14} /> New Entry
-          </button>
-        </Link>
-      )}
-    >
+    <AppShell title="Journal" subtitle="Make room for reflection. Keep what matters." actions={<Link to="/journals/new" className="ody-btn"><Plus size={17} />New Entry</Link>}>
       <DimensionFilter value={dimFilter} onChange={setDimFilter} />
-
-      <div className="ody-card" style={{ marginBottom: 16 }}>
-        <form className="ody-row" onSubmit={runSearch}>
-          <div style={{ display: 'flex', gap: 8, flex: 1, alignItems: 'center' }}>
-            <Icon name="search" size={16} className="ody-muted" />
-            <input
-              className="ody-input"
-              placeholder="Search journal entries..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{ maxWidth: 320 }}
-            />
-          </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            <button className="ody-btn secondary" type="submit">Search</button>
-            <button className="ody-btn secondary" type="button" onClick={() => { setSearch(''); void load() }}>Reset</button>
-          </div>
-        </form>
-      </div>
-
-      {loading ? (
-        <div className="ody-grid">
-          {[1, 2, 3].map((i) => <div key={i} className="ody-skeleton ody-skeleton-card" style={{ height: 96 }} />)}
-        </div>
-      ) : groupedByDay.length === 0 ? (
-        <div className="ody-card">
-          <div className="ody-empty">
-            <div className="ody-empty-icon"><Icon name="book" size={22} /></div>
-            <h4>{search || dimFilter !== 'all' ? 'No Results' : 'No Journal Entries'}</h4>
-            <p>{search || dimFilter !== 'all'
-              ? 'Try different filters or search terms.'
-              : 'Start writing to capture your reflections, gratitude, or random thoughts.'}
-            </p>
-            {!search && dimFilter === 'all' ? (
-              <Link to="/journals/new">
-                <button className="ody-btn" style={{ marginTop: 16 }}>
-                  <Icon name="plus" size={14} /> Write Entry
-                </button>
-              </Link>
-            ) : null}
-          </div>
-        </div>
-      ) : (
-        <div className="ody-card">
-          <div className="ody-journal-timeline">
-            {groupedByDay.map(([date, entries]) => (
-              <section key={date}>
-                <div className="ody-journal-day">{dateLabel(date)}</div>
-                {entries.map((entry) => (
-                  <Link key={entry.id} to={`/journals/${entry.id}`} className="ody-journal-entry-node">
-                    <span className="ody-journal-dot" />
-                    <div className="ody-journal-entry-content">
-                      <div className="ody-row" style={{ gap: 8 }}>
-                        <strong className="ody-item-title">{entry.title || 'Untitled entry'}</strong>
-                      </div>
-                      <p className="ody-journal-preview">
-                        {entry.content}
-                      </p>
-                      {entry.category_tags?.length ? (
-                        <div className="ody-item-meta">
-                          {entry.category_tags.map((t) => (
-                            <DimensionLabel key={t} dim={t} />
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                  </Link>
-                ))}
-              </section>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="journal-library-toolbar"><label className="journal-library-search"><MagnifyingGlass size={19} aria-hidden="true" /><span className="journal-sr-only">Search journal entries</span><input className="ody-input" type="search" placeholder="Search your writing, titles or tags" value={search} onChange={(event) => setSearch(event.target.value)} /></label><span className="ody-muted">{journals.length} {journals.length === 1 ? 'entry' : 'entries'}</span></div>
+      {loading ? <div className="ody-grid" aria-label="Loading journal entries" role="status">{[1, 2, 3].map((item) => <div key={item} className="ody-skeleton ody-skeleton-card" style={{ height: 112 }} />)}</div> : error ? <div className="ody-card journal-library-empty" role="alert"><WarningCircle size={30} /><h2>Your journal is unavailable</h2><p>{error}</p><button className="ody-btn" onClick={() => void load()}>Try again</button></div> : !groupedByDay.length ? <div className="ody-card journal-library-empty"><Feather size={36} weight="light" /><h2>{search || dimFilter !== 'all' ? 'No matching entries' : 'Your story starts here'}</h2><p>{search || dimFilter !== 'all' ? 'Try another phrase or choose a different life dimension.' : 'A thought, a lesson, a moment worth remembering. Give it a page.'}</p>{search || dimFilter !== 'all' ? <button className="ody-btn secondary" onClick={() => { setSearch(''); setDimFilter('all') }}>Clear filters</button> : <Link to="/journals/new" className="ody-btn"><Feather size={18} />Write Entry</Link>}</div> : <div className="journal-library-list">{groupedByDay.map(([date, entries]) => <section key={date} className="journal-library-day"><h2>{dateLabel(entries[0].created_at)}</h2><div>{entries.map((entry) => <Link key={entry.id} to={`/journals/${entry.id}`} className="journal-library-entry"><div className="journal-entry-symbol" aria-hidden="true"><Feather size={22} weight="light" /></div><div className="journal-library-entry-content"><h3>{entry.title || 'Untitled entry'}</h3><p>{journalPreview(entry.content) || 'An empty page.'}</p>{entry.category_tags?.length ? <div className="journal-reading-dimensions">{entry.category_tags.map((tag) => <DimensionLabel key={tag} dim={tag} />)}</div> : null}</div><ArrowUpRight size={20} className="journal-entry-arrow" aria-hidden="true" /></Link>)}</div></section>)}</div>}
     </AppShell>
   )
 }

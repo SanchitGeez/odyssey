@@ -1,0 +1,538 @@
+---
+title: "Odyssey: UI overhaul"
+brief: "A complete Greek-epic visual and interaction redesign, grounded in the current app."
+kind: "plan"
+localOnly: true
+---
+
+# Odyssey UI overhaul
+
+**Status: proposed design for review. No application UI has been changed.**
+
+The goal is an elegant, useful daily application with a convincing Homeric world:
+Greek coastal light, Spartan discipline, Roman clarity, original artwork, and a
+journal that feels like writing a scroll. Professional quality comes from readable
+content, clear actions, reliable feedback, and consistent spacing on every route.
+
+[Open the generated concepts and before/after evidence](http://localhost:15174/).
+
+## Confirmed decisions
+
+- **Tone:** disciplined and challenging, without punishment.
+- **Device priorities:** phone for daily check-ins; desktop for planning and journaling.
+  All existing workflows must remain usable on mobile.
+- **Journal:** headings, bold/italic, bullet and numbered lists, checklists, quotations,
+  links, undo/redo, autosave, and focus mode.
+- **Scope:** UI and frontend interaction overhaul. Preserve existing data, routes,
+  authentication, task schedules, quest rules, and ownership.
+- **Visual commitment:** Greek/Roman/Spartan Odyssey/Iliad inspiration, custom-generated
+  imagery, and a modern elegant finish.
+- **Still open:** final light/dark emphasis, degree of figurative/mythic art, and swipe
+  confirmation behavior. Recommendations below are proposals, not user approvals.
+
+## The proposed visual world
+
+**Spartan Standard** is the lead proposal. Rich oxblood gives navigation a clear
+identity; smoked Aegean teal gives working areas depth; ivory text and controlled
+bronze actions make the next step visible. Artwork depicts journeys, coastlines,
+crafted objects, and human effort. A few precise historical details carry the
+world through an otherwise familiar professional application.
+
+The defining moment is the **daily commitment card**: one readable task, one
+evocative piece of art, a visible Done/Skip pair, and a deliberate horizontal
+gesture. The scroll editor is the second expression of that same material world.
+
+**Aegean Passage** is the lighter alternative shown in the fourth generated
+preview: cool limestone surfaces, dark ink, an indigo shell and actions, and
+sunlit original artwork. It is equally functional, with a stronger daylight feel.
+
+The historical source is a coherent artistic interpretation. Homeric Greece leads;
+Spartan cloth, bronze, and Roman inscription proportions support it. This is not a
+claim of archaeological reconstruction. Control names remain Check-In, Tasks,
+Quests, Journal, Insights, and Settings.
+
+### What the concept images settle and what they do not
+
+The four generated images test atmosphere, hierarchy, imagery and layout. They
+are **illustrative proposals with sample content**, not implemented screenshots,
+proof of accessibility, or approval of a new logo. Text and controls will be real
+HTML in the application.
+
+Known concept-only details to correct in implementation: the dark Tasks comp
+substitutes Wisdom/Community/Purpose for three dimensions; the actual names remain
+Wealth/Alliance/Legacy. Its row checkboxes are illustrative and will not introduce
+an unplanned task-completion workflow. Any generated laurel mark is a placeholder
+until a logo decision is made. Sample dates and activity marks are not user data.
+The lighter comp also uses some display type in controls; final controls use the
+readable UI family consistently. Final texture will be quieter than these
+art-direction images, especially behind text.
+
+### Proposed foundation
+
+- **Expression:** moderate and recognizable in working screens, strongest on entry,
+  check-in and the journal. Design variance 6/10, motion intensity 4/10, visual
+  density 5/10 for planning and 3/10 for focused writing/check-in.
+- **Typography:** a self-hosted inscription-inspired display face for Odyssey and
+  selected headings; a readable humanist sans for navigation, forms and data; an
+  optional book serif for journal prose. Candidate roles: Marcellus, Source Sans 3,
+  and Literata. Final faces are chosen against the approved comps and licensing.
+- **Scale:** 16px base body; 14-16px metadata; 16px minimum editable mobile controls;
+  18-20px journal text with 1.65-1.8 line-height. Avoid tiny tracked capitals.
+- **Spacing:** one 4/8px rhythm, 16-24px group spacing, 32-40px between major regions.
+  Desktop navigation uses consistent approximately 48px rows with a small fixed
+  gap; it never distributes links over the full height.
+- **Shape:** restrained corners for working surfaces and controls. More generous
+  corners belong to the gesture card; pills are reserved for compact tags.
+- **Color:** semantic tokens for surface, text, action, border, focus and each state.
+  Six dimensions have readable names and distinct icon/color pairing. Color never
+  carries a state alone. Bronze buttons receive dark labels.
+- **Themes:** design light and dark variants of the same system, with a system/manual
+  preference in Settings. The preferred emphasis remains a review choice.
+  The journal may use a light paper document inside the dark application surround.
+- **Icons:** one maintained family, proposed Phosphor, with one weight and clear
+  accessible names. Generated illustrations do not replace control icons.
+- **Data honesty:** display actual API values. Remove the fixed Life Balance shape;
+  show an explicit unavailable-data explanation until real dimension scores exist.
+
+## Evidence from the current application
+
+Browser captures were made at 1440x1000 and 390x844. This is a targeted live audit
+plus a read of all page/component sources, not an exhaustive device certification.
+
+- **Navigation spacing:** desktop link tops measured approximately 129px apart.
+  The navigation grid grows to fill its parent and references undefined
+  `--space-10`. Evidence: `client/src/index.css:192`.
+- **Horizontal overflow:** Tasks measured 467px of document width in a 390px viewport.
+  Filter controls and row actions run beyond the screen. See the mobile audit image.
+- **Small text:** desktop nav measured 11.84px; mobile nav 9.28px; form controls 14.08px.
+  Evidence: `index.css:210`, `:693`, `:1723`.
+- **Reported zoom:** Chromium emulation showed scale 1, so route-triggered Safari
+  zoom was not reproduced. Small form text is a plausible focus-zoom contributor;
+  document overflow is independently confirmed. Verify on the user's real browser.
+- **Missing mobile account controls:** mobile takes only the first five nav items;
+  Settings and Logout exist in the hidden sidebar. Evidence: `components/layout.tsx:22`.
+- **Incomplete dialogs:** Escape and dialog role exist, but initial focus, trapping,
+  background inertness and focus return are missing. Evidence: `components/modal.tsx:13`.
+- **Gesture missing:** check-in responses are button driven; there is no swipe code.
+  Evidence: `pages/checkin.tsx:17`.
+- **Journal limitations:** textarea rather than rich text; save failure can still
+  navigate away in the `finally` block. Evidence: `journal-write.tsx:114`, `:196`.
+- **Unclear controls:** unlabeled filter selects, placeholder-only forms, clickable
+  quest list items without keyboard semantics, and immediate destructive actions.
+  Evidence: `tasks.tsx:313`, `quests.tsx:95`, `tasks.tsx:249`.
+- **Misleading state:** failed library loads can fall through to empty screens;
+  plain-object API errors are often discarded by `instanceof Error` checks.
+  Evidence: `tasks.tsx:121`, `app/auth.tsx:129`.
+- **Invented chart:** Life Balance uses fixed values for every user.
+  Evidence: `pages/insights.tsx:53`, `:65`.
+- **Date correctness:** UTC serialization is used for civil dates, including after
+  local-midnight arithmetic. This can shift dates in India. Evidence: `lib/date.ts:1`.
+
+## Navigation and responsive structure
+
+### Desktop and tablet
+
+Reuse the current router and routes. A steady 224-240px sidebar holds the existing
+destinations; account and Settings remain at the bottom. Page headers align title,
+short context and one primary action. Long lists use the full useful work area.
+The shell uses bounded line lengths, not arbitrary large empty areas.
+
+Medium widths use a compact rail or clearly labeled menu before the sidebar
+crowds the work. Do not switch a large tablet to tiny phone navigation merely
+because it crosses the current 1120px breakpoint.
+
+### Phone
+
+Keep five core destinations in a persistent bottom bar, with an always-visible
+Account button opening Settings, Help and Logout. Show labels at readable sizes,
+announce the active destination, and respect safe-area insets. Check-in can enter
+focus mode, with a clearly labeled exit; focus mode is explicit, never a trap.
+
+Allow normal pinch zoom. Keep the existing device-width viewport policy; do not
+add maximum-scale or user-scalable restrictions. Fix intrinsic widths and layout
+overflow, use at least 16px mobile input text, avoid automatic focus on route
+entry, and handle virtual-keyboard/safe-area geometry.
+
+## Screen-by-screen overhaul
+
+### Sign in and registration
+
+Original artwork introduces the world in a split desktop composition. The form
+remains compact with persistent labels, password reveal, correct autocomplete,
+visible validation and recovery. Mobile reduces the artwork and leads with the
+form; it must not make users scroll past a cinematic introduction to sign in.
+
+### Onboarding
+
+Introduce the six existing dimensions through six consistent original vignettes
+and concise explanations. The starter task remains the main action. Do not turn
+setup into a mandatory animation or invent new scoring. Cross-browser onboarding
+persistence is a separate product issue because the current flag is browser-local.
+
+### Daily check-in
+
+One task at a time with date, clear progress, category, schedule and primary actions.
+Artwork makes each commitment feel situated without competing with its title.
+Done and Skip remain visible even when swipe is available. Optional value entry
+is progressively disclosed. Completed, no-tasks-due, loading and failed-load
+screens have distinct wording and next actions.
+
+A truthful completion summary offers Journal or Insights. Avoid saying every
+task was done when some were skipped, and distinguish no tasks due from having
+completed existing tasks.
+
+### Tasks
+
+A compact useful library with labeled search, dimension/type/status filters and
+a primary New task action. Desktop rows expose title, schedule, status, edit and
+activity. Phone rows stack the same information and put secondary actions in an
+accessible menu. Filters wrap or open a sheet; they cannot widen the document.
+
+Expanded history shows a readable legend, date range and accessible summary.
+Avoid hundreds of independent tab stops in the heatmap. Create/edit use the same
+labeled fields, schedule controls and validation; long content scrolls while
+actions remain reachable. Confirm deletion and describe the affected history.
+
+### Quests
+
+Desktop master/detail: readable goal list on the left, selected quest and
+milestones on the right. On phone, open a focused detail state with Back to
+Quests, preserving list/filter position. Selection is a real link or button.
+Keep progress and milestone behavior tied to current APIs.
+
+Use bespoke landscape/object art in headers or genuinely empty states. Milestones
+use proper checkboxes, inline pending feedback and understandable completion.
+Activity history remains reachable without competing with the next action.
+
+### Journal library and reader
+
+Keep date grouping, search and dimension filters. A clear New entry action leads.
+Previews show readable text, title, date and meaningful tags; they do not display
+stored formatting syntax. Empty library, empty search, loading and failed load
+are separate states. The reader reuses the editor's document typography and
+document parser, with clear Edit, Back and a protected delete action.
+
+### Scroll editor
+
+The document is a continuous writing surface with subtle papyrus material, generous
+margins and strong ink contrast. A small rolled-edge or seal detail may frame the
+document, but writing uses normal scrolling and selection.
+
+A sticky toolbar groups text style, inline emphasis, lists/checklists, quote/link,
+and undo/redo. Selected formatting has semantic pressed states and visible focus.
+Focus mode hides secondary metadata; it never hides save state or the exit.
+
+Title, tags and dimensions remain editable, with metadata secondary to writing.
+Desktop line length stays around 65-75 characters. On mobile, use a compact
+keyboard-aware toolbar and a More menu for lower-frequency actions. Long typing,
+text selection and the virtual keyboard must work without fighting the bottom bar.
+
+Save states are explicit: Unsaved changes, Saving, Saved, Save failed with Retry.
+A failed save keeps the editor open. Serialize writes so a slower old response
+cannot overwrite a newer draft or falsely claim the newest edit is saved.
+Failed saves keep the editor open. In-app navigation offers Save, Discard and
+Stay; browser-back navigation needs the same guard where the router supports it.
+Hard reloads, tab termination and crashes cannot guarantee draft recovery without
+explicitly approved durable local draft storage.
+
+### Insights
+
+Lead with the selected date range and the metrics actually returned by the API:
+task completions/skips, current check-in streak, quest updates and journal count.
+There is no separate check-in completion-count field in the current overview API.
+Add accessible text equivalents for all charts. Remove hard-coded balance values.
+Use totals language when a count is not actually filtered to active items.
+
+The data should feel authored and readable, with warm visual detail around it,
+but never imply scores, trends or per-dimension analytics the API does not supply.
+
+### Settings and Help
+
+Provide reachable account/session controls plus appearance and motion preferences.
+Existing account fields are informational unless supported editing is deliberately
+added later. Help preserves the useful task/quest templates and six-dimension
+explanations, with accessible disclosures and readable guidance.
+
+## Swipe and motion specification
+
+### Gesture contract
+
+Proposed mapping: swipe right for Done, left for Skip. Before release, reveal both
+the direction and its text action. Commit only after clear horizontal intent and
+a substantial distance threshold; short or cancelled drags return to rest.
+The initial tuning target is roughly a quarter of card width, verified on phones.
+
+Preserve vertical scrolling and operating-system edge gestures. Do not start
+a drag from an input, button or text selection. Prevent duplicate submissions;
+on failure restore the card with an inline Retry. Announce saved outcomes and the
+next task through a polite live region.
+
+**Do not promise post-save Undo in this UI-only pass.** The response API has no
+clear-response operation, and completing a one-time task archives it. A real Undo
+needs a separate contract decision. The review form offers a safer reveal-then-tap
+variant if immediate release-to-save feels too risky.
+
+### Motion language
+
+- Task response: a weighted lateral exit and next-card settle, approximately
+  180-240ms, communicating that an answer was recorded.
+- Panel/menu opening: restrained directional movement, approximately 160-220ms,
+  tied to where the control opened.
+- Quest milestone: a brief state change and progress update, not a fireworks reward.
+- Journal entry: a quiet document reveal, once; while writing, keep the surface still.
+- Buttons: short press feedback. Navigation selection remains stable and readable.
+- Reduced motion: remove travel, tilt and unrolling; retain clear state and
+  save feedback through immediate changes or a brief fade.
+
+Use transform/opacity for ordinary UI transitions. Avoid infinite shimmer,
+glowing nav labels, bouncing controls, scroll hijacking and decorative particles.
+The era comes from material, imagery and deliberate weight, not animation delays.
+
+## Accessibility and affordances
+
+Target WCAG 2.2 AA. This is an implementation requirement, not a claim that the
+generated images pass. Use a 44-48px touch-target design goal, clear persistent
+labels, visible focus, meaningful button names and sufficient text/control contrast.
+Verify body and placeholder text at least 4.5:1 and non-text control boundaries
+at least 3:1 where required, on the actual rendered surfaces.
+
+Support keyboard navigation throughout; expose filter selection semantically.
+Dialogs manage initial focus, trapping, Escape, background inertness, scroll
+restoration and focus return. Prefer accessible maintained primitives over
+rebuilding modal behavior repeatedly. Destructive confirmation initially focuses
+the safe action.
+
+Support 200% zoom and reflow at narrow widths, long titles, large text, screen-reader
+status announcements and reduced motion. Use clear words plus icons/colors for
+status. Replace nested link/button markup with one appropriate interactive element.
+
+## Custom image production plan
+
+All four preview images were produced with the built-in imagegen tool. Exact
+prompts are saved under `prompts/`; original PNGs carry embedded provenance and
+optimized WebP previews carry adjacent provenance sidecars.
+These previews are concept art. Production art is regenerated separately at its
+placement's dimensions; UI screenshots are not sliced up to create artwork.
+
+### Proposed original asset family
+
+- **Entry panorama:** an Aegean harbor, a coastal path and a small distant traveler;
+  landscape and portrait compositions, with usable negative space.
+- **Check-in art:** calm paths and purposeful movement; category-specific variants
+  selected from a small set rather than fetching a new image per interaction.
+- **Quest art:** ascent, distant sanctuary, navigation and crafted objects,
+  supporting long-term effort without implying a reward system.
+- **Journal material:** clean, subtle papyrus fiber and optional edge details,
+  tested at reading scale. The texture never reduces legibility.
+- **Six vignettes:** Vitality, Psyche, Prowess, Wealth, Alliance and Legacy in one
+  visual medium and lighting family. Suggested objects include an olive branch,
+  still water/owl, a stylus/worked tool, an amphora/granary, a joined cord, and a
+  carved enduring mark. These are proposals pending the imagery preference.
+- **Empty/completion scenes:** small, purposeful illustrations with clear text
+  and actions, rather than empty full-screen darkness.
+
+Keep imagery original; do not copy game screenshots or actor likenesses. Generated
+art carries no UI text. Final assets receive informative alt text when meaningful,
+and empty alt text when purely decorative. Use responsive crops, reserved dimensions
+and WebP/AVIF where supported. Initial budgets: under roughly 250KB for a desktop
+banner and 150KB for mobile, subject to measured visual quality. Avoid loading all
+scene variants before the first action.
+
+## Implementation approach and boundaries
+
+Retain React/TypeScript, Vite, Tailwind v4, React Router and the existing API client.
+Do not migrate frameworks. Build the shared visual/interaction foundation once,
+then apply it to every route.
+
+Proposed additions are limited to a maintained headless rich-text editor, accessible
+overlay/menu primitives, one icon family, self-hosted fonts, and generated art.
+Tiptap is the recommended editor candidate; Radix Primitives can supply overlay
+behavior while our styles supply the Odyssey identity. No dependencies are
+installed during planning.
+
+Tiptap's official Markdown bridge currently carries a beta warning. That makes a
+format round-trip spike a prerequisite rather than a promise of instant fidelity.
+The official Radix Dialog supports focus trapping and Escape behavior; wrappers
+still need appropriate labels, layout and end-to-end verification.
+Sources: [Tiptap Markdown](https://tiptap.dev/docs/editor/markdown),
+[Radix Dialog](https://www.radix-ui.com/primitives/docs/components/dialog).
+
+### Rich-text storage decision
+
+The current API and database store `content: string`; list/read screens render it
+as plain text and server search uses substring matching on the string.
+A toolbar alone cannot safely implement rich text.
+
+Proposed UI-only approach: an explicitly versioned Markdown document inside that
+existing string, parsed by one shared frontend adapter. Unmarked existing entries
+remain literal plain text, preserving old asterisks, angle brackets and line breaks.
+Only a deliberate save converts an edited legacy entry to the new format.
+The parser strips the version marker before handing content to editor libraries.
+
+The adapter provides document load, save, safe read rendering and plain-text
+preview/word count. Support only the agreed formatting subset. Disable raw HTML
+and unsafe link schemes, and test pasted content. Guard unknown format versions
+with a readable fallback rather than silently overwriting them.
+
+This avoids a database migration but has a trade-off: existing server search
+still searches stored Markdown, so an exact phrase split by formatting may not
+match. Full formatting-insensitive search or a first-class format column is a
+separately identified backend improvement. If those are required now, expand scope
+explicitly before implementation.
+
+Send explicit null/empty values where the current PATCH contract supports clearing
+title/tags/categories; do not let `trimPayload` erase the user's clear action.
+The API accepts nullable title and list metadata, and the update handler uses
+`exclude_unset=True`, so clearing can be handled without a new endpoint.
+Do not create/save an empty document merely because the user opened the editor.
+
+### Other boundaries
+
+Theme preferences can remain browser-local in this pass; cross-device settings
+need persistence work outside this UI plan. Keep autosave failure protection within
+the editor; durable browser storage of sensitive drafts is an explicit privacy
+choice, not an automatic addition. No file uploads, image insertion, tables,
+collaboration, AI mentor, XP, scoring, notifications or new backend services are
+included. Preserve the existing form field order unless the review approves a change.
+
+## Ordered delivery plan
+
+### Establish the approved visual foundation
+
+Review the four concepts and remaining choices. Finalize one system across light
+and dark. Before committing to an editor/storage approach, complete a small
+journal format spike: checklist/link/format round trips, legacy literal-text
+preservation, safe rendering and unknown-version handling must pass. If the beta
+Markdown bridge fails this gate, hold rich-text persistence and bring an explicit
+format/search API extension for review; never ship lossy saves or silently change
+the schema. Other UI work can proceed independently.
+
+Produce original art and font assets, token roles, type/spacing scales,
+and a small component/state sheet. Reuse `index.css` as the active styling entry;
+`App.css` is currently unused. Finalize `DESIGN.md` from implemented reality at
+handoff, rather than treating this proposal as a finished design system.
+
+### Rebuild shared controls and the shell
+
+Reuse `components/layout.tsx`, the router and existing destinations. Replace
+navigation internals and shared styling; add consistent Button, Field, Filter,
+Menu, Dialog/Sheet, ConfirmDialog, EmptyState, ErrorState and Skeleton components.
+Add theme handling and motion preferences. Fix focus, target sizes, mobile account
+access and overflow before decorating individual pages.
+
+### Complete the daily task flow
+
+Rework `pages/checkin.tsx`, `pages/tasks.tsx` and `components/heatmap.tsx`.
+Isolate gesture behavior from persistence. Reuse `api.respondDaily`, schedule
+fields and task APIs. Normalize API errors centrally. Fix the frontend date helper
+with civil-date arithmetic and the user's timezone; keep backend schedule rules.
+
+### Complete planning and reflective writing
+
+Rework `pages/quests.tsx` using current quest/milestone/activity APIs.
+Use the proven journal format adapter and build the shared editor/renderer; then update
+`journal-write.tsx`, `journal-read.tsx` and `journals.tsx` together.
+Add serialized autosave, safe close behavior and deliberate metadata clearing.
+
+### Finish every remaining route and state
+
+Apply the system to login, register, onboarding, insights, settings and help.
+Remove unsupported balance imagery and preserve template-prefill flows.
+Review long/short content, full/empty/filter-empty/error states and slow networks.
+
+### Validate the completed experience
+
+Run focused tests for the document adapter, save ordering, failed close, civil
+dates and gesture submission/cancellation; retain backend regression tests and
+frontend build/lint. Inspect desktop and mobile together, including both themes,
+keyboard paths and reduced motion. Fix the collected findings in one batch and
+confirm once. Use an independent finish review; record the actual limitations.
+
+<FileTree id="implementation-files" title="Planned implementation areas" entries={[
+  {path:"client/src/index.css",change:"modified",note:"Replace active styling with the approved tokens and responsive system."},
+  {path:"client/src/components/layout.tsx",change:"modified",note:"Stable desktop navigation; complete mobile account access."},
+  {path:"client/src/components/modal.tsx",change:"modified",note:"Accessible shared overlay and focus behavior."},
+  {path:"client/src/components/ui/",change:"added",note:"Shared accessible controls and state components, extracted as reused."},
+  {path:"client/src/app/auth.tsx",change:"modified",note:"Error normalization and precise journal clearing payloads."},
+  {path:"client/src/lib/date.ts",change:"modified",note:"Timezone-aware civil dates for affected UI."},
+  {path:"client/src/pages/checkin.tsx",change:"modified",note:"Focused card flow and accessible swipe behavior."},
+  {path:"client/src/pages/tasks.tsx",change:"modified",note:"Responsive task library, forms and history."},
+  {path:"client/src/pages/quests.tsx",change:"modified",note:"Keyboard-accessible master/detail and mobile detail."},
+  {path:"client/src/components/journal/",change:"added",note:"Editor, renderer, toolbar and document adapter."},
+  {path:"client/src/pages/journal-write.tsx",change:"modified",note:"Rich text and reliable save lifecycle."},
+  {path:"client/src/pages/journal-read.tsx",change:"modified",note:"Shared document reading surface."},
+  {path:"client/src/pages/journals.tsx",change:"modified",note:"Plain-text previews, search and distinct states."},
+  {path:"client/src/pages/insights.tsx",change:"modified",note:"Truthful, accessible activity summaries."},
+  {path:"client/public/art/",change:"added",note:"Optimized original generated production artwork."},
+  {path:"client/public/fonts/",change:"added",note:"Licensed self-hosted display/UI/writing fonts."},
+  {path:"client/package.json",change:"modified",note:"Only approved and necessary editor/primitives/icons/test dependencies."},
+  {path:"specs/Style-Guide.md",change:"modified",note:"Replace outdated styling guidance after the implemented system is reviewed."}
+]} />
+
+## Acceptance checklist
+
+<Checklist id="acceptance" items={[
+ {id:"navigation",label:"All routes, Settings, Help and Logout are reachable by keyboard and phone."},
+ {id:"reflow",label:"No document-level horizontal overflow at 320, 390, 768, 1024 and 1440px; verify reflow and 200% zoom."},
+ {id:"safari",label:"Reproduce and verify the reported zoom issue on the affected real Safari/browser/device; do not disable pinch zoom."},
+ {id:"contrast",label:"Measure actual text, input, button, selected and focus-state contrast in both themes."},
+ {id:"dialogs",label:"Initial focus, trap, Escape, background inertness, scroll restore and focus return work."},
+ {id:"swipe",label:"Gesture threshold/cancel, vertical scrolling, duplicate prevention, failure restoration and button/keyboard alternatives work."},
+ {id:"journal-format",label:"Every agreed formatting feature survives save/reload/read/edit; legacy entries remain readable."},
+ {id:"journal-save",label:"A failed save cannot close the editor or report unsaved content as saved."},
+ {id:"clear",label:"Clearing title, tags and dimensions persists correctly."},
+ {id:"states",label:"Libraries distinguish genuine-empty, filtered-empty, loading, error/retry, pending and success."},
+ {id:"data",label:"No fabricated scores or charts; date navigation works around midnight in Asia/Kolkata."},
+ {id:"motion",label:"Reduced-motion mode preserves every task and outcome without spatial choreography."},
+ {id:"performance",label:"Reserve asset dimensions; lazy-load editor and noncritical art; measure LCP, INP and layout shift."},
+ {id:"regressions",label:"Frontend build/lint, focused UI logic tests and existing backend tests pass."}
+]} />
+
+## Review questions for your return
+
+The first batch is settled. These are the remaining two batches; reviewing them
+does not authorize application changes until the overall direction is accepted.
+The form records preferences in the plan review surface; it does not send messages.
+
+### Batch 2: world and imagery
+
+<QuestionForm id="open-questions" questions={[
+ {id:"world",title:"Which visual world should lead?",subtitle:"See the dark Tasks and light Tasks concepts in the visual review.",mode:"single",options:[
+  {id:"spartan",label:"Spartan Standard",detail:"Oxblood, smoked Aegean teal, ivory and controlled bronze; the lead proposal.",recommended:true},
+  {id:"aegean",label:"Aegean Passage",detail:"Limestone and ink, indigo navigation, brighter coastal artwork."},
+  {id:"blend",label:"Use both as matching light/dark themes",detail:"Keep one component system; choose the default after trying both."}
+ ]},
+ {id:"imagery",title:"How directly should the artwork show heroes and mythology?",mode:"single",options:[
+  {id:"places",label:"Landscapes, artifacts and occasional distant human figures",detail:"Historical atmosphere with room for your own story.",recommended:true},
+  {id:"heroic",label:"Visible heroic figures and sculpture",detail:"More human presence, effort and Spartan character."},
+  {id:"mythic",label:"Explicit gods, creatures and mythic scenes",detail:"A stronger fantasy interpretation of the Homeric world."}
+ ]},
+ {id:"workflow",title:"Should approved screens be built from image compositions or directly in code?",subtitle:"This controls the later implementation workflow, not whether custom artwork is included.",mode:"single",options:[
+  {id:"comp",label:"Image composition first",detail:"Approve detailed screen images, then implement against them; stronger visual control, slower.",recommended:true},
+  {id:"code",label:"Code first",detail:"Build directly from the agreed system and review the live result; leaner and faster."}
+ ]},
+ {id:"swipe",title:"Batch 3: What should releasing a swipe do?",mode:"single",options:[
+  {id:"commit",label:"Save Done/Skip once the threshold is crossed",detail:"Fast daily flow; visible cues and buttons remain. No unsupported post-save Undo.",recommended:true},
+  {id:"reveal",label:"Reveal the action and require a tap",detail:"Safer against accidental answers, with one extra step."}
+ ]},
+ {id:"browser",title:"Which phone and browser show the menu zoom issue?",mode:"freeform",placeholder:"For example: iPhone 15, Safari; happens after tapping Tasks or focusing Search."},
+ {id:"journal-storage",title:"How should we handle formatted journal storage?",subtitle:"The current API stores one text string; rich text changes what that string contains.",mode:"single",options:[
+  {id:"ui-only",label:"Keep the UI-only boundary",detail:"Use versioned Markdown after the round-trip gate. Accept that exact searches across formatting may miss matches.",recommended:true},
+  {id:"format-api",label:"Review a small explicit API extension first",detail:"Add deliberate format and plain-text search handling before rich-text persistence ships."}
+ ]},
+ {id:"notes",title:"What feels right or wrong in the previews?",mode:"freeform",placeholder:"Texture strength, artwork, darkness, scroll treatment, or a reference you want us to study."}
+]} submitLabel="Save review answers" />
+
+## Scope and handoff status
+
+Prepared: repository-grounded plan, product context, four custom image concepts,
+saved prompts and provenance, before-state desktop/mobile captures, a route/file
+map, implementation order, accessibility criteria and remaining review questions.
+
+Not performed: application redesign implementation, new dependency installation in
+the app, production artwork extraction, exhaustive real-device testing, or a claim
+that generated concepts satisfy accessibility. No backend schema or data migration
+is included. The app remains running at http://localhost:15173.
+
+The next implementation step begins after the overall direction and the material
+journal/swipe trade-offs are accepted.

@@ -1,11 +1,15 @@
 export function todayIso(): string {
-  return new Date().toISOString().slice(0, 10)
+  return localDateKey(new Date())
+}
+
+function localDateKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
 
 export function shiftDays(dateIso: string, days: number): string {
-  const date = new Date(`${dateIso}T00:00:00`)
+  const date = new Date(`${dateIso}T12:00:00`)
   date.setDate(date.getDate() + days)
-  return date.toISOString().slice(0, 10)
+  return localDateKey(date)
 }
 
 export function formatDate(dateIso: string | null | undefined): string {

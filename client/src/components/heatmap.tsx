@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useId, useMemo, useState } from 'react'
 import type { TaskHeatmapStatus } from '../app/types'
 
 type HeatmapProps = {
@@ -21,13 +21,13 @@ const dayLabels: Array<{ row: number; label: string }> = [
 
 function parseDateKey(key: string): Date {
   const [year, month, day] = key.split('-').map(Number)
-  return new Date(year, month - 1, day)
+  return new Date(Date.UTC(year, month - 1, day))
 }
 
 function toDateKey(value: Date): string {
-  const year = value.getFullYear()
-  const month = String(value.getMonth() + 1).padStart(2, '0')
-  const day = String(value.getDate()).padStart(2, '0')
+  const year = value.getUTCFullYear()
+  const month = String(value.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(value.getUTCDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 }
 
@@ -36,7 +36,7 @@ function addDays(value: Date, amount: number): Date {
 }
 
 function weekdayMonFirst(value: Date): number {
-  return (value.getDay() + 6) % 7
+  return (value.getUTCDay() + 6) % 7
 }
 
 function alignToMonday(value: Date): Date {
@@ -55,11 +55,15 @@ function statusLabel(status: TaskHeatmapStatus): string {
 }
 
 function formatDate(key: string): string {
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).format(parseDateKey(key))
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit', year: 'numeric', timeZone: 'UTC' }).format(parseDateKey(key))
 }
 
 export function Heatmap({ dates }: HeatmapProps) {
   const keys = useMemo(() => Object.keys(dates).sort(), [dates])
+  const [selectedDate, setSelectedDate] = useState('')
+  const descriptionId = useId()
+  const instructionsId = useId()
+  const selected = selectedDate in dates ? selectedDate : keys[keys.length - 1]
 
   const model = useMemo(() => {
     if (keys.length === 0) {
@@ -83,10 +87,10 @@ export function Heatmap({ dates }: HeatmapProps) {
       const weekday = weekdayMonFirst(current)
       weeks[weekIndex][weekday] = dates[key] ?? null
 
-      if (current.getDate() === 1) {
+      if (current.getUTCDate() === 1) {
         monthLabels.push({
-          key: `${current.getFullYear()}-${current.getMonth() + 1}`,
-          label: new Intl.DateTimeFormat('en-US', { month: 'short' }).format(current),
+          key: `${current.getUTCFullYear()}-${current.getUTCMonth() + 1}`,
+          label: new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' }).format(current),
           weekIndex,
         })
       }
@@ -94,8 +98,8 @@ export function Heatmap({ dates }: HeatmapProps) {
 
     if (monthLabels.length === 0 || monthLabels[0].weekIndex !== 0) {
       monthLabels.unshift({
-        key: `${first.getFullYear()}-${first.getMonth() + 1}-start`,
-        label: new Intl.DateTimeFormat('en-US', { month: 'short' }).format(first),
+        key: `${first.getUTCFullYear()}-${first.getUTCMonth() + 1}-start`,
+        label: new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' }).format(first),
         weekIndex: 0,
       })
     }
@@ -108,7 +112,23 @@ export function Heatmap({ dates }: HeatmapProps) {
   }
 
   return (
-    <div className="ody-heatmap-wrap" role="group" aria-label="Task completion heatmap">
+    <div className="ody-heatmap-wrap">
+      <p id={instructionsId} className="ody-muted">Activity calendar. Use arrow keys to explore days; left and right move one week.</p>
+      <div
+        className="ody-heatmap-inspect"
+        role="group"
+        aria-label="Task activity calendar"
+        aria-describedby={`${instructionsId} ${descriptionId}`}
+        tabIndex={0}
+        onKeyDown={(event) => {
+          const offsets: Record<string, number> = { ArrowUp: -1, ArrowDown: 1, ArrowLeft: -7, ArrowRight: 7 }
+          if (!(event.key in offsets) && event.key !== 'Home' && event.key !== 'End') return
+          event.preventDefault()
+          const index = keys.indexOf(selected)
+          const next = event.key === 'Home' ? 0 : event.key === 'End' ? keys.length - 1 : Math.max(0, Math.min(keys.length - 1, index + offsets[event.key]))
+          setSelectedDate(keys[next])
+        }}
+      >
       <div className="ody-heatmap-months" aria-hidden>
         {model.monthLabels.map((month) => (
           <span key={month.key} style={{ gridColumn: month.weekIndex + 1 }}>
@@ -145,8 +165,9 @@ export function Heatmap({ dates }: HeatmapProps) {
                     className="ody-heatmap-cell"
                     data-status={status}
                     title={tooltip}
-                    aria-label={tooltip}
-                    tabIndex={0}
+                    aria-hidden="true"
+                    data-selected={dateKey === selected}
+                    onClick={() => setSelectedDate(dateKey)}
                   />
                 )
               })}
@@ -155,7 +176,9 @@ export function Heatmap({ dates }: HeatmapProps) {
         </div>
       </div>
 
-      <div className="ody-heatmap-legend" aria-hidden>
+      </div>
+      <p id={descriptionId} className="ody-heatmap-status" aria-live="polite" aria-atomic="true">{formatDate(selected)}: {statusLabel(dates[selected])}</p>
+      <div className="ody-heatmap-legend">
         <span className="ody-heatmap-legend-item"><span className="ody-heatmap-cell" data-status="done" /> Done</span>
         <span className="ody-heatmap-legend-item"><span className="ody-heatmap-cell" data-status="skipped" /> Skipped</span>
         <span className="ody-heatmap-legend-item"><span className="ody-heatmap-cell" data-status="missed" /> Missed</span>

@@ -1,243 +1,145 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { AppShell } from '../components/layout'
-import { DimensionFilter } from '../components/dimension-filter'
 import { Icon } from '../components/icons'
+import { DimensionRadar } from '../components/dimension-radar'
 import { useAuth } from '../app/auth'
-import type { InsightsOverview, LifeDimension } from '../app/types'
-import { defaultInsightsWindow, formatDate } from '../lib/date'
-import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
-
-const dimensions = DIMENSION_KEYS.map((dimensionKey) => ({
-  key: dimensionKey,
-  short: DIMENSIONS[dimensionKey].label,
-  color: `var(${DIMENSIONS[dimensionKey].cssVar})`,
-}))
-
-function HexagonChart() {
-  const cx = 150, cy = 140, r = 100
-  const angles = dimensions.map((_, i) => (Math.PI * 2 * i) / 6 - Math.PI / 2)
-
-  const gridPoints = (radius: number) =>
-    angles.map((a) => `${cx + radius * Math.cos(a)},${cy + radius * Math.sin(a)}`).join(' ')
-
-  const labelPos = (i: number, offset = 22) => ({
-    x: cx + (r + offset) * Math.cos(angles[i]),
-    y: cy + (r + offset) * Math.sin(angles[i]),
-  })
-
-  return (
-    <div className="ody-hex-container">
-      <svg width="300" height="290" viewBox="0 0 300 290">
-        {/* Grid rings */}
-        {[0.25, 0.5, 0.75, 1].map((scale) => (
-          <polygon
-            key={scale}
-            points={gridPoints(r * scale)}
-            fill="none"
-            stroke="rgba(158, 163, 170, 0.12)"
-            strokeWidth="0.5"
-          />
-        ))}
-        {/* Axis lines */}
-        {angles.map((a, i) => (
-          <line
-            key={i}
-            x1={cx} y1={cy}
-            x2={cx + r * Math.cos(a)}
-            y2={cy + r * Math.sin(a)}
-            stroke="rgba(158, 163, 170, 0.08)"
-            strokeWidth="0.5"
-          />
-        ))}
-        {/* Placeholder data shape (50-80% per axis) */}
-        <polygon
-          points={angles.map((a, i) => {
-            const val = [0.7, 0.5, 0.65, 0.4, 0.55, 0.6][i]
-            return `${cx + r * val * Math.cos(a)},${cy + r * val * Math.sin(a)}`
-          }).join(' ')}
-          fill="rgba(201, 164, 76, 0.08)"
-          stroke="rgba(201, 164, 76, 0.5)"
-          strokeWidth="1.5"
-        />
-        {/* Dots on vertices */}
-        {angles.map((a, i) => {
-          const val = [0.7, 0.5, 0.65, 0.4, 0.55, 0.6][i]
-          return (
-            <circle
-              key={i}
-              cx={cx + r * val * Math.cos(a)}
-              cy={cy + r * val * Math.sin(a)}
-              r="3"
-              fill={dimensions[i].color}
-              stroke="rgba(0,0,0,0.5)"
-              strokeWidth="1"
-            />
-          )
-        })}
-        {/* Labels */}
-        {dimensions.map((dim, i) => {
-          const pos = labelPos(i)
-          return (
-            <text
-              key={dim.key}
-              x={pos.x}
-              y={pos.y}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill={dim.color}
-              style={{ fontSize: '8px' }}
-            >
-              {dim.short}
-            </text>
-          )
-        })}
-      </svg>
-    </div>
-  )
-}
+import type { InsightsOverview } from '../app/types'
+import { defaultInsightsWindow, formatDate, todayIso } from '../lib/date'
+import { summarizeDimensions, type DimensionSummary } from '../lib/dimension-summary'
 
 export function InsightsPage() {
   const { api } = useAuth()
   const [overview, setOverview] = useState<InsightsOverview | null>(null)
-  const [window, setWindow] = useState(defaultInsightsWindow())
+  const [dateWindow, setDateWindow] = useState(defaultInsightsWindow)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [dimFilter, setDimFilter] = useState<LifeDimension | 'all'>('all')
+  const [rangeError, setRangeError] = useState('')
+  const [dimensions, setDimensions] = useState<DimensionSummary | null>(null)
+  const [dimensionsLoading, setDimensionsLoading] = useState(true)
+  const [dimensionsError, setDimensionsError] = useState('')
 
-  const load = async (from: string, to: string) => {
+  const loadDimensions = useCallback(async () => {
+    setDimensionsLoading(true)
+    setDimensionsError('')
+    try {
+      const [tasks, quests] = await Promise.all([api.listTasks(), api.listQuests()])
+      setDimensions(summarizeDimensions(tasks, quests))
+    } catch (err) {
+      setDimensionsError(err instanceof Error ? err.message : 'Could not load your life dimensions. Try again.')
+    } finally {
+      setDimensionsLoading(false)
+    }
+  }, [api])
+
+  const load = useCallback(async (from: string, to: string) => {
     setLoading(true)
     setError('')
     try {
       setOverview(await api.getInsightsOverview(from, to))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load insights')
+      setError(err instanceof Error ? err.message : 'Could not load your activity. Try again.')
     } finally {
       setLoading(false)
     }
-  }
+  }, [api])
 
-  useEffect(() => { void load(window.fromDate, window.toDate) }, [])
+  useEffect(() => {
+    const initial = defaultInsightsWindow()
+    void load(initial.fromDate, initial.toDate)
+    void loadDimensions()
+  }, [load, loadDimensions])
 
-  const submitWindow = async (e: FormEvent) => {
-    e.preventDefault()
-    await load(window.fromDate, window.toDate)
+  const submitWindow = async (event: FormEvent) => {
+    event.preventDefault()
+    if (!dateWindow.fromDate || !dateWindow.toDate || dateWindow.fromDate > dateWindow.toDate) {
+      setRangeError('Choose a start date on or before the end date.')
+      return
+    }
+    setRangeError('')
+    await load(dateWindow.fromDate, dateWindow.toDate)
   }
 
   return (
     <AppShell
       title="Insights"
-      subtitle="Your life dimensions at a glance"
-      actions={
-        <Link to="/check-in">
-          <button className="ody-btn">
-            <Icon name="shield" size={14} /> Check In
-          </button>
-        </Link>
-      }
+      subtitle="A clear view of the work you have put in."
+      actions={<Link className="ody-btn" to="/check-in"><Icon name="shield" size={18} /> Check In</Link>}
     >
-      <DimensionFilter value={dimFilter} onChange={setDimFilter} />
+      <form className="ody-insights-window" onSubmit={submitWindow}>
+        <label className="ody-field">
+          <span className="ody-label">From</span>
+          <input className="ody-input" type="date" required max={dateWindow.toDate || todayIso()} value={dateWindow.fromDate} onChange={(e) => setDateWindow((current) => ({ ...current, fromDate: e.target.value }))} />
+        </label>
+        <label className="ody-field">
+          <span className="ody-label">To</span>
+          <input className="ody-input" type="date" required min={dateWindow.fromDate} value={dateWindow.toDate} onChange={(e) => setDateWindow((current) => ({ ...current, toDate: e.target.value }))} />
+        </label>
+        <button className="ody-btn secondary" type="submit" disabled={loading}>
+          <Icon name="calendar" size={18} /> {loading ? 'Loading...' : 'Apply dates'}
+        </button>
+      </form>
+      {rangeError ? <p className="ody-field-error" role="alert">{rangeError}</p> : null}
+
+      <section className="ody-card dimension-radar-section" aria-labelledby="life-dimensions-heading">
+        <h2 id="life-dimensions-heading" className="ody-section-title">Life dimensions</h2>
+        <p className="dimension-radar-intro">Active tasks and quests by dimension. Current library snapshot.</p>
+        {dimensionsLoading ? <div className="dimension-radar-loading" role="status" aria-label="Loading life dimensions" aria-busy="true"><div className="ody-skeleton" /><div className="ody-skeleton" /></div>
+        : dimensionsError ? <div className="dimension-radar-error" role="alert"><p>{dimensionsError}</p><button className="ody-btn secondary" onClick={() => void loadDimensions()}>Retry dimensions</button></div>
+        : dimensions ? <DimensionRadar summary={dimensions} /> : null}
+      </section>
 
       {loading ? (
-        <div className="ody-grid three">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="ody-skeleton ody-skeleton-card" style={{ height: 140 }} />
-          ))}
+        <div className="ody-grid three" aria-label="Loading activity" aria-busy="true">
+          {[1, 2, 3].map((item) => <div key={item} className="ody-skeleton ody-skeleton-card" />)}
         </div>
       ) : error ? (
-        <div className="ody-card">
-          <p className="ody-error" style={{ margin: 0 }}>{error}</p>
+        <div className="ody-card ody-inline-error" role="alert">
+          <p>{error}</p>
+          <button className="ody-btn secondary" onClick={() => void load(dateWindow.fromDate, dateWindow.toDate)}>Retry</button>
         </div>
       ) : overview ? (
         <div className="ody-grid">
-          {/* Stat cards */}
+          <p className="ody-muted">Recorded activity from {formatDate(overview.window.from_date)} to {formatDate(overview.window.to_date)}.</p>
           <div className="ody-grid three ody-insights-stats">
             <article className="ody-card ody-stat-card">
-              <div style={{ color: 'var(--accent-gold)', marginBottom: 8 }}>
-                <Icon name="flame" size={24} />
-              </div>
+              <Icon name="flame" size={24} />
               <div className="ody-stat-value">{overview.current_streak}</div>
-              <div className="ody-stat-label">Day Streak</div>
-              <div className="ody-stat-sub">Consistency over intensity</div>
+              <h2 className="ody-stat-label">Check-in day streak</h2>
+              <p className="ody-stat-sub">Consecutive completed check-ins ending on the selected end date.</p>
             </article>
-
             <article className="ody-card ody-stat-card">
-              <div style={{ color: 'var(--state-success)', marginBottom: 8 }}>
-                <Icon name="check" size={24} />
-              </div>
+              <Icon name="check" size={24} />
               <div className="ody-stat-value">{overview.tasks.done}</div>
-              <div className="ody-stat-label">Tasks Done</div>
-              <div className="ody-stat-sub">
-                {overview.tasks.skipped} skipped &middot; {overview.tasks.active} active
-              </div>
+              <h2 className="ody-stat-label">Task completions</h2>
+              <p className="ody-stat-sub">Done responses recorded in this date range.</p>
             </article>
-
             <article className="ody-card ody-stat-card">
-              <div style={{ color: 'var(--cat-meaning)', marginBottom: 8 }}>
-                <Icon name="compass" size={24} />
-              </div>
-              <div className="ody-stat-value">{overview.quests.active}</div>
-              <div className="ody-stat-label">Active Quests</div>
-              <div className="ody-stat-sub">
-                {overview.quests.updates} updates &middot; {overview.journals.entries} journal entries
-              </div>
+              <Icon name="book" size={24} />
+              <div className="ody-stat-value">{overview.journals.entries}</div>
+              <h2 className="ody-stat-label">Journal entries</h2>
+              <p className="ody-stat-sub">Reflections written in this date range.</p>
             </article>
           </div>
-
-          {/* Hexagon chart */}
-          <article className="ody-card">
-            <div className="ody-section-header">
-              <h3 className="ody-section-title">Life Balance</h3>
-              <span className="ody-badge gold">
-                {formatDate(overview.window.from_date)} — {formatDate(overview.window.to_date)}
-              </span>
-            </div>
-            <HexagonChart />
-            <p className="ody-muted" style={{ textAlign: 'center', fontSize: '0.72rem', margin: 0 }}>
-              {dimFilter === 'all'
-                ? 'Category health scores will become data-driven as you track more activity.'
-                : `${DIMENSIONS[dimFilter].label} is selected for activity filtering. The balance hexagon always shows all dimensions.`}
-            </p>
-          </article>
-
-          {/* Date window selector */}
-          <article className="ody-card">
-            <form className="ody-row" onSubmit={submitWindow}>
-              <label className="ody-field" style={{ minWidth: 150 }}>
-                <span className="ody-label">From</span>
-                <input className="ody-input" type="date" value={window.fromDate} onChange={(e) => setWindow((w) => ({ ...w, fromDate: e.target.value }))} />
-              </label>
-              <label className="ody-field" style={{ minWidth: 150 }}>
-                <span className="ody-label">To</span>
-                <input className="ody-input" type="date" value={window.toDate} onChange={(e) => setWindow((w) => ({ ...w, toDate: e.target.value }))} />
-              </label>
-              <button className="ody-btn secondary" type="submit" style={{ alignSelf: 'flex-end' }}>
-                <Icon name="eye" size={14} /> Update
-              </button>
-            </form>
-          </article>
-
-          {/* Quick actions */}
-          <div className="ody-grid two">
-            <Link to="/check-in" style={{ textDecoration: 'none' }}>
-              <div className="ody-card" style={{ textAlign: 'center', cursor: 'pointer', padding: '20px' }}>
-                <Icon name="shield" size={20} className="ody-muted" />
-                <p style={{ margin: '8px 0 0', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  Start Check-In
-                </p>
-              </div>
-            </Link>
-            <Link to="/tasks" style={{ textDecoration: 'none' }}>
-              <div className="ody-card" style={{ textAlign: 'center', cursor: 'pointer', padding: '20px' }}>
-                <Icon name="plus" size={20} className="ody-muted" />
-                <p style={{ margin: '8px 0 0', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  Add New Task
-                </p>
-              </div>
-            </Link>
+          <section className="ody-card ody-activity-overview">
+            <h2 className="ody-section-title">Your activity</h2>
+            <dl>
+              <div><dt>Tasks in your library</dt><dd>{overview.tasks.active}</dd></div>
+              <div><dt>Skipped responses in this range</dt><dd>{overview.tasks.skipped}</dd></div>
+              <div><dt>Quests in your library</dt><dd>{overview.quests.active}</dd></div>
+              <div><dt>Quest updates in this range</dt><dd>{overview.quests.updates}</dd></div>
+            </dl>
+            {overview.tasks.done === 0 && overview.journals.entries === 0 && overview.quests.updates === 0 ? (
+              <p className="ody-muted">No activity recorded in this range yet. Your next check-in or reflection will appear here.</p>
+            ) : null}
+          </section>
+          <div className="ody-row">
+            <Link className="ody-btn secondary" to="/tasks"><Icon name="scroll" size={18} /> View tasks</Link>
+            <Link className="ody-btn secondary" to="/journals"><Icon name="book" size={18} /> Open journal</Link>
           </div>
         </div>
       ) : null}
+
     </AppShell>
   )
 }

@@ -9,6 +9,7 @@ export function RegisterPage() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [timezone, setTimezone] = useState('Asia/Kolkata')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -30,8 +31,11 @@ export function RegisterPage() {
   return (
     <AuthCard title="Create Account" subtitle="Begin tracking your life dimensions.">
       <form className="ody-grid" onSubmit={onSubmit}>
-        <div className="ody-field">
+        <label className="ody-field">
+          <span className="ody-label">Email</span>
           <input
+            autoComplete="email"
+            name="email"
             className="ody-input"
             type="email"
             placeholder="Email"
@@ -40,11 +44,15 @@ export function RegisterPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
-        <div className="ody-field">
+        </label>
+        <label className="ody-field">
+          <span className="ody-label">Password</span>
+          <span className="ody-password-wrap">
           <input
+            autoComplete="new-password"
+            name="password"
             className="ody-input"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             minLength={8}
             placeholder="Password (min 8 characters)"
             aria-label="Password"
@@ -52,9 +60,14 @@ export function RegisterPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
-        <div className="ody-field">
+          <button type="button" className="ody-icon-btn" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword}><Icon name={showPassword ? 'hidden' : 'visible'} /></button>
+          </span>
+          <span className="ody-muted" style={{fontSize:12}}>Use at least 8 characters.</span>
+        </label>
+        <label className="ody-field">
+          <span className="ody-label">Timezone</span>
           <input
+            name="timezone"
             className="ody-input"
             placeholder="Timezone"
             aria-label="Timezone"
@@ -62,8 +75,9 @@ export function RegisterPage() {
             onChange={(e) => setTimezone(e.target.value)}
             required
           />
-        </div>
-        {error ? <p className="ody-error" style={{ margin: 0 }}>{error}</p> : null}
+          <span className="ody-muted" style={{fontSize:12}}>For example, Asia/Kolkata or Europe/London.</span>
+        </label>
+        {error ? <p role="alert" className="ody-error" style={{ margin: 0 }}>{error}</p> : null}
         <button className="ody-btn" type="submit" disabled={loading}>
           <Icon name="shield" size={14} />
           {loading ? 'Creating account...' : 'Begin Your Odyssey'}

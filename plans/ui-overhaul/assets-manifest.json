@@ -1,0 +1,44 @@
+[
+  {
+    "name": "tasks-desktop-concept",
+    "status": "proposed, not approved",
+    "mode": "built-in imagegen",
+    "original": "originals/tasks-desktop-concept.png",
+    "preview": "assets/tasks-desktop-concept.webp",
+    "prompt": "prompts/tasks-desktop.txt",
+    "preview_conversion": "ffmpeg libwebp quality 86",
+    "sha256": "69eba5583eed7187a5c5b2a7863086015c49d60a1c77468ac2daed95d6bc4f3d"
+  },
+  {
+    "name": "tasks-aegean-light-concept",
+    "status": "proposed, not approved",
+    "mode": "built-in imagegen",
+    "original": "originals/tasks-aegean-light-concept.png",
+    "preview": "assets/tasks-aegean-light-concept.webp",
+    "prompt": "prompts/tasks-aegean-light.txt",
+    "preview_conversion": "ffmpeg libwebp quality 86",
+    "sha256": "75ba1281ac6f00c944ce0fdc4d0f74bdd811cdaf34b78faac098c5b5cf6eed45"
+  },
+  {
+    "name": "checkin-mobile-concept",
+    "status": "proposed, not approved",
+    "mode": "built-in imagegen",
+    "original": "originals/checkin-mobile-concept.png",
+    "preview": "assets/checkin-mobile-concept.webp",
+    "prompt": "prompts/checkin-mobile-correction.txt",
+    "preview_conversion": "ffmpeg libwebp quality 86",
+    "sha256": "ddd4104714550214472e2c055bf03182197ca281ecfb930414a169921b58076c",
+    "source_prompt": "prompts/checkin-mobile.txt",
+    "reference": "originals/checkin-mobile-before-correction.png"
+  },
+  {
+    "name": "journal-desktop-concept",
+    "status": "proposed, not approved",
+    "mode": "built-in imagegen",
+    "original": "originals/journal-desktop-concept.png",
+    "preview": "assets/journal-desktop-concept.webp",
+    "prompt": "prompts/journal-desktop.txt",
+    "preview_conversion": "ffmpeg libwebp quality 86",
+    "sha256": "41c3848378bbff6e6f481addec84a69d7e56ec3f5d54defc8f68d15878031ff0"
+  }
+]

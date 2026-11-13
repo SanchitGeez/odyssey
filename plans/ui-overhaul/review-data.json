@@ -1,0 +1,269 @@
+{
+  "files": [
+    {
+      "path": "client/src/index.css",
+      "change": "modified",
+      "note": "Replace active styling with the approved tokens and responsive system."
+    },
+    {
+      "path": "client/src/components/layout.tsx",
+      "change": "modified",
+      "note": "Stable desktop navigation; complete mobile account access."
+    },
+    {
+      "path": "client/src/components/modal.tsx",
+      "change": "modified",
+      "note": "Accessible shared overlay and focus behavior."
+    },
+    {
+      "path": "client/src/components/ui/",
+      "change": "added",
+      "note": "Shared accessible controls and state components, extracted as reused."
+    },
+    {
+      "path": "client/src/app/auth.tsx",
+      "change": "modified",
+      "note": "Error normalization and precise journal clearing payloads."
+    },
+    {
+      "path": "client/src/lib/date.ts",
+      "change": "modified",
+      "note": "Timezone-aware civil dates for affected UI."
+    },
+    {
+      "path": "client/src/pages/checkin.tsx",
+      "change": "modified",
+      "note": "Focused card flow and accessible swipe behavior."
+    },
+    {
+      "path": "client/src/pages/tasks.tsx",
+      "change": "modified",
+      "note": "Responsive task library, forms and history."
+    },
+    {
+      "path": "client/src/pages/quests.tsx",
+      "change": "modified",
+      "note": "Keyboard-accessible master/detail and mobile detail."
+    },
+    {
+      "path": "client/src/components/journal/",
+      "change": "added",
+      "note": "Editor, renderer, toolbar and document adapter."
+    },
+    {
+      "path": "client/src/pages/journal-write.tsx",
+      "change": "modified",
+      "note": "Rich text and reliable save lifecycle."
+    },
+    {
+      "path": "client/src/pages/journal-read.tsx",
+      "change": "modified",
+      "note": "Shared document reading surface."
+    },
+    {
+      "path": "client/src/pages/journals.tsx",
+      "change": "modified",
+      "note": "Plain-text previews, search and distinct states."
+    },
+    {
+      "path": "client/src/pages/insights.tsx",
+      "change": "modified",
+      "note": "Truthful, accessible activity summaries."
+    },
+    {
+      "path": "client/public/art/",
+      "change": "added",
+      "note": "Optimized original generated production artwork."
+    },
+    {
+      "path": "client/public/fonts/",
+      "change": "added",
+      "note": "Licensed self-hosted display/UI/writing fonts."
+    },
+    {
+      "path": "client/package.json",
+      "change": "modified",
+      "note": "Only approved and necessary editor/primitives/icons/test dependencies."
+    },
+    {
+      "path": "specs/Style-Guide.md",
+      "change": "modified",
+      "note": "Replace outdated styling guidance after the implemented system is reviewed."
+    }
+  ],
+  "criteria": [
+    {
+      "id": "navigation",
+      "label": "All routes, Settings, Help and Logout are reachable by keyboard and phone."
+    },
+    {
+      "id": "reflow",
+      "label": "No document-level horizontal overflow at 320, 390, 768, 1024 and 1440px; verify reflow and 200% zoom."
+    },
+    {
+      "id": "safari",
+      "label": "Reproduce and verify the reported zoom issue on the affected real Safari/browser/device; do not disable pinch zoom."
+    },
+    {
+      "id": "contrast",
+      "label": "Measure actual text, input, button, selected and focus-state contrast in both themes."
+    },
+    {
+      "id": "dialogs",
+      "label": "Initial focus, trap, Escape, background inertness, scroll restore and focus return work."
+    },
+    {
+      "id": "swipe",
+      "label": "Gesture threshold/cancel, vertical scrolling, duplicate prevention, failure restoration and button/keyboard alternatives work."
+    },
+    {
+      "id": "journal-format",
+      "label": "Every agreed formatting feature survives save/reload/read/edit; legacy entries remain readable."
+    },
+    {
+      "id": "journal-save",
+      "label": "A failed save cannot close the editor or report unsaved content as saved."
+    },
+    {
+      "id": "clear",
+      "label": "Clearing title, tags and dimensions persists correctly."
+    },
+    {
+      "id": "states",
+      "label": "Libraries distinguish genuine-empty, filtered-empty, loading, error/retry, pending and success."
+    },
+    {
+      "id": "data",
+      "label": "No fabricated scores or charts; date navigation works around midnight in Asia/Kolkata."
+    },
+    {
+      "id": "motion",
+      "label": "Reduced-motion mode preserves every task and outcome without spatial choreography."
+    },
+    {
+      "id": "performance",
+      "label": "Reserve asset dimensions; lazy-load editor and noncritical art; measure LCP, INP and layout shift."
+    },
+    {
+      "id": "regressions",
+      "label": "Frontend build/lint, focused UI logic tests and existing backend tests pass."
+    }
+  ],
+  "questions": [
+    {
+      "id": "world",
+      "title": "Which visual world should lead?",
+      "subtitle": "See the dark Tasks and light Tasks concepts in the visual review.",
+      "mode": "single",
+      "options": [
+        {
+          "id": "spartan",
+          "label": "Spartan Standard",
+          "detail": "Oxblood, smoked Aegean teal, ivory and controlled bronze; the lead proposal.",
+          "recommended": true
+        },
+        {
+          "id": "aegean",
+          "label": "Aegean Passage",
+          "detail": "Limestone and ink, indigo navigation, brighter coastal artwork."
+        },
+        {
+          "id": "blend",
+          "label": "Use both as matching light/dark themes",
+          "detail": "Keep one component system; choose the default after trying both."
+        }
+      ]
+    },
+    {
+      "id": "imagery",
+      "title": "How directly should the artwork show heroes and mythology?",
+      "mode": "single",
+      "options": [
+        {
+          "id": "places",
+          "label": "Landscapes, artifacts and occasional distant human figures",
+          "detail": "Historical atmosphere with room for your own story.",
+          "recommended": true
+        },
+        {
+          "id": "heroic",
+          "label": "Visible heroic figures and sculpture",
+          "detail": "More human presence, effort and Spartan character."
+        },
+        {
+          "id": "mythic",
+          "label": "Explicit gods, creatures and mythic scenes",
+          "detail": "A stronger fantasy interpretation of the Homeric world."
+        }
+      ]
+    },
+    {
+      "id": "workflow",
+      "title": "Should approved screens be built from image compositions or directly in code?",
+      "subtitle": "This controls the later implementation workflow, not whether custom artwork is included.",
+      "mode": "single",
+      "options": [
+        {
+          "id": "comp",
+          "label": "Image composition first",
+          "detail": "Approve detailed screen images, then implement against them; stronger visual control, slower.",
+          "recommended": true
+        },
+        {
+          "id": "code",
+          "label": "Code first",
+          "detail": "Build directly from the agreed system and review the live result; leaner and faster."
+        }
+      ]
+    },
+    {
+      "id": "swipe",
+      "title": "Batch 3: What should releasing a swipe do?",
+      "mode": "single",
+      "options": [
+        {
+          "id": "commit",
+          "label": "Save Done/Skip once the threshold is crossed",
+          "detail": "Fast daily flow; visible cues and buttons remain. No unsupported post-save Undo.",
+          "recommended": true
+        },
+        {
+          "id": "reveal",
+          "label": "Reveal the action and require a tap",
+          "detail": "Safer against accidental answers, with one extra step."
+        }
+      ]
+    },
+    {
+      "id": "browser",
+      "title": "Which phone and browser show the menu zoom issue?",
+      "mode": "freeform",
+      "placeholder": "For example: iPhone 15, Safari; happens after tapping Tasks or focusing Search."
+    },
+    {
+      "id": "journal-storage",
+      "title": "How should we handle formatted journal storage?",
+      "subtitle": "The current API stores one text string; rich text changes what that string contains.",
+      "mode": "single",
+      "options": [
+        {
+          "id": "ui-only",
+          "label": "Keep the UI-only boundary",
+          "detail": "Use versioned Markdown after the round-trip gate. Accept that exact searches across formatting may miss matches.",
+          "recommended": true
+        },
+        {
+          "id": "format-api",
+          "label": "Review a small explicit API extension first",
+          "detail": "Add deliberate format and plain-text search handling before rich-text persistence ships."
+        }
+      ]
+    },
+    {
+      "id": "notes",
+      "title": "What feels right or wrong in the previews?",
+      "mode": "freeform",
+      "placeholder": "Texture strength, artwork, darkness, scroll treatment, or a reference you want us to study."
+    }
+  ]
+}

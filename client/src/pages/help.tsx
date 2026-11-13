@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AppShell } from '../components/layout'
 import { Icon } from '../components/icons'
+import { DimensionMark } from '../components/dimension-mark'
 import type { LifeDimension } from '../app/types'
 import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
 
@@ -42,7 +43,7 @@ export function HelpPage() {
   return (
     <AppShell
       title="Life Dimensions"
-      subtitle="Guide to each domain, with proven examples you can use immediately"
+      subtitle="Explore each dimension and turn an example into your next commitment."
     >
       <div className="ody-card">
         {DIMENSION_KEYS.map((dimensionKey) => {
@@ -50,26 +51,28 @@ export function HelpPage() {
           const isOpen = expanded[dimensionKey]
           return (
             <section key={dimensionKey}>
-              <button
+              <h2 className="ody-accordion-title"><button
                 type="button"
                 className="ody-accordion-header"
                 onClick={() => toggleSection(dimensionKey)}
                 aria-expanded={isOpen}
+                aria-controls={`dimension-${dimensionKey}`}
+                id={`dimension-trigger-${dimensionKey}`}
               >
-                <span className="ody-dim-dot" style={{ background: `var(${dimension.cssVar})` }} />
+                <DimensionMark dimension={dimensionKey} size={32} />
                 <span>
                   <span className="ody-help-title">{dimension.label}</span>
                   <span className="ody-help-desc">{dimension.description}</span>
                 </span>
                 <Icon name={isOpen ? 'x' : 'plus'} size={14} className="ody-muted" />
-              </button>
+              </button></h2>
 
-              {isOpen ? (
-                <div className="ody-accordion-body">
+                <div hidden={!isOpen} className="ody-accordion-body" id={`dimension-${dimensionKey}`} role="region" aria-labelledby={`dimension-trigger-${dimensionKey}`}>
+                  <img className="ody-dimension-illustration" src={`/art/dimensions/${dimensionKey}.webp`} alt="" width={160} height={160} loading="lazy" />
                   <p className="ody-help-quote">{dimension.philosophy}</p>
                   <p className="ody-help-entails">{dimension.entails}</p>
 
-                  <h4 className="ody-help-sub">Example Habits</h4>
+                  <h3 className="ody-help-sub">Example Habits</h3>
                   <ul className="ody-help-list">
                     {dimension.exampleRecurring.map((item) => (
                       <li key={`${dimensionKey}-rec-${item}`}>
@@ -97,7 +100,7 @@ export function HelpPage() {
                     ))}
                   </ul>
 
-                  <h4 className="ody-help-sub">Example Goals</h4>
+                  <h3 className="ody-help-sub">Example Goals</h3>
                   <ul className="ody-help-list">
                     {dimension.exampleQuests.map((item) => (
                       <li key={`${dimensionKey}-quest-${item}`}>
@@ -113,7 +116,6 @@ export function HelpPage() {
                     ))}
                   </ul>
                 </div>
-              ) : null}
             </section>
           )
         })}
@@ -124,9 +126,7 @@ export function HelpPage() {
           <Link to="/settings" className="ody-help-link">
             <Icon name="gear" size={14} /> Back to Settings
           </Link>
-          <a className="ody-help-link" href="mailto:support@odyssey.local">
-            <Icon name="book" size={14} /> Contact Support
-          </a>
+
         </div>
       </div>
     </AppShell>

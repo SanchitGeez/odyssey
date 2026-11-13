@@ -1,12 +1,7 @@
 import type { LifeDimension } from '../app/types'
 import { DIMENSIONS } from '../lib/dimensions'
+import { DimensionMark } from './dimension-mark'
 
 export function DimensionLabel({ dim }: { dim: LifeDimension }) {
-  const dimension = DIMENSIONS[dim]
-  return (
-    <span className="ody-dim-label">
-      <span className="ody-dim-dot" style={{ background: `var(${dimension.cssVar})` }} />
-      {dimension.label}
-    </span>
-  )
+  return <span className="ody-dim-label"><DimensionMark dimension={dim} size={21} />{DIMENSIONS[dim].label}</span>
 }

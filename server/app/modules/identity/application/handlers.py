@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 
@@ -57,10 +57,19 @@ class RefreshHandler:
     def execute(self, refresh_token: str) -> TokenOut:
         token_hash = hash_refresh_token(refresh_token)
         row = self.repo.get_active_refresh_token(token_hash)
-        if not row or row.expires_at < datetime.utcnow():
+        if not row:
             raise HTTPException(status_code=401, detail="Invalid refresh token")
 
-        row.revoked_at = datetime.utcnow()
+        # PostgreSQL returns timezone-aware values; SQLite drops the UTC timezone.
+        # Compare both as instants without changing the stored expiry or rotation rules.
+        expires_at = row.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=UTC)
+        now = datetime.now(UTC)
+        if expires_at < now:
+            raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+        row.revoked_at = now
         new_refresh = generate_refresh_token()
         self.repo.create_refresh_token(row.user_id, hash_refresh_token(new_refresh), settings.refresh_token_days)
         self.uow.commit()

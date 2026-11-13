@@ -20,11 +20,6 @@ import type {
   User,
 } from './types'
 
-type ApiError = {
-  status: number
-  message: string
-}
-
 type TaskPayload = {
   title: string
   description?: string
@@ -42,16 +37,16 @@ type TaskPatch = Partial<TaskPayload> & { status?: TaskStatus }
 
 type QuestPayload = {
   title: string
-  description?: string
-  category?: LifeDimension
-  target_date?: string
-  success_criteria?: string
+  description?: string | null
+  category?: LifeDimension | null
+  target_date?: string | null
+  success_criteria?: string | null
 }
 
 type QuestPatch = Partial<QuestPayload> & { status?: QuestStatus; progress_percent?: number }
 
 type JournalPayload = {
-  title?: string
+  title?: string | null
   content: string
   tags?: string[]
   category_tags?: LifeDimension[]
@@ -126,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch {
         // ignore non-json errors
       }
-      throw { status: response.status, message } satisfies ApiError
+      throw Object.assign(new Error(typeof message === 'string' ? message : 'Check the entered details and try again.'), { status: response.status })
     }
     if (response.status === 204) {
       return undefined as T
@@ -159,9 +154,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await parseResponse<AuthTokens>(res)
       updateSession(data)
       return data
-    } catch {
-      clearSession()
-      return null
+    } catch (error) {
+      const status = error && typeof error === 'object' && 'status' in error ? error.status : null
+      if (status === 401 || status === 403) {
+        clearSession()
+        return null
+      }
+      // A temporary refresh failure must not unmount an editor with unsaved work.
+      throw new Error('Your session could not reconnect. Try saving again.')
     }
   }
 
@@ -178,7 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (response.status === 401 && retry && tokensRef.current?.refresh_token) {
       const refreshed = await refresh()
       if (!refreshed) {
-        throw { status: 401, message: 'Session expired. Please login again.' } satisfies ApiError
+        throw Object.assign(new Error('Session expired. Please sign in again.'), { status: 401 })
       }
       return authedFetch<T>(path, init, false, refreshed.access_token)
     }
@@ -329,7 +329,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return authedFetch<InsightsOverview>(`/api/v1/insights/overview?from_date=${fromDate}&to_date=${toDate}`)
       },
     }),
-    [tokens],
+    // Methods read tokensRef; stable identity keeps a refreshing session from resetting editors.
+    [],
   )
 
   useEffect(() => {

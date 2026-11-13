@@ -1,0 +1,86 @@
+.checkin-date-nav { display: flex; align-items: center; gap: 10px; min-width: 180px; justify-content: space-between; color: var(--text-secondary); font-size: 14px; }
+.checkin-date-nav > span { text-align: center; white-space: nowrap; }
+.checkin-stage { position: relative; isolation: isolate; min-height: 690px; display: grid; align-content: start; justify-items: center; padding: 36px 24px 54px; overflow: hidden; border-radius: 16px; }
+.checkin-landscape { position: absolute; inset: 0; z-index: -2; background: linear-gradient(180deg, rgb(13 19 17 / .22), rgb(13 19 17 / .8) 48%, rgb(13 19 17 / .98) 90%), url('/art/last-light.webp') center 41% / cover no-repeat; opacity: .72; }
+.checkin-introduction { text-align: center; margin-bottom: 38px; }
+.checkin-introduction h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 3.3vw, 43px); letter-spacing: -.025em; line-height: 1.2; color: #f3e9d3; margin: 0 0 12px; text-wrap: balance; }
+.checkin-introduction p { margin: 0; color: #d1c9b8; font-size: 15px; line-height: 1.6; text-wrap: balance; }
+.checkin-workspace { width: min(100%, 500px); }
+.checkin-progress { margin: 0 8px 27px; }
+.checkin-progress-label { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; line-height: 1.5; color: #d2cfbf; margin-bottom: 12px; }
+.checkin-progress-label > span:last-child { color: #cdb680; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.checkin-progress-track { height: 3px; background: rgb(229 211 173 / .13); overflow: hidden; border-radius: 2px; }
+.checkin-progress-fill { width: 100%; height: 100%; background: #c9a869; transform-origin: left; }
+.checkin-card-stack { position: relative; }
+.checkin-card-underlay { position: absolute; inset: 12px 12px -10px; border-radius: 16px; background: #252b24; transform: rotate(-1.5deg); z-index: -1; }
+.checkin-commitment-card { position: relative; background: linear-gradient(135deg, #252e27, #19221e 68%); color: #f1ecdc; border-radius: 16px; padding: 30px 32px 24px; box-shadow: 0 20px 44px rgb(4 9 6 / .3); min-height: 320px; cursor: grab; }
+.checkin-commitment-card:active { cursor: grabbing; }
+.checkin-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+.checkin-card-top > svg { color: #a89365; }
+.checkin-card-top .ody-dim-label { font-size: 13px; }
+.checkin-task-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(25px, 2.5vw, 32px); line-height: 1.28; letter-spacing: -.02em; margin: 0 0 12px; overflow-wrap: anywhere; text-wrap: balance; cursor: text; }
+.checkin-card-prompt { color: #c1c6ba; font-size: 14px; line-height: 1.65; margin: 0 0 30px; cursor: text; }
+.checkin-card-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px; }
+.checkin-card-actions .ody-btn { min-height: 48px; justify-content: center; font-size: 15px; }
+.checkin-card-actions .checkin-done { background: #d1b271; color: #191e17; }
+.checkin-card-actions .checkin-skip { border: 1px solid #5f6859; background: transparent; color: #e4e8dd; }
+.checkin-card-actions .checkin-skip:hover { background: #303b31; }
+.checkin-value-details { margin-top: 22px; color: #c0c6b9; font-size: 13px; cursor: default; }
+.checkin-value-details summary { cursor: pointer; min-height: 32px; padding: 7px 0; text-underline-offset: 4px; }
+.checkin-value-details summary:hover { color: #f1e3bf; }
+.checkin-value-details summary:focus-visible { outline: 2px solid #d1b271; outline-offset: 5px; }
+.checkin-value-form { margin-top: 14px; }
+.checkin-value-form > label { display: block; font-size: 13px; color: #d2d7cc; margin-bottom: 8px; }
+.checkin-value-form > div { display: flex; gap: 8px; }
+.checkin-value-form .ody-input { min-width: 0; font-size: 16px; }
+.checkin-swipe-cue { position: absolute; inset: 30% auto auto; width: 90px; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; line-height: 1.5; text-align: center; pointer-events: none; }
+.checkin-swipe-cue-done { left: 0; color: #c5dfb7; }
+.checkin-swipe-cue-skip { right: 0; color: #decda9; }
+.checkin-swipe-hint { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 30px 0 0; color: #c8ccbd; font-size: 12px; line-height: 1.7; }
+.checkin-swipe-hint > span { width: 1px; height: 12px; background: #66705d; margin: 0 5px; }
+.checkin-save-note { text-align: center; color: #aab5a4; font-size: 12px; line-height: 1.6; margin: 12px 0 0; }
+.checkin-response-error { margin-top: 23px; padding: 14px 16px; background: #3b2927; border-radius: 10px; color: #f7d3c9; font-size: 14px; line-height: 1.5; }
+.checkin-response-error p { margin: 0 0 12px; }
+.checkin-result { text-align: center; padding: 42px 26px; background: rgb(23 32 26 / .94); border-radius: 16px; }
+.checkin-result > svg { color: #cab279; margin: 0 auto 20px; }
+.checkin-result h3 { font-family: var(--font-display); font-size: 30px; line-height: 1.3; font-weight: 500; color: #f0e8d3; margin: 0 0 16px; }
+.checkin-result p { font-size: 15px; color: #c1c9bb; line-height: 1.7; max-width: 36ch; margin: 0 auto 26px; }
+.checkin-result-actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 12px; }
+.checkin-result-actions .ody-btn { justify-content: center; }
+.checkin-complete-mark { display: grid; place-items: center; width: 68px; height: 68px; background: #303d2e; border-radius: 50%; color: #d4bc80; margin: 0 auto 23px; }
+.checkin-loading { min-height: 320px; display: flex; flex-direction: column; gap: 20px; padding: 32px; background: #202a23; border-radius: 16px; }
+.checkin-sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (max-width: 767px) {
+  .checkin-date-nav { min-width: 165px; }
+  .checkin-stage { padding: 30px 12px 36px; min-height: 650px; margin-inline: -4px; }
+  .checkin-introduction { margin-bottom: 29px; }
+  .checkin-introduction p { font-size: 14px; max-width: 30ch; }
+  .checkin-landscape { background-position: 52% 30%; opacity: .65; }
+  .checkin-workspace { width: 100%; max-width: 440px; }
+  .checkin-progress { margin-inline: 3px; }
+  .checkin-progress-label { font-size: 12px; }
+  .checkin-commitment-card { padding: 25px 24px 20px; min-height: 320px; }
+  .checkin-card-top { margin-bottom: 27px; }
+  .checkin-card-prompt { margin-bottom: 26px; }
+  .checkin-swipe-hint { font-size: 11px; gap: 4px; }
+  .checkin-swipe-hint > svg { width: 11px; }
+  .checkin-swipe-hint > span { margin-inline: 2px; }
+  .checkin-result { padding: 34px 22px; }
+  .checkin-result-actions { flex-direction: column; }
+  .checkin-result-actions .ody-btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .checkin-stage *, .checkin-stage *::before, .checkin-stage *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+/* Preserve the whole journey scene on a phone instead of stretching it to card height. */
+@media (max-width: 767px) {
+  .checkin-landscape {
+    background:
+      linear-gradient(90deg, #0d13117a 0%, #0d131120 62%, #0d131105),
+      linear-gradient(180deg, #0d131108 0, #0d131115 140px, #0d1311 300px),
+      url('/art/last-light.webp') right top / auto 300px no-repeat;
+    background-color: #0d1311;
+    opacity: 1;
+  }
+  .checkin-introduction { text-align: left; justify-self: stretch; padding: 6px 12px 14px; margin-bottom: 29px; }
+  .checkin-introduction h2 { max-width: 240px; font-size: 28px; }
+  .checkin-introduction p { max-width: 24ch; font-size: 14px; }
+}

@@ -1,57 +1,10 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
+import * as Dialog from '@radix-ui/react-dialog'
 import { Icon } from './icons'
 
-type ModalProps = {
-  open: boolean
-  onClose: () => void
-  title: string
-  subtitle?: string
-  children: ReactNode
-  width?: string
-}
-
-export function SlideOver({ open, onClose, title, subtitle, children, width }: ModalProps) {
-  const panelRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!open) return
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
-  }, [open, onClose])
-
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => { document.body.style.overflow = '' }
-  }, [open])
-
-  if (!open) return null
-
-  return (
-    <div className="ody-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label={title}>
-      <div
-        ref={panelRef}
-        className="ody-slide-panel"
-        style={width ? { maxWidth: width } : undefined}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <header className="ody-slide-header">
-          <div>
-            <h2 className="ody-slide-title">{title}</h2>
-            {subtitle ? <p className="ody-slide-subtitle">{subtitle}</p> : null}
-          </div>
-          <button className="ody-icon-btn" onClick={onClose} aria-label="Close panel">
-            <Icon name="x" size={18} />
-          </button>
-        </header>
-        <div className="ody-slide-body">{children}</div>
-      </div>
-    </div>
-  )
+export function SlideOver({ open, onClose, title, subtitle, children, width }: { open: boolean; onClose: () => void; title: string; subtitle?: string; children: ReactNode; width?: string }) {
+  const returnFocus = useRef<HTMLElement | null>(null)
+  return <Dialog.Root open={open} onOpenChange={value => { if (!value) onClose() }}><Dialog.Portal><Dialog.Overlay className="ody-overlay" /><Dialog.Content className="ody-slide-panel" style={width ? { maxWidth: width } : undefined} onOpenAutoFocus={() => { returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null }} onCloseAutoFocus={event => { event.preventDefault(); returnFocus.current?.focus(); returnFocus.current = null }}>
+    <header className="ody-slide-header"><div><Dialog.Title className="ody-slide-title">{title}</Dialog.Title><Dialog.Description className={subtitle ? 'ody-slide-subtitle' : 'sr-only'}>{subtitle || `Complete the ${title.toLowerCase()} form.`}</Dialog.Description></div><Dialog.Close asChild><button className="ody-icon-btn" aria-label="Close panel"><Icon name="x" /></button></Dialog.Close></header><div className="ody-slide-body">{children}</div>
+  </Dialog.Content></Dialog.Portal></Dialog.Root>
 }

@@ -1,0 +1,23 @@
+{
+  "incomplete": [
+    "aria-prohibited-attr",
+    "color-contrast"
+  ],
+  "passes": 36,
+  "url": "/check-in",
+  "violations": [
+    {
+      "description": "Ensure all page content is contained by landmarks",
+      "id": "region",
+      "impact": "moderate",
+      "nodes": [
+        {
+          "summary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+          "target": [
+            ".ody-mobile-wordmark"
+          ]
+        }
+      ]
+    }
+  ]
+}

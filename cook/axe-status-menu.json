@@ -1,0 +1,35 @@
+{
+  "incomplete": [
+    "aria-hidden-focus"
+  ],
+  "passes": 27,
+  "url": "/tasks",
+  "violations": [
+    {
+      "description": "Ensure the document has a main landmark",
+      "id": "landmark-one-main",
+      "impact": "moderate",
+      "nodes": [
+        {
+          "summary": "Fix all of the following:\n  Document does not have a main landmark",
+          "target": [
+            "html"
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "nodes": [
+        {
+          "summary": "Fix all of the following:\n  Page must have a level-one heading",
+          "target": [
+            "html"
+          ]
+        }
+      ]
+    }
+  ]
+}

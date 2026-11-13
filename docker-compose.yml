@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: odyssey
       POSTGRES_DB: odyssey
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
     container_name: odyssey-server
     ports:
-      - "8000:8000"
+      - "18000:8000"
     environment:
       DATABASE_URL: postgresql+psycopg://odyssey:odyssey@postgres:5432/odyssey
       PYTHONPATH: /app
@@ -46,7 +46,7 @@ services:
       dockerfile: Dockerfile
     container_name: odyssey-client
     ports:
-      - "5173:5173"
+      - "15173:5173"
     environment:
       VITE_API_URL: http://server:8000
     depends_on:

@@ -1,0 +1,23 @@
+{
+  "incomplete": [
+    "aria-hidden-focus",
+    "color-contrast"
+  ],
+  "passes": 28,
+  "url": "/tasks",
+  "violations": [
+    {
+      "description": "Ensure all page content is contained by landmarks",
+      "id": "region",
+      "impact": "moderate",
+      "nodes": [
+        {
+          "summary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+          "target": [
+            ".ody-dimension-options"
+          ]
+        }
+      ]
+    }
+  ]
+}

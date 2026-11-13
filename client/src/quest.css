@@ -1,0 +1,23 @@
+/* Quest details inherit the shared modal, with a single uninterrupted workspace. */
+.ody-quest-list-workspace { min-width: 0; }
+.ody-slide-panel:has(.ody-quest-details) { width: min(600px, calc(100vw - 24px)); }
+.ody-quest-details { display: grid; gap: 28px; min-width: 0; }
+.ody-quest-details > .ody-card { padding: 0; margin: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.ody-quest-details > .ody-card::after { display: none; }
+.ody-quest-details > .ody-card + .ody-card { padding-top: 24px; border-top: 1px solid var(--border-soft); }
+.ody-quest-details .ody-empty { padding: 16px 0; }
+.ody-quest-details .ody-milestone-add { margin-top: 18px; }
+.ody-quest-details .ody-milestone-add .ody-input { min-width: 0; }
+@media (max-width: 640px) {
+  .ody-slide-panel:has(.ody-quest-details) { inset: 0; width: 100%; max-width: 100% !important; max-height: 100dvh; border-radius: 0; border: 0; }
+}
+
+/* One semantic button stretches across the card; edit/delete remain separate. */
+.ody-quest-list-workspace .ody-list-item { transition:transform .22s var(--ease-out),background .2s,border-color .2s; }
+.ody-quest-list-workspace .ody-quest-select::after { content:''; position:absolute; inset:0; border-radius:12px; cursor:pointer; }
+.ody-quest-list-workspace .ody-quest-select:focus-visible { outline:none; }
+.ody-quest-list-workspace .ody-quest-select:focus-visible::after { outline:2px solid var(--accent-gold); outline-offset:3px; }
+.ody-quest-list-workspace .ody-list-item .ody-icon-btn { position:relative; z-index:2; }
+.ody-quest-list-workspace .ody-list-item:hover { transform:translateY(-2px); border-color:#a18b574d; background:#232d21; }
+.ody-quest-list-workspace .ody-list-item:has(.ody-quest-select:active) { transform:translateY(0) scale(.995); }
+@media(prefers-reduced-motion:reduce) { .ody-quest-list-workspace .ody-list-item { transition:none; } .ody-quest-list-workspace .ody-list-item:hover,.ody-quest-list-workspace .ody-list-item:has(.ody-quest-select:active) { transform:none; } }

@@ -2,7 +2,10 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react
 import { useSearchParams } from 'react-router-dom'
 import { AppShell } from '../components/layout'
 import { SlideOver } from '../components/modal'
+import { ConfirmDialog } from '../components/confirm-dialog'
 import { DimensionFilter } from '../components/dimension-filter'
+import { DimensionSelect } from '../components/dimension-select'
+import { SelectField } from '../components/select-field'
 import { DimensionLabel } from '../components/dimension-label'
 import { Heatmap } from '../components/heatmap'
 import { Icon } from '../components/icons'
@@ -11,6 +14,27 @@ import { useAuth } from '../app/auth'
 import type { LifeDimension, Task, TaskHeatmapResponse, TaskStatus, TaskType } from '../app/types'
 import { formatDate } from '../lib/date'
 import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
+
+const taskTypeOptions = [
+  { value: 'recurring', label: 'Recurring', icon: 'repeat' },
+  { value: 'one_time', label: 'One-time', icon: 'target' },
+]
+const taskStatusOptions = [
+  { value: 'active', label: 'Active', icon: 'play' },
+  { value: 'completed', label: 'Completed', icon: 'check' },
+  { value: 'archived', label: 'Archived', icon: 'archive' },
+]
+const scheduleOptions = [
+  { value: 'daily', label: 'Daily', icon: 'repeat' },
+  { value: 'specific_days', label: 'Specific days', icon: 'calendar' },
+  { value: 'x_per_week', label: 'X per week', icon: 'clock' },
+]
+const dueWindowOptions = [
+  { value: 'none', label: 'No deadline', icon: 'target' },
+  { value: 'date', label: 'Specific date', icon: 'calendar' },
+  { value: 'week', label: 'This week', icon: 'calendar' },
+  { value: 'month', label: 'This month', icon: 'calendar' },
+]
 
 const dayOptions = [
   { label: 'Mon', value: 0 },
@@ -66,6 +90,25 @@ function parseDaysOfWeek(value: unknown): number[] {
     .filter((day) => Number.isInteger(day) && day >= 0 && day <= 6)
 }
 
+function taskScheduleLabel(task: Task): string {
+  if (task.task_type === 'one_time') {
+    return task.due_date ? `Due ${formatDate(task.due_date)}` : 'One-time commitment'
+  }
+  if (task.schedule_type === 'daily') return 'Every day'
+  const config = getScheduleConfig(task.schedule_config)
+  if (task.schedule_type === 'specific_days') {
+    const days = [...new Set(parseDaysOfWeek(config.days_of_week))].sort((left, right) => left - right)
+    return days.length > 0 ? days.map((day) => dayOptions[day].label).join(', ') : 'Specific days'
+  }
+  if (task.schedule_type === 'x_per_week') {
+    const count = Number(config.target_count)
+    return Number.isInteger(count) && count >= 1 && count <= 7
+      ? `${count} ${count === 1 ? 'time' : 'times'} a week`
+      : 'Weekly target'
+  }
+  return 'Recurring commitment'
+}
+
 type RangeMode = 'month' | 'custom'
 
 function toIsoDate(value: Date): string {
@@ -107,6 +150,9 @@ export function TasksPage() {
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [loadError, setLoadError] = useState('')
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null)
   const [rangeMode, setRangeMode] = useState<RangeMode>('month')
   const [monthOffset, setMonthOffset] = useState(0)
@@ -118,18 +164,19 @@ export function TasksPage() {
   const [heatmapLoadingKey, setHeatmapLoadingKey] = useState<string | null>(null)
   const [heatmapError, setHeatmapError] = useState('')
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
+    setLoadError('')
     try {
       setTasks(await api.listTasks())
     } catch (err) {
-      toast(err instanceof Error ? err.message : 'Failed to load tasks', 'error')
+      setLoadError(err instanceof Error ? err.message : 'Could not load tasks. Try again.')
     } finally {
       setLoading(false)
     }
-  }
+  }, [api])
 
-  useEffect(() => { void load() }, [])
+  useEffect(() => { void load() }, [load])
 
   useEffect(() => {
     if (searchParams.get('prefill') !== 'true') return
@@ -247,12 +294,17 @@ export function TasksPage() {
   }
 
   const removeTask = async (taskId: string) => {
+    if (deleting) return
+    setDeleting(true)
     try {
       await api.deleteTask(taskId)
+      setPendingDelete(null)
       toast('Task deleted', 'success')
       await load()
     } catch (err) {
-      toast(err instanceof Error ? err.message : 'Delete failed', 'error')
+      throw err instanceof Error ? err : new Error('Could not delete task. Try again.')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -309,33 +361,19 @@ export function TasksPage() {
     >
       <DimensionFilter value={dimFilter} onChange={setDimFilter} />
 
-      {/* Filters */}
-      <div className="ody-card" style={{ marginBottom: 16 }}>
-        <div className="ody-row">
-          <div style={{ display: 'flex', gap: 8, flex: 1, alignItems: 'center' }}>
-            <Icon name="search" size={16} className="ody-muted" />
-            <input
-              className="ody-input"
-              placeholder="Search tasks..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{ maxWidth: 260 }}
-            />
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <select className="ody-select" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as 'all' | TaskType)} style={{ width: 130 }}>
-              <option value="all">All types</option>
-              <option value="recurring">Recurring</option>
-              <option value="one_time">One-time</option>
-            </select>
-            <select className="ody-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as 'all' | TaskStatus)} style={{ width: 130 }}>
-              <option value="all">All status</option>
-              <option value="active">Active</option>
-              <option value="completed">Completed</option>
-              <option value="archived">Archived</option>
-            </select>
-          </div>
-        </div>
+      <div className="ody-task-filters">
+        <label className="ody-filter-field ody-task-search">
+          <span className="ody-label">Search tasks</span>
+          <input className="ody-input" type="search" placeholder="Find a commitment..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        </label>
+        <label className="ody-filter-field">
+          <span className="ody-label">Type</span>
+          <SelectField label="Type" value={typeFilter} onValueChange={(value) => setTypeFilter(value as 'all' | TaskType)} options={[{ value: 'all', label: 'All types', icon: 'filter' }, ...taskTypeOptions]} />
+        </label>
+        <label className="ody-filter-field">
+          <span className="ody-label">Status</span>
+          <SelectField label="Status" value={statusFilter} onValueChange={(value) => setStatusFilter(value as 'all' | TaskStatus)} options={[{ value: 'all', label: 'All statuses', icon: 'filter' }, ...taskStatusOptions]} />
+        </label>
       </div>
 
       {/* Task list */}
@@ -345,11 +383,16 @@ export function TasksPage() {
             <div key={i} className="ody-skeleton ody-skeleton-card" />
           ))}
         </div>
+      ) : loadError ? (
+        <div className="ody-card ody-inline-error" role="alert">
+          <p>{loadError}</p>
+          <button className="ody-btn secondary" onClick={() => void load()}>Retry</button>
+        </div>
       ) : filtered.length === 0 ? (
         <div className="ody-card">
           <div className="ody-empty">
             <div className="ody-empty-icon"><Icon name="scroll" size={22} /></div>
-            <h4>{tasks.length === 0 ? 'No Tasks Yet' : 'No Matches'}</h4>
+            <h2>{tasks.length === 0 ? 'No Tasks Yet' : 'No Matches'}</h2>
             <p>{tasks.length === 0
               ? 'Create your first task to begin tracking your life dimensions.'
               : 'Try adjusting your search or filters.'}
@@ -364,47 +407,38 @@ export function TasksPage() {
       ) : (
         <ul className="ody-list ody-stagger">
           {filtered.map((task) => (
-            <li key={task.id} className="ody-list-item">
-              <div className="ody-row">
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span className="ody-item-title">{task.title}</span>
-                </div>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <span className="ody-badge">{task.task_type === 'recurring' ? 'Recurring' : 'One-time'}</span>
-                  <span className={`ody-badge${task.status === 'active' ? ' success' : task.status === 'archived' ? '' : ' gold'}`}>
-                    {task.status}
-                  </span>
-                </div>
-              </div>
-              {task.description ? (
-                <p className="ody-muted" style={{ margin: '8px 0 0', fontSize: '0.82rem' }}>
-                  {task.description.length > 120 ? `${task.description.slice(0, 120)}...` : task.description}
-                </p>
-              ) : null}
-              <div className="ody-item-meta" style={{ marginTop: 10 }}>
-                <DimensionLabel dim={task.category} />
-                {task.schedule_type ? (
-                  <span className="ody-muted" style={{ fontSize: '0.72rem' }}>
-                    {task.schedule_type.replace(/_/g, ' ')}
-                  </span>
-                ) : null}
-                {task.due_date ? (
-                  <span className="ody-muted" style={{ fontSize: '0.72rem' }}>
-                    Due: {formatDate(task.due_date)}
-                  </span>
-                ) : null}
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
-                  {task.task_type === 'recurring' ? (
-                    <button className="ody-icon-btn" onClick={() => toggleHeatmap(task.id)} aria-label="Toggle heatmap">
-                      <Icon name="calendar" size={15} />
-                    </button>
+            <li key={task.id} className="ody-task-card">
+              <div className="ody-task-header">
+                <div className="ody-task-content">
+                  <h2 className="ody-item-title">{task.title}</h2>
+                  <div className="ody-task-meta">
+                    <DimensionLabel dim={task.category} />
+                    <span className="ody-task-schedule"><Icon name="calendar" size={15} />{taskScheduleLabel(task)}</span>
+                  </div>
+                  {task.description ? (
+                    <p className="ody-task-description">{task.description.length > 160 ? `${task.description.slice(0, 160)}...` : task.description}</p>
                   ) : null}
-                  <button className="ody-icon-btn" onClick={() => openEdit(task)} aria-label="Edit task">
-                    <Icon name="edit" size={15} />
-                  </button>
-                  <button className="ody-icon-btn" onClick={() => void removeTask(task.id)} aria-label="Delete task">
-                    <Icon name="trash" size={15} />
-                  </button>
+                </div>
+                <div className="ody-task-tools">
+                  <div className="ody-task-status">
+                    <span className="ody-badge">{task.task_type === 'recurring' ? 'Recurring' : 'One-time'}</span>
+                    <span className={`ody-badge${task.status === 'active' ? ' success' : task.status === 'completed' ? ' gold' : ''}`}>
+                      {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                    </span>
+                  </div>
+                  <div className="ody-task-actions">
+                    {task.task_type === 'recurring' ? (
+                      <button className="ody-btn secondary ody-task-action" onClick={() => toggleHeatmap(task.id)} aria-label={`History for ${task.title}`} aria-expanded={expandedTaskId === task.id}>
+                        <Icon name="calendar" size={17} /> History
+                      </button>
+                    ) : null}
+                    <button className="ody-btn secondary ody-task-action" onClick={() => openEdit(task)} aria-label={`Edit ${task.title}`}>
+                      <Icon name="edit" size={17} /> Edit
+                    </button>
+                    <button className="ody-icon-btn" onClick={() => setPendingDelete(task.id)} aria-label={`Delete ${task.title}`}>
+                      <Icon name="trash" size={18} />
+                    </button>
+                  </div>
                 </div>
               </div>
               {task.task_type === 'recurring' && expandedTaskId === task.id ? (
@@ -414,6 +448,7 @@ export function TasksPage() {
                       <button
                         type="button"
                         className={`ody-heatmap-toggle${rangeMode === 'month' ? ' active' : ''}`}
+                        aria-pressed={rangeMode === 'month'}
                         onClick={() => setRangeMode('month')}
                       >
                         Monthly
@@ -421,6 +456,7 @@ export function TasksPage() {
                       <button
                         type="button"
                         className={`ody-heatmap-toggle${rangeMode === 'custom' ? ' active' : ''}`}
+                        aria-pressed={rangeMode === 'custom'}
                         onClick={() => setRangeMode('custom')}
                       >
                         Range
@@ -453,12 +489,14 @@ export function TasksPage() {
                         <input
                           className="ody-input"
                           type="date"
+                          aria-label="Activity start date"
                           value={customFromDate}
                           onChange={(e) => setCustomFromDate(e.target.value)}
                         />
                         <input
                           className="ody-input"
                           type="date"
+                          aria-label="Activity end date"
                           value={customToDate}
                           onChange={(e) => setCustomToDate(e.target.value)}
                         />
@@ -515,6 +553,15 @@ export function TasksPage() {
         </ul>
       )}
 
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        onClose={() => { if (!deleting) setPendingDelete(null) }}
+        onConfirm={() => pendingDelete ? removeTask(pendingDelete) : undefined}
+        title="Delete task?"
+        description={`Delete “${tasks.find((task) => task.id === pendingDelete)?.title ?? 'this task'}” and its activity history? This cannot be undone.`}
+        busy={deleting}
+      />
+
       {/* Slide-over form */}
       <SlideOver
         open={panelOpen}
@@ -533,41 +580,29 @@ export function TasksPage() {
           </label>
           <label className="ody-field">
             <span className="ody-label">Category</span>
-            <select
-              className="ody-select"
-              value={form.category}
-              onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as LifeDimension }))}
-            >
-              {DIMENSION_KEYS.map((dimensionKey) => (
-                <option key={dimensionKey} value={dimensionKey}>
-                  {DIMENSIONS[dimensionKey].label}
-                </option>
-              ))}
-            </select>
+            <DimensionSelect value={form.category} onChange={(value) => setForm((f) => ({ ...f, category: value as LifeDimension }))} />
           </label>
           <label className="ody-field">
             <span className="ody-label">Type</span>
-            <select
-              className="ody-select"
+            <SelectField
+              label="Type"
               value={form.task_type}
-              onChange={(e) => {
+              options={taskTypeOptions}
+              onValueChange={(value) => {
                 setScheduleError('')
-                setForm((f) => ({ ...f, task_type: e.target.value as TaskType }))
+                setForm((f) => ({ ...f, task_type: value as TaskType }))
               }}
-            >
-              <option value="recurring">Recurring</option>
-              <option value="one_time">One-Time</option>
-            </select>
+            />
           </label>
           {form.task_type === 'recurring' ? (
             <>
               <label className="ody-field">
                 <span className="ody-label">Schedule</span>
-                <select
-                  className="ody-select"
+                <SelectField
+                  label="Schedule"
                   value={form.schedule_type}
-                  onChange={(e) => {
-                    const scheduleType = e.target.value
+                  options={scheduleOptions}
+                  onValueChange={(scheduleType) => {
                     setScheduleError('')
                     setForm((f) => {
                       if (scheduleType === 'specific_days') {
@@ -579,11 +614,7 @@ export function TasksPage() {
                       return { ...f, schedule_type: scheduleType, days_of_week: [], target_count: 3 }
                     })
                   }}
-                >
-                  <option value="daily">Daily</option>
-                  <option value="specific_days">Specific days</option>
-                  <option value="x_per_week">X per week</option>
-                </select>
+                />
               </label>
               {form.schedule_type === 'specific_days' ? (
                 <div className="ody-field">
@@ -637,12 +668,7 @@ export function TasksPage() {
             <>
               <label className="ody-field">
                 <span className="ody-label">Due window</span>
-                <select className="ody-select" value={form.due_window_type} onChange={(e) => setForm((f) => ({ ...f, due_window_type: e.target.value }))}>
-                  <option value="none">No deadline</option>
-                  <option value="date">Specific date</option>
-                  <option value="week">This week</option>
-                  <option value="month">This month</option>
-                </select>
+                <SelectField label="Due window" value={form.due_window_type} onValueChange={(value) => setForm((f) => ({ ...f, due_window_type: value }))} options={dueWindowOptions} />
               </label>
               {form.due_window_type === 'date' ? (
                 <label className="ody-field">

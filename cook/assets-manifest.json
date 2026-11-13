@@ -1,0 +1,123 @@
+[
+  {
+    "asset": "client/public/art/bronze.webp",
+    "bytes": 161670,
+    "sha256": "f04d8bae9a1b941a3cf856d97f49a4f24de1ed147ca583a8c62a05e8f5de43db",
+    "provenance": "client/public/art/bronze.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. Original cinematic still-life artwork for a modern dark Greek Odyssey application. Weathered antique bronze Corinthian helmet with tall horsehair crest, olive sprig, a softly folded dark cloth on aged limestone plinth, partly visible fluted temple column behind, warm angled sunset light catches bronze edges. Intimate museum-level material detail, rich deep charcoal olive background, elegant restraint. Helmet on right two thirds, upper left and left edge dark. Landscape 3:2, no text no logos no graphic frame no UI. Genuine bronze patina, tactile classical stone, nuanced deep shadows, golden highlights, painterly photographic blend.\n",
+      "createdAt": "2026-11-13T18:13:22.084Z"
+    }
+  },
+  {
+    "asset": "client/public/art/dimensions/alliance.webp",
+    "bytes": 22890,
+    "sha256": "49180a344b1c468dd4d7023e784ebb39f175aa5f0ddf47b91b3d3e808476a50e",
+    "provenance": "client/public/art/dimensions/alliance.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. An original square editorial vignette illustration for the alliance life dimension in Odyssey, a modern dark Greek personal development app. Subject: two olive branches intertwined around two antique clasped hands carved in warm limestone, friendship and connection. A single carefully composed tangible still life, centered fully visible with breathing room, rich fine sculptural detail, cinematic side light from upper left, dark charcoal forest-green seamless background #151d16. Antique burnished gold, warm pale limestone, restrained teal patina shadows. Luxurious painterly photographic illustration. Subject fills 75 percent of image and reads clearly as thumbnail, highlights crisp and warm, not muddy. No frame no border no letters no logos no text no UI no particles. Same consistent art direction as a classical museum collection.\n",
+      "createdAt": "2026-11-13T18:21:38.322Z"
+    }
+  },
+  {
+    "asset": "client/public/art/dimensions/legacy.webp",
+    "bytes": 26028,
+    "sha256": "fbae54b241ab867a90bf0d810202fbf86d1b0b82d345efe7ad7ca232ee22f8d0",
+    "provenance": "client/public/art/dimensions/legacy.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. An original square editorial vignette illustration for the legacy life dimension in Odyssey, a modern dark Greek personal development app. Subject: a miniature Doric temple on a rocky step, a small sprig growing from stone, enduring purpose. A single carefully composed tangible still life, centered fully visible with breathing room, rich fine sculptural detail, cinematic side light from upper left, dark charcoal forest-green seamless background #151d16. Antique burnished gold, warm pale limestone, restrained teal patina shadows. Luxurious painterly photographic illustration. Subject fills 75 percent of image and reads clearly as thumbnail, highlights crisp and warm, not muddy. No frame no border no letters no logos no text no UI no particles. Same consistent art direction as a classical museum collection.\n",
+      "createdAt": "2026-11-13T18:21:38.617Z"
+    }
+  },
+  {
+    "asset": "client/public/art/dimensions/prowess.webp",
+    "bytes": 23626,
+    "sha256": "1940019f533f889e93a84fb83de25fcd401aade9a72e0758214ce89fd790224b",
+    "provenance": "client/public/art/dimensions/prowess.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. An original square editorial vignette illustration for the prowess life dimension in Odyssey, a modern dark Greek personal development app. Subject: a weathered bronze Corinthian crested helmet beside a slim upright sword, mastery and practiced skill. A single carefully composed tangible still life, centered fully visible with breathing room, rich fine sculptural detail, cinematic side light from upper left, dark charcoal forest-green seamless background #151d16. Antique burnished gold, warm pale limestone, restrained teal patina shadows. Luxurious painterly photographic illustration. Subject fills 75 percent of image and reads clearly as thumbnail, highlights crisp and warm, not muddy. No frame no border no letters no logos no text no UI no particles. Same consistent art direction as a classical museum collection.\n",
+      "createdAt": "2026-11-13T18:21:37.720Z"
+    }
+  },
+  {
+    "asset": "client/public/art/dimensions/psyche.webp",
+    "bytes": 21488,
+    "sha256": "347b7976ed9146bd29c64e87c1e6692b970d49764236f817d6be363690f139a2",
+    "provenance": "client/public/art/dimensions/psyche.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. An original square editorial vignette illustration for the psyche life dimension in Odyssey, a modern dark Greek personal development app. Subject: a finely carved ancient Greek owl perched on a closed small manuscript, wisdom and reflection. A single carefully composed tangible still life, centered fully visible with breathing room, rich fine sculptural detail, cinematic side light from upper left, dark charcoal forest-green seamless background #151d16. Antique burnished gold, warm pale limestone, restrained teal patina shadows. Luxurious painterly photographic illustration. Subject fills 75 percent of image and reads clearly as thumbnail, highlights crisp and warm, not muddy. No frame no border no letters no logos no text no UI no particles. Same consistent art direction as a classical museum collection.\n",
+      "createdAt": "2026-11-13T18:21:37.401Z"
+    }
+  },
+  {
+    "asset": "client/public/art/dimensions/vitality.webp",
+    "bytes": 21076,
+    "sha256": "ef7873277667f34e6a436b69b6f3e515c7061fa507c79b75a6171c312566516b",
+    "provenance": "client/public/art/dimensions/vitality.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. An original square editorial vignette illustration for the vitality life dimension in Odyssey, a modern dark Greek personal development app. Subject: an antique Greek athlete's bronze discus and a finely sculpted laurel branch, a small classical muscular marble torso behind, vitality and physical strength. A single carefully composed tangible still life, centered fully visible with breathing room, rich fine sculptural detail, cinematic side light from upper left, dark charcoal forest-green seamless background #151d16. Antique burnished gold, warm pale limestone, restrained teal patina shadows. Luxurious painterly photographic illustration. Subject fills 75 percent of image and reads clearly as thumbnail, highlights crisp and warm, not muddy. No frame no border no letters no logos no text no UI no particles. Same consistent art direction as a classical museum collection.\n",
+      "createdAt": "2026-11-13T18:21:37.105Z"
+    }
+  },
+  {
+    "asset": "client/public/art/dimensions/wealth.webp",
+    "bytes": 21416,
+    "sha256": "fd3f4699f4cbb8d2eb280a0e69951863d1b62409bad071c3c752500ccc838786",
+    "provenance": "client/public/art/dimensions/wealth.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. An original square editorial vignette illustration for the wealth life dimension in Odyssey, a modern dark Greek personal development app. Subject: three small stacks of antique Greek gold coins beside a small terracotta amphora, stewardship and resources. A single carefully composed tangible still life, centered fully visible with breathing room, rich fine sculptural detail, cinematic side light from upper left, dark charcoal forest-green seamless background #151d16. Antique burnished gold, warm pale limestone, restrained teal patina shadows. Luxurious painterly photographic illustration. Subject fills 75 percent of image and reads clearly as thumbnail, highlights crisp and warm, not muddy. No frame no border no letters no logos no text no UI no particles. Same consistent art direction as a classical museum collection.\n",
+      "createdAt": "2026-11-13T18:21:38.018Z"
+    }
+  },
+  {
+    "asset": "client/public/art/last-light.webp",
+    "bytes": 96818,
+    "sha256": "c41a341e82cde891536036f48adeb9a0739aeabf167405811a497e3859d746ad",
+    "provenance": "client/public/art/last-light.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. Original panoramic artwork for Odyssey personal journey app daily checkin. A lone distant ancient Greek traveler wearing a crested helmet and dark cloak stands in a field of muted rust-red poppies and golden flowers, seen in profile against a warm low sunset, birds in distant sky. Cinematic painterly illustration, contemplative hopeful disciplined mood. Figure at right third, sun behind figure but not a perfect halo. Broad dark open foreground and left side for later UI composition, misty mountain silhouettes far away. Palette deep charcoal, dark forest shadows, terracotta, muted amber and burnished gold. Horizontal wide 3:2 landscape composition suitable shallow banner cropping. No text, no logos, no UI, no particles, no frame.\n",
+      "createdAt": "2026-11-13T18:13:22.557Z"
+    }
+  },
+  {
+    "asset": "client/public/art/sanctuary.webp",
+    "bytes": 153380,
+    "sha256": "dad6b10a0e18762efef3fb7c245bbecf06147bf19f04919b868a2de73be699d0",
+    "provenance": "client/public/art/sanctuary.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. Create an original horizontal panoramic atmospheric artwork for Odyssey, a modern Greek myth-inspired personal commitments app. Painted cinematic matte art, exceptionally elegant and detailed. Ancient small Doric temple emerging from a vast shadowed forest gorge, mossy limestone staircase and a still pool reflecting the temple's warm golden doorway. Temple situated in rightmost third of frame, tiny solitary cloaked traveler near stairs. Left half mostly deep charcoal olive shadow and subtle mist, negative space. Restrained burnished gold light, deep forest green, blue-black shadows, aged stone. No words, no UI, no borders, no watermark. 3:2 wide landscape with important architecture kept inside right half for a wide banner crop. Painterly tactile quiet grandeur, no glowing orbs, no particles, no overbright magic.\n",
+      "createdAt": "2026-11-13T18:13:21.584Z"
+    }
+  },
+  {
+    "asset": "client/public/art/sidebar-sanctuary.webp",
+    "bytes": 52522,
+    "sha256": "833f632410a9a1ed94ea1ebb6a98ed131a9541d3ab5ceb582e19bcea7b60f229",
+    "provenance": "client/public/art/sidebar-sanctuary.webp.json",
+    "generation": "built-in image_gen reference-guided edit",
+    "prompt": {
+      "prompt": "Use case: background-extraction / compositional extension. Using this attached bronze helmet image as the visual reference, create an ORIGINAL VERY TALL PORTRAIT background artwork for the entire left sidebar of a Greek Odyssey application, aspect ratio 1:3. Keep the same beautiful weathered bronze Corinthian helmet, antique stone and deep charcoal olive palette. Remove every word and all UI, remove rounded corners and framing. Extend the physical environment vertically: a tall fluted shadowed Greek column along the far right, faint aged dark stone wall and atmospheric darkness occupying the UPPER 60 PERCENT for navigation text to be overlaid later. Helmet with crest and folded cloth occupies LOWER third, slightly right of center and fully inside the frame, warm angled light catches bronze detail. Bottom darkens softly into forest charcoal for account controls. This is one continuous full-height background, not a card, not a collage. No text, no letters, no logo, no watermark, no UI. Tactile rich material detail with quiet shadows, no particles and no magical glow.\n",
+      "createdAt": "2026-11-13T18:57:31.470Z"
+    }
+  },
+  {
+    "asset": "client/public/art/voyage.webp",
+    "bytes": 254328,
+    "sha256": "7a37e16212b4226d59b31014a2d4c27c822ba6b80aa3859549cbdf3e5815ba3b",
+    "provenance": "client/public/art/voyage.webp.json",
+    "generation": "built-in image_gen generation",
+    "prompt": {
+      "prompt": "Use case: stylized-concept. Original panoramic illustration for Odyssey journal library, inspired by ancient Greek black-figure vase painting but elegant and contemporary art direction. A small Greek sailing ship crosses stylized Aegean waves toward a distant rocky island, a few olive branches in foreground edges. Crisp hand-painted black silhouettes with very fine burnished bronze lines on deeply aged terracotta charcoal ground, muted copper rather than bright orange, weathered ceramic texture subtle. Landscape 3:2 composition, ship and island right half, left half mostly dark unadorned background for page title. No text, no typography, no UI, no invented lettering, no border, no watermark. Museum-quality drawing, disciplined silhouette rhythm and fine linear details, restrained golden light.\n",
+      "createdAt": "2026-11-13T18:17:04.443Z"
+    }
+  }
+]

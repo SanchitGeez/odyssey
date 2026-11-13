@@ -1,6 +1,44 @@
 # Odyssey
 
-Odyssey backend for Stage 1: tasks, quests, journals, and insights.
+Odyssey brings tasks, quests, journals, and insights together.
+
+## Run the application UI
+
+The redesigned web application runs at `http://localhost:15173/` with API docs at
+`http://localhost:18000/docs` in the local Docker setup.
+
+```bash
+docker compose up --build -d
+```
+
+See [UI implementation and checks](cook/README.md) and the source-derived
+[design system](DESIGN.md). The backend setup below also supports standalone use.
+
+## How the project fits together
+
+```text
+Browser: React pages + shared UI + authenticated API client
+                         |
+                         v
+FastAPI routes -> application handlers -> domain/repositories
+                                              |
+                                              v
+                                   SQLAlchemy -> PostgreSQL
+```
+
+The frontend in `client/` owns navigation, forms, check-in gestures, journal
+editing and the visual system. `src/pages/` contains route screens,
+`src/components/` holds shared controls, `src/app/` handles routing and sessions,
+and `src/lib/` contains date, journal-format and summary helpers. Vite serves the
+local UI and proxies `/api` to the backend. Journal editor code loads when needed.
+
+The backend in `server/` is one FastAPI application split into five feature
+modules. Routes accept HTTP requests; application handlers coordinate work;
+repositories read and write the database. Alembic maintains the database schema.
+Docker Compose runs the frontend, backend and PostgreSQL together. Tasks record
+daily activity, quests group milestones, journals store reflections, and Insights
+summarizes actual records. The UI's hexagon separately counts current active
+tasks and categorized quests across the six life dimensions.
 
 ## Current Status
 

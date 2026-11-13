@@ -10,6 +10,7 @@ export function LoginPage() {
   const { api } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -30,8 +31,11 @@ export function LoginPage() {
   return (
     <AuthCard title="Welcome Back" subtitle="Sign in to continue your journey.">
       <form className="ody-grid" onSubmit={onSubmit}>
-        <div className="ody-field">
+        <label className="ody-field">
+          <span className="ody-label">Email</span>
           <input
+            autoComplete="email"
+            name="email"
             className="ody-input"
             type="email"
             placeholder="Email"
@@ -40,19 +44,26 @@ export function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
-        <div className="ody-field">
+        </label>
+        <label className="ody-field">
+          <span className="ody-label">Password</span>
+          <span className="ody-password-wrap">
           <input
+            autoComplete="current-password"
+            name="password"
             className="ody-input"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             placeholder="Password"
             aria-label="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
-        {error ? <p className="ody-error" style={{ margin: 0 }}>{error}</p> : null}
+          <button type="button" className="ody-icon-btn" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword}><Icon name={showPassword ? 'hidden' : 'visible'} /></button>
+          </span>
+
+        </label>
+        {error ? <p role="alert" className="ody-error" style={{ margin: 0 }}>{error}</p> : null}
         <button className="ody-btn" type="submit" disabled={loading}>
           <Icon name="arrow-right" size={14} />
           {loading ? 'Signing in...' : 'Sign In'}

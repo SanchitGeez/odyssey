@@ -1,0 +1,30 @@
+{
+  "scope": "Local Odyssey UI overhaul and user-directed refinements",
+  "application_url": "http://localhost:15173/",
+  "checks": {
+    "production_build": "passed",
+    "scoped_additions_visual_review": "ship; no open material visual fixes",
+    "frontend_tests": {"passed": 14, "failed": 0},
+    "backend_tests": {"passed": 21, "failed": 0, "note": "Existing deprecation warnings; no backend changes after this run."},
+    "lint": {"errors": 0, "warnings": 2, "note": "Existing auth hook dependency warnings."},
+    "production_dependencies": {"vulnerabilities": 0},
+    "generated_art": {"shipping_assets": 11, "manifest_entries": 11, "missing_or_mismatched": 0},
+    "quest_card": {"desktop_blank_space_selects": true, "mobile_390_blank_space_selects": true, "escape_restores_card_focus": true, "edit_is_independent": true},
+    "journal_zen_parent": {"mobile_390_axe_violations": 0, "axe_incomplete": ["color-contrast"], "fixed_header": true, "formatting_outside_scroll": true, "editor_dom_preserved_on_format_and_link_toggle": true, "no_horizontal_overflow_at_widths": [320, 390]},
+    "journal_zen_helper": {"captured_widths": [390, 440, 1440], "heading_bold_link_caret_retained": true, "metadata_persisted_through_reload": true, "failed_save_retains_writing": true, "browser_back_guard": true, "reconnect_saves_latest_writing": true, "desktop_reader_writer_paper_width": 860},
+    "root_review_fixture_cleanup": {"journal_remaining": 0, "quest_remaining": 0, "account": "isolated smoke account"}
+  },
+  "evidence": {
+    "baseline_visual_review": "review-final.md",
+    "additions_visual_review": "review-additions.md",
+    "generated_art_provenance": "assets-manifest.json",
+    "journal_mobile_axe": "axe-journal-zen-mobile.json"
+  },
+  "limits": [
+    "Real iPhone Safari focus zoom and real-device touch have not been verified.",
+    "Automated accessibility checks are not full WCAG certification or complete screen-reader testing.",
+    "No persistent local journal draft is stored; crash recovery is not guaranteed.",
+    "Lighthouse and motion evidence are local lab captures, not field performance or FPS claims.",
+    "Inherited development-only ESLint/minimatch advisories were not force-upgraded."
+  ]
+}

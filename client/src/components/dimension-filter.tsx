@@ -1,4 +1,5 @@
 import type { LifeDimension } from '../app/types'
+import { DimensionMark } from './dimension-mark'
 import { DIMENSIONS, DIMENSION_KEYS } from '../lib/dimensions'
 
 type DimensionFilterValue = LifeDimension | 'all'
@@ -13,6 +14,7 @@ export function DimensionFilter({ value, onChange }: DimensionFilterProps) {
     <div className="ody-filter-bar">
       <button
         type="button"
+        aria-pressed={value === 'all'}
         className={`ody-filter-tab${value === 'all' ? ' active' : ''}`}
         onClick={() => onChange('all')}
       >
@@ -22,10 +24,11 @@ export function DimensionFilter({ value, onChange }: DimensionFilterProps) {
         <button
           key={dimensionKey}
           type="button"
+          aria-pressed={value === dimensionKey}
           className={`ody-filter-tab${value === dimensionKey ? ' active' : ''}`}
           onClick={() => onChange(dimensionKey)}
         >
-          {DIMENSIONS[dimensionKey].label}
+          <DimensionMark dimension={dimensionKey} size={20} />{DIMENSIONS[dimensionKey].label}
         </button>
       ))}
     </div>
